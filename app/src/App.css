@@ -1,0 +1,7 @@
+.menu {
+    display: flex;
+}
+
+.search-box-start-station, .search-box-end-station {
+    width: 200px;
+}

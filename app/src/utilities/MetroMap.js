@@ -1,4 +1,5 @@
 import Station from "./Station";
+import MinPriorityQueue from "./MinPriorityQueue";
 
 
 // This class manages Station instances and supports querying of stations.
@@ -36,9 +37,83 @@ class MetroMap {
         });
     }
 
-    async visualize() {
-        this.parseStationCSV(this.stationsCSVPath);
-        this.parseConnectionCSV(this.connectionsCSVPath);
+    // Parses stationCSV, connectionCSV
+    async parseAssets() {
+        await this.parseStationCSV(this.stationsCSVPath);
+        await this.parseConnectionCSV(this.connectionsCSVPath);
+    }
+
+    // Visualise stations and connections
+    visualizeAssets() { }
+
+    // Choose searching algorithms
+    searchPath(startStationName, endStationName) {
+        const stations = this.stations;
+        const distances = {};
+        const visited = {};
+        const previousStation = {};
+        const priorityQueue = new MinPriorityQueue();
+
+        // Initialize distances
+        Object.keys(stations).forEach(stationName => {
+            distances[stationName] = Infinity;
+            visited[stationName] = false;
+            previousStation[stationName] = null;
+        });
+        distances[startStationName] = 0;
+
+        // Enqueue the starting station
+        priorityQueue.enqueue(startStationName, 0);
+
+        while (!priorityQueue.isEmpty()) {
+            // Dequeue a station
+            const currentStation = priorityQueue.dequeue().element;
+
+            if (visited[currentStation]) continue;
+
+            // Mark current station as visited
+            visited[currentStation] = true;
+
+            // Check neighbors and update distances
+            const neighbors = stations[currentStation].neighbours;
+            Object.keys(neighbors).forEach(neighborName => {
+                const neighborDistance = neighbors[neighborName];
+                const newDistance = distances[currentStation] + neighborDistance;
+
+                if (newDistance < distances[neighborName]) {
+                    distances[neighborName] = newDistance;
+                    previousStation[neighborName] = currentStation;
+                    // Enqueue the neighbor with updated distance
+                    priorityQueue.enqueue(neighborName, newDistance);
+                }
+            });
+        }
+
+        // Construct the path
+        const path = this.constructPath(previousStation, startStationName, endStationName);
+
+        return { distance: distances[endStationName], path };
+    }
+
+    constructPath(previousStation, startStation, endStation) {
+        const path = [];
+        let currentStation = endStation;
+
+        while (currentStation !== startStation && currentStation !== null) {
+            path.unshift(currentStation);
+            currentStation = previousStation[currentStation];
+        }
+
+        if (currentStation === startStation) {
+            path.unshift(startStation);
+        }
+
+        return path;
+    }
+
+    // Utility methods
+    getStationNames() {
+        return Object.keys(this.stations);
     }
 }
 
