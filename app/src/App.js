@@ -3,13 +3,32 @@ import Select from "react-select";
 import MetroMap from "./utilities/MetroMap";
 import "./App.css"; // Import your CSS file for styling
 
+// React-select styling
+const customStyles = {
+  control: (provided, state) => ({
+    ...provided,
+    border: '1px solid #ccc', // customize the border
+    borderRadius: '4px', // customize the border radius
+    boxShadow: state.isFocused ? '0 0 0 2px rgba(0, 123, 255, 0.6)' : null,
+    fontFamily: 'Inter',
+    fontSize: '14px',
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    backgroundColor: state.isSelected ? '#007bff' : null,
+    color: state.isSelected ? 'white' : 'black',
+    fontFamily: 'Inter',
+    fontSize: '14px',
+  }),
+};
+
+
 function App() {
   const [startStation, setStartStation] = useState("");
   const [endStation, setEndStation] = useState("");
   const [stationnames, setStationNames] = useState([]);
-  const [showStartDropdown, setShowStartDropdown] = useState(false);
-  const [showEndDropdown, setShowEndDropdown] = useState(false);
-
+  const [path, setPath] = useState([]);
+  const [pathDistance, setPathDistance] = useState([]);
   const metroMap = new MetroMap(
     "London",
     process.env.PUBLIC_URL + '/data/londonstations.csv',
@@ -27,12 +46,14 @@ function App() {
   }, []); // Run only once when component mounts
 
   const canvasRef = useRef(null);
+  const testRef = useRef(null);
 
   const handleSearchClick = async () => {
+    console.log(startStation, endStation);
     await metroMap.parseAssets();
     var result = metroMap.searchPath(startStation, endStation);
-    console.log(result.distance);
-    console.log(result.path);
+    setPath(result.path);
+    setPathDistance(result.distance);
   };
 
   return (
@@ -41,23 +62,32 @@ function App() {
         <div className="search-box-start-station">
           <Select
             options={stationnames.map(station => ({ value: station, label: station }))}
-            value={{ value: startStation, label: startStation }}
-            onChange={(selectedOption) => setStartStation(selectedOption.value)}
+            onChange={(selectedOption) => setStartStation(selectedOption ? selectedOption.value : "")}
             placeholder="Select Start Station"
             isSearchable
+            styles={customStyles}
+            ref={testRef}
           />
         </div>
         <div className="search-box-end-station">
           <Select
             options={stationnames.map(station => ({ value: station, label: station }))}
-            value={{ value: endStation, label: endStation }}
-            onChange={(selectedOption) => setEndStation(selectedOption.value)}
+            onChange={(selectedOption) => setEndStation(selectedOption ? selectedOption.value : "")}
             placeholder="Select End Station"
             isSearchable
+            styles={customStyles}
           />
         </div>
-        <div></div>
         <button onClick={handleSearchClick}>Search</button>
+      </div>
+      <div>
+        <h2>Path:</h2>
+        <ul>
+          {path.map((station, index) => (
+            <li key={index}>{station}</li>
+          ))}
+        </ul>
+        {pathDistance}
       </div>
       <canvas ref={canvasRef}></canvas>
     </div>
