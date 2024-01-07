@@ -1,8 +1,52 @@
-.menu {
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+.App {
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    overflow: hidden;
+}
+
+/* Search panel code, including search boxes and path results */
+.search-panel {
+    grid-row: 1;
+    grid-column: 1;
+    z-index: 10;
+    height: 100px;
+    background-color: transparent;
+}
+
+.search-menu {
     display: flex;
+    justify-content: center;
+    margin: 10px;
 }
 
 .search-box-start-station, .search-box-end-station {
-    width: 40%;
+    width: 35%;
     margin-right: 10px;
+}
+
+.search-btn {
+    padding: 0 5%;
+    font-family: 'Inter';
+    border: none;
+    border-radius: 4px;
+    background-color: #1865f3;
+    color: white;
+}
+
+.search-btn:hover {
+    cursor:pointer;
+}
+
+/* Canvas element to display stations, connections and search result path */
+.metro-map-container {
+    margin: 0px;
+    grid-row: 1;
+    grid-column: 1;
 }

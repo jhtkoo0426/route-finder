@@ -1,14 +1,15 @@
-import { useState, useEffect, useRef } from "react";
+import React, { Component } from "react";
 import Select from "react-select";
 import MetroMap from "./utilities/MetroMap";
-import "./App.css"; // Import your CSS file for styling
+import MapCanvas from "./utilities/MapCanvas";
+import "./App.css";
 
 // React-select styling
 const customStyles = {
   control: (provided, state) => ({
     ...provided,
-    border: '1px solid #ccc', // customize the border
-    borderRadius: '4px', // customize the border radius
+    border: '1px solid #ccc',
+    borderRadius: '4px',
     boxShadow: state.isFocused ? '0 0 0 2px rgba(0, 123, 255, 0.6)' : null,
     fontFamily: 'Inter',
     fontSize: '14px',
@@ -22,76 +23,99 @@ const customStyles = {
   }),
 };
 
+class App extends Component {
+  constructor(props) {
+    super(props);
 
-function App() {
-  const [startStation, setStartStation] = useState("");
-  const [endStation, setEndStation] = useState("");
-  const [stationnames, setStationNames] = useState([]);
-  const [path, setPath] = useState([]);
-  const [pathDistance, setPathDistance] = useState([]);
-  const metroMap = new MetroMap(
-    "London",
-    process.env.PUBLIC_URL + '/data/londonstations.csv',
-    process.env.PUBLIC_URL + '/data/londonrailwaylines.csv'
-  );
-
-  useEffect(() => {
-    const fetchData = async () => {
-      await metroMap.parseAssets();
-      const names = metroMap.getStationNames();
-      setStationNames(names);
+    this.state = {
+      startStation: "",
+      endStation: "",
+      stationnames: [],
+      path: [],
+      pathDistance: null,
     };
 
-    fetchData();
-  }, []); // Run only once when component mounts
+    this.metroMap = new MetroMap(
+      "London",
+      process.env.PUBLIC_URL + '/data/londonstations.csv',
+      process.env.PUBLIC_URL + '/data/londonrailwaylines.csv'
+    );
 
-  const canvasRef = useRef(null);
-  const testRef = useRef(null);
+    // Remove the following line to avoid creating a new instance of MapCanvas here
+    // this.metroMapCanvas = new MapCanvas();
+  }
 
-  const handleSearchClick = async () => {
-    console.log(startStation, endStation);
-    await metroMap.parseAssets();
-    var result = metroMap.searchPath(startStation, endStation);
-    setPath(result.path);
-    setPathDistance(result.distance);
+  async componentDidMount() {
+    await this.fetchData();
+    this.metroMap.visualizeMetroMap(this.metroMapCanvas);
+  }
+
+  fetchData = async () => {
+    await this.metroMap.parseAssets();
+    const names = this.metroMap.getStationNames();
+    this.setState({ stationnames: names });
   };
 
-  return (
-    <div className="App">
-      <div className="menu">
-        <div className="search-box-start-station">
-          <Select
-            options={stationnames.map(station => ({ value: station, label: station }))}
-            onChange={(selectedOption) => setStartStation(selectedOption ? selectedOption.value : "")}
-            placeholder="Select Start Station"
-            isSearchable
-            styles={customStyles}
-            ref={testRef}
-          />
+  handleSearchClick = async () => {
+    await this.metroMap.parseAssets();
+
+    const { startStation, endStation } = this.state;
+    if (startStation !== "" && endStation !== "") {
+      const result = this.metroMap.searchPath(startStation, endStation);
+      this.setState({
+        path: result.path,
+        pathDistance: result.distance,
+      });
+    } else {
+      console.log("Starting or ending station is not selected.");
+    }
+  };
+
+  render() {
+    const { startStation, endStation, stationnames, path, pathDistance } = this.state;
+
+    return (
+      <div className="App">
+        <div className="search-panel">
+          <div className="search-menu">
+            <div className="search-box-start-station">
+              <Select
+                options={stationnames.map((station) => ({ value: station, label: station }))}
+                onChange={(selectedOption) => this.setState({ startStation: selectedOption ? selectedOption.value : "" })}
+                placeholder="Select Start Station"
+                isSearchable
+                styles={customStyles}
+              />
+            </div>
+            <div className="search-box-end-station">
+              <Select
+                options={stationnames.map((station) => ({ value: station, label: station }))}
+                onChange={(selectedOption) => this.setState({ endStation: selectedOption ? selectedOption.value : "" })}
+                placeholder="Select End Station"
+                isSearchable
+                styles={customStyles}
+              />
+            </div>
+            <button onClick={this.handleSearchClick} className="search-btn">
+              Search
+            </button>
+          </div>
+          <div className="search-results">
+            <h2>Path:</h2>
+            <ul>
+              {path.map((station, index) => (
+                <li key={index}>{station}</li>
+              ))}
+            </ul>
+            {pathDistance !== null && <p>{pathDistance}</p>}
+          </div>
         </div>
-        <div className="search-box-end-station">
-          <Select
-            options={stationnames.map(station => ({ value: station, label: station }))}
-            onChange={(selectedOption) => setEndStation(selectedOption ? selectedOption.value : "")}
-            placeholder="Select End Station"
-            isSearchable
-            styles={customStyles}
-          />
+        <div className="metro-map-container" style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative' }}>
+          <MapCanvas ref={(mapCanvas) => (this.metroMapCanvas = mapCanvas)}/>
         </div>
-        <button onClick={handleSearchClick}>Search</button>
       </div>
-      <div>
-        <h2>Path:</h2>
-        <ul>
-          {path.map((station, index) => (
-            <li key={index}>{station}</li>
-          ))}
-        </ul>
-        {pathDistance}
-      </div>
-      <canvas ref={canvasRef}></canvas>
-    </div>
-  );
+    );
+  }
 }
 
 export default App;

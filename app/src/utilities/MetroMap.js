@@ -2,7 +2,8 @@ import Station from "./Station";
 import MinPriorityQueue from "./MinPriorityQueue";
 
 
-// This class manages Station instances and supports querying of stations.
+// This class manages business logic, including Station instances and supports 
+// stations querying.
 class MetroMap {
     constructor(cityName, stationsCSVPath, connectionsCSVPath) {
         this.cityName = cityName;
@@ -44,7 +45,9 @@ class MetroMap {
     }
 
     // Visualise stations and connections
-    visualizeAssets() { }
+    visualizeMetroMap(mapInstance) {
+        mapInstance.drawStations(this.stations);
+    }
 
     // Choose searching algorithms
     searchPath(startStationName, endStationName) {
