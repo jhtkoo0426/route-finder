@@ -3,7 +3,7 @@ class Station {
         this.name = name;
         this.lat = lat;
         this.lon = lon;
-        this.neighbours = {};
+        this.neighbours = {};   // Nested hashmap
 
         const R = 6371;
         
@@ -15,11 +15,16 @@ class Station {
         this.y = Math.round(this.y);
     }
 
-    addNeighbour(station) {
+    addNeighbour(station, metroLineName) {
         const [stationName, stationLat, stationLon] = [station.name, station.lat, station.lon];
-        this.neighbours[stationName] = {
-            distance: this.calculateDistance(this.lat, this.lon, stationLat, stationLon),
-        };
+        if (stationName in this.neighbours) {
+            this.neighbours[stationName].lines.add(metroLineName);
+        } else {
+            this.neighbours[stationName] = {
+                distance: this.calculateDistance(this.lat, this.lon, stationLat, stationLon),
+                lines: new Set([metroLineName]),
+            };
+        }        
     }
 
     toRad(x) {

@@ -5,14 +5,13 @@ import MinPriorityQueue from "./MinPriorityQueue";
 // This class manages business logic, including Station instances and supports 
 // stations querying.
 class MetroMap {
-    constructor(cityName, stationsCSVPath, connectionsCSVPath, railwayColourCSVPath) {
+    constructor(cityName, stationsCSVPath, connectionsCSVPath, metroLinesCSVPath) {
         this.cityName = cityName;
         this.stationsCSVPath = stationsCSVPath;
         this.connectionsCSVPath = connectionsCSVPath;
-        this.railwayColourCSVPath = railwayColourCSVPath;
+        this.metroLinesCSVPath = metroLinesCSVPath;
         this.stations = {};
-        this.railwayColourMap = {};
-        this.connections = {};
+        this.metroLineColourMap = {};
     }
 
     // Parses the stations file; Assumes that there is no header line
@@ -26,57 +25,53 @@ class MetroMap {
             this.stations[stationName] = new Station(stationName, latitude, longitude);
         });
     }
-    
-    async parseConnectionCSV(filePath) {
-        const response = await fetch(filePath);
-        const csvText = await response.text();
-        const csvData = csvText.split(/\r\n|\n/).filter(Boolean);
-    
-        csvData.forEach(row => {
-            const [metroLineName, startStationName, endStationName] = row.split(",");
 
-            // Build adjacent list
-            var startStationObj = this.stations[startStationName];
-            var endStationObj = this.stations[endStationName];
-            
-            if (startStationObj !== undefined && endStationObj !== undefined) {
-                startStationObj.addNeighbour(endStationObj);
-                endStationObj.addNeighbour(startStationObj);
-    
-                // Build connections list
-                if (this.connections.hasOwnProperty(startStationName)) {
-                    if (!this.connections[startStationName].some(entry => entry.station === endStationName && entry.line === metroLineName)) {
-                        this.connections[startStationName].push({ station: endStationName, line: metroLineName});
-                    }
-                } else {
-                    this.connections[startStationName] = [{ station: endStationName, line: metroLineName}];
-                }
-            }
-        });
-    }
-
-    async parseRailwayColoursCSV(filePath) {
+    async parseMetroLinesCSV(filePath) {
         const response = await fetch(filePath);
         const csvText = await response.text();
         const csvData = csvText.split(/\r\n|\n/).filter(Boolean);
         
         csvData.forEach(row => {
             const [metroLineName, colour] = row.split(",");
-            this.railwayColourMap[metroLineName] = colour;
+            this.metroLineColourMap[metroLineName] = colour;
         })
+    }
+    
+    async parseConnectionCSV(filePath) {
+        const response = await fetch(filePath);
+        const csvText = await response.text();
+        const csvData = csvText.split(/\r\n|\n/).filter(Boolean);
+        
+        for (let i = 0; i < csvData.length; i++) {
+            const [metroLineName, startStationName, endStationName] = csvData[i].split(",");
+
+            // Build adjacent list
+            var startStationObj = this.stations[startStationName];
+            var endStationObj = this.stations[endStationName];
+            
+            if (startStationObj !== undefined && endStationObj !== undefined) {
+                startStationObj.addNeighbour(endStationObj, metroLineName);
+                endStationObj.addNeighbour(startStationObj, metroLineName);
+            }
+        };
     }
 
     // Parses stationCSV, connectionCSV
     async parseAssets() {
         await this.parseStationCSV(this.stationsCSVPath);
+        await this.parseMetroLinesCSV(this.metroLinesCSVPath);
         await this.parseConnectionCSV(this.connectionsCSVPath);
-        await this.parseRailwayColoursCSV(this.railwayColourCSVPath);
     }
 
     // Visualise stations and connections
     visualizeMetroMap(mapInstance) {
-        mapInstance.drawStations(this.stations);
-        mapInstance.drawConnections(this.stations, this.connections, this.railwayColourMap);
+        // Since we need to layer multiple elements on the map canvas, we draw assets
+        // in the order that we want them to appear, where elements drawm later will be
+        // on top of elemetns drawn earlier.
+        Object.entries(this.stations).forEach(([ stationName, stationObj ]) => {
+            mapInstance.drawStation(stationName, stationObj);
+            mapInstance.drawConnections(this.stations, stationName, stationObj, this.metroLineColourMap);
+        })
     }
 
     // Choose searching algorithms
