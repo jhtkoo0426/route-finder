@@ -12,7 +12,7 @@ class MapCanvas extends Component {
         };
 
         this.STATION_RADIUS = 6;
-        this.LINE_WIDTH = 4;
+        this.LINE_WIDTH = 2;
 
         this.canvasRef = React.createRef();
     }
@@ -112,35 +112,29 @@ class MapCanvas extends Component {
     }
 
     drawConnections(stations, stationName, stationObj, metroLineColourMap) {
-        var neighbours = stationObj.neighbours;
-        var startStationObj = stations[stationName];
-        for (let neighbourStationName in neighbours) {
-            var endStationObj = stations[neighbourStationName];
-
-            // Accessing the current station's details
-            let stationDetails = neighbours[neighbourStationName];
-        
-            // Accessing the distance and lines properties
-            let lines = stationDetails.lines;
-            console.log(lines)
-
-            for (let line of lines) {
-              console.log(line)
+      const neighbours = stationObj.neighbours;
+      const startStationObj = stations[stationName];
+  
+      for (const neighbourStationName in neighbours) {
+          const endStationObj = stations[neighbourStationName];
+          const lines = neighbours[neighbourStationName].lines;
+  
+          for (let i = 0; i < lines.size; i++) {
+              const yOffset = (i - 1) * (i % 2 === 0 ? 3 : -3);
               this.drawConnection(
-                startStationObj.x,
-                startStationObj.y,
-                endStationObj.x,
-                endStationObj.y,
-                metroLineColourMap[line]
-              )
-            }
-        }
+                  startStationObj.x,
+                  startStationObj.y + yOffset,
+                  endStationObj.x,
+                  endStationObj.y + yOffset,
+                  metroLineColourMap[Array.from(lines)[i]]
+              );
+          }
+      }
     }
 
     drawConnection(x1, y1, x2, y2, colour) {
         // Set line colour before stroke
         this.ctx.beginPath();
-
         this.ctx.strokeStyle = colour;
         this.ctx.lineWidth = this.LINE_WIDTH;
         this.ctx.moveTo(x1, y1);

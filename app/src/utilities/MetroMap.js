@@ -69,8 +69,10 @@ class MetroMap {
         // in the order that we want them to appear, where elements drawm later will be
         // on top of elemetns drawn earlier.
         Object.entries(this.stations).forEach(([ stationName, stationObj ]) => {
-            mapInstance.drawStation(stationName, stationObj);
             mapInstance.drawConnections(this.stations, stationName, stationObj, this.metroLineColourMap);
+        })
+        Object.entries(this.stations).forEach(([ stationName, stationObj ]) => {
+            mapInstance.drawStation(stationName, stationObj);
         })
     }
 
