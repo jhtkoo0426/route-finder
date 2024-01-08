@@ -5,11 +5,14 @@ import MinPriorityQueue from "./MinPriorityQueue";
 // This class manages business logic, including Station instances and supports 
 // stations querying.
 class MetroMap {
-    constructor(cityName, stationsCSVPath, connectionsCSVPath) {
+    constructor(cityName, stationsCSVPath, connectionsCSVPath, railwayColourCSVPath) {
         this.cityName = cityName;
         this.stationsCSVPath = stationsCSVPath;
         this.connectionsCSVPath = connectionsCSVPath;
+        this.railwayColourCSVPath = railwayColourCSVPath;
         this.stations = {};
+        this.railwayColourMap = {};
+        this.connections = {};
     }
 
     // Parses the stations file; Assumes that there is no header line
@@ -31,29 +34,53 @@ class MetroMap {
     
         csvData.forEach(row => {
             const [metroLineName, startStationName, endStationName] = row.split(",");
-            console.log(startStationName + " | " + endStationName)
+
+            // Build adjacent list
             var startStationObj = this.stations[startStationName];
             var endStationObj = this.stations[endStationName];
-            startStationObj.addNeighbour(endStationObj);
-            endStationObj.addNeighbour(startStationObj);
+            
+            if (startStationObj !== undefined && endStationObj !== undefined) {
+                startStationObj.addNeighbour(endStationObj);
+                endStationObj.addNeighbour(startStationObj);
+    
+                // Build connections list
+                if (this.connections.hasOwnProperty(startStationName)) {
+                    if (!this.connections[startStationName].some(entry => entry.station === endStationName && entry.line === metroLineName)) {
+                        this.connections[startStationName].push({ station: endStationName, line: metroLineName});
+                    }
+                } else {
+                    this.connections[startStationName] = [{ station: endStationName, line: metroLineName}];
+                }
+            }
         });
+    }
+
+    async parseRailwayColoursCSV(filePath) {
+        const response = await fetch(filePath);
+        const csvText = await response.text();
+        const csvData = csvText.split(/\r\n|\n/).filter(Boolean);
+        
+        csvData.forEach(row => {
+            const [metroLineName, colour] = row.split(",");
+            this.railwayColourMap[metroLineName] = colour;
+        })
     }
 
     // Parses stationCSV, connectionCSV
     async parseAssets() {
         await this.parseStationCSV(this.stationsCSVPath);
         await this.parseConnectionCSV(this.connectionsCSVPath);
+        await this.parseRailwayColoursCSV(this.railwayColourCSVPath);
     }
 
     // Visualise stations and connections
     visualizeMetroMap(mapInstance) {
         mapInstance.drawStations(this.stations);
+        mapInstance.drawConnections(this.stations, this.connections, this.railwayColourMap);
     }
 
     // Choose searching algorithms
     searchPath(startStationName, endStationName) {
-        console.log(this.stations[startStationName])
-        console.log(this.stations[endStationName])
         const stations = this.stations;
         const distances = {};
         const visited = {};

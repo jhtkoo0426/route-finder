@@ -37,8 +37,9 @@ class App extends Component {
 
     this.metroMap = new MetroMap(
       "London",
-      process.env.PUBLIC_URL + '/data/londonstations.csv',
-      process.env.PUBLIC_URL + '/data/londonrailwaylines.csv'
+      process.env.PUBLIC_URL + '/data/stations.csv',
+      process.env.PUBLIC_URL + '/data/connections.csv',
+      process.env.PUBLIC_URL + '/data/lines.csv',
     );
 
     // Remove the following line to avoid creating a new instance of MapCanvas here

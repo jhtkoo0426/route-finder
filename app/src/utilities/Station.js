@@ -1,26 +1,23 @@
 class Station {
-    constructor(name, lat, lng) {
+    constructor(name, lat, lon) {
         this.name = name;
         this.lat = lat;
-        this.lng = lng;
+        this.lon = lon;
         this.neighbours = {};
 
-        const R = 6371; // Earth's radius in km
-        const latRad = this.toRad(this.lat);
-        const lngRad = this.toRad(this.lng);
+        const R = 6371;
 
-        this.x = (R * lngRad) * 10 + 1200;
-        this.y = (R * Math.log(Math.tan(Math.PI / 4 + latRad / 2))) * 12 - 8000 * 10;
+        this.x = R * Math.cos(this.lat) * Math.sin(this.lon) + 2000;
+        this.y = R * Math.cos(this.lat) * Math.cos(this.lon) - 500;
 
         this.x = Math.round(this.x);
         this.y = Math.round(this.y);
     }
 
-    addNeighbour(station, line) {
-        const [stationName, stationLat, stationLng] = [station.name, station.lat, station.lng];
+    addNeighbour(station) {
+        const [stationName, stationLat, stationLon] = [station.name, station.lat, station.lon];
         this.neighbours[stationName] = {
-            distance: this.calculateDistance(this.lat, this.lng, stationLat, stationLng),
-            metroLine: line
+            distance: this.calculateDistance(this.lat, this.lon, stationLat, stationLon),
         };
     }
 
