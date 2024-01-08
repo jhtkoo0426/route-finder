@@ -22,18 +22,6 @@ Bakerloo,Warwick Avenue,Paddington
 Bakerloo,Waterloo,Lambeth North
 Bakerloo,Wembley Central,Stonebridge Park
 Bakerloo,Willesden Junction,Kensal Green
-C2C,Barking,Dagenham Dock
-C2C,Barking,Upminster
-C2C,Dagenham Dock,Purfleet
-C2C,Dagenham Dock,Rainham
-C2C,Fenchurch Street,Limehouse
-C2C,Fenchurch Street,Stratford
-C2C,Limehouse,West Ham
-C2C,Liverpool Street,Stratford
-C2C,Ockendon,Chafford Hundred
-C2C,Stratford,Barking
-C2C,Upminster,Ockendon
-C2C,West Ham,Barking
 Central,Bank,St. Pauls
 Central,Barkingside,Fairlop
 Central,Bethnal Green,Liverpool Street
@@ -82,18 +70,6 @@ Central,Wanstead,Redbridge
 Central,West Acton,Ealing Broadway
 Central,White City,East Acton
 Central,Woodford,South Woodford
-Chiltern Railways,Chalfont and Latimer,Amersham
-Chiltern Railways,Chorleywood,Chalfont and Latimer
-Chiltern Railways,Harrow-on-the-Hill,Rickmansworth
-Chiltern Railways,Marylebone,Harrow-on-the-Hill
-Chiltern Railways,Marylebone,Wembley Stadium
-Chiltern Railways,Northolt Park,South Ruislip
-Chiltern Railways,Paddington,South Ruislip
-Chiltern Railways,Rickmansworth,Chorleywood
-Chiltern Railways,South Ruislip,West Ruislip
-Chiltern Railways,Sudbury and Harrow Road,Sudbury Hill Harrow
-Chiltern Railways,Sudbury Hill Harrow,Northolt Park
-Chiltern Railways,Wembley Stadium,Sudbury and Harrow Road
 Circle,Aldgate,Tower Hill
 Circle,Baker Street,Great Portland Street
 Circle,Barbican,Moorgate
@@ -273,60 +249,6 @@ Elizabeth,West Ealing,Hanwell
 Elizabeth,Whitechapel,Canary Wharf
 Elizabeth,Whitechapel,Liverpool Street
 Elizabeth,Woolwich,Abbey Wood
-Great Northern,Alexandra Palace,Bowes Park
-Great Northern,Alexandra Palace,New Southgate
-Great Northern,Bowes Park,Palmers Green
-Great Northern,Drayton Park,Finsbury Park
-Great Northern,Enfield Chase,Gordon Hill
-Great Northern,Essex Road,Highbury and Islington
-Great Northern,Finsbury Park,Harringay
-Great Northern,Gordon Hill,Crews Hill
-Great Northern,Grange Park,Enfield Chase
-Great Northern,Harringay,Hornsey
-Great Northern,Highbury and Islington,Drayton Park
-Great Northern,Hornsey,Alexandra Palace
-Great Northern,King's Cross,Finsbury Park
-Great Northern,Moorgate,Old Street
-Great Northern,New Barnet,Hadley Wood
-Great Northern,New Southgate,Oakleigh Park
-Great Northern,Oakleigh Park,New Barnet
-Great Northern,Old Street,Essex Road
-Great Northern,Palmers Green,Winchmore Hill
-Great Northern,Winchmore Hill,Grange Park
-Great Western,Acton Main Line,Ealing Broadway
-Great Western,Castle Bar Park,South Greenford
-Great Western,Drayton Green,Castle Bar Park
-Great Western,Ealing Broadway,West Ealing
-Great Western,Hanwell,Southall
-Great Western,Hayes and Harlington,West Drayton
-Great Western,Paddington,Acton Main Line
-Great Western,South Greenford,Greenford
-Great Western,Southall,Hayes and Harlington
-Great Western,West Ealing,Drayton Green
-Great Western,West Ealing,Hanwell
-Greater Anglia,Angel Road,Ponders End
-Greater Anglia,Brentwood,Shenfield
-Greater Anglia,Brimsdown,Enfield Lock
-Greater Anglia,Cheshunt,Broxbourne
-Greater Anglia,Edmonton Green,Cheshunt
-Greater Anglia,Enfield Lock,Waltham Cross
-Greater Anglia,Gidea Park,Harold Wood
-Greater Anglia,Hackney Downs,Seven Sisters
-Greater Anglia,Hackney Downs,Tottenham Hale
-Greater Anglia,Harold Wood,Brentwood
-Greater Anglia,Lea Bridge,Tottenham Hale
-Greater Anglia,Liverpool Street,Hackney Downs
-Greater Anglia,Liverpool Street,Stratford
-Greater Anglia,Meridian Water,Angel Road
-Greater Anglia,Northumberland Park,Meridian Water
-Greater Anglia,Ponders End,Brimsdown
-Greater Anglia,Romford,Gidea Park
-Greater Anglia,Seven Kings,Romford
-Greater Anglia,Seven Sisters,Edmonton Green
-Greater Anglia,Stratford,Lea Bridge
-Greater Anglia,Stratford,Seven Kings
-Greater Anglia,Tottenham Hale,Northumberland Park
-Greater Anglia,Waltham Cross,Cheshunt
 Hammersmith and City,Aldgate East,Whitechapel
 Hammersmith and City,Baker Street,Great Portland Street
 Hammersmith and City,Barbican,Moorgate
@@ -355,14 +277,6 @@ Hammersmith and City,West Ham,Plaistow
 Hammersmith and City,Westbourne Park,Royal Oak
 Hammersmith and City,Whitechapel,Stepney Green
 Hammersmith and City,Wood Lane,Latimer Road
-Heathrow Connect,Ealing Broadway,West Ealing
-Heathrow Connect,Hanwell,Southall
-Heathrow Connect,Hayes and Harlington,Heathrow Terminals 1 2 3
-Heathrow Connect,Heathrow Terminals 1 2 3,Heathrow Terminal 4
-Heathrow Connect,Heathrow Terminals 1 2 3,Heathrow Terminal 5
-Heathrow Connect,Paddington,Ealing Broadway
-Heathrow Connect,Southall,Hayes and Harlington
-Heathrow Connect,West Ealing,Hanwell
 Heathrow Express,Heathrow Terminals 1 2 3,Heathrow Terminal 4
 Heathrow Express,Heathrow Terminals 1 2 3,Heathrow Terminal 5
 Heathrow Express,Paddington,Heathrow Terminals 1 2 3
@@ -392,10 +306,6 @@ Jubilee,West Ham,Stratford
 Jubilee,West Hampstead,Finchley Road
 Jubilee,Westminster,Waterloo
 Jubilee,Willesden Green,Kilburn
-London Midland,Bushey,Watford Junction
-London Midland,Euston,Wembley Central
-London Midland,Harrow and Wealdstone,Bushey
-London Midland,Wembley Central,Harrow and Wealdstone
 Metropolitan,Aldgate,Liverpool Street
 Metropolitan,Baker Street,Finchley Road
 Metropolitan,Barbican,Farringdon
@@ -643,208 +553,6 @@ Piccadilly,Sudbury Town,Sudbury Hill
 Piccadilly,Turnham Green,Acton Town
 Piccadilly,Turnpike Lane,Manor House
 Piccadilly,Wood Green,Turnpike Lane
-South Western,Barnes,Putney
-South Western,Barnes Bridge,Barnes
-South Western,Berrylands,Surbiton
-South Western,Brentford,Kew Bridge
-South Western,Chessington North,Chessington South
-South Western,Chiswick,Barnes Bridge
-South Western,Clapham Junction,Earlsfield
-South Western,Earlsfield,Wimbledon
-South Western,Feltham,Hounslow
-South Western,Fulwell,Hampton
-South Western,Hampton Wick,Teddington
-South Western,Hounslow,Isleworth
-South Western,Isleworth,Syon Lane
-South Western,Kew Bridge,Chiswick
-South Western,Kingston,Hampton Wick
-South Western,Malden Manor,Tolworth
-South Western,Mortlake,Barnes
-South Western,Motspur Park,Malden Manor
-South Western,Motspur Park,Worcester Park
-South Western,New Malden,Berrylands
-South Western,New Malden,Norbiton
-South Western,Norbiton,Kingston
-South Western,North Sheen,Mortlake
-South Western,Putney,Wandsworth Town
-South Western,Queenstown Road,Clapham Junction
-South Western,Raynes Park,Motspur Park
-South Western,Raynes Park,New Malden
-South Western,Richmond,North Sheen
-South Western,St Margarets,Richmond
-South Western,Stoneleigh,Ewell West
-South Western,Strawberry Hill,Twickenham
-South Western,Surbiton,Thames Ditton
-South Western,Syon Lane,Brentford
-South Western,Teddington,Fulwell
-South Western,Teddington,Strawberry Hill
-South Western,Thames Ditton,Hampton Court
-South Western,Tolworth,Chessington North
-South Western,Twickenham,St Margarets
-South Western,Twickenham,Whitton
-South Western,Vauxhall,Queenstown Road
-South Western,Wandsworth Town,Clapham Junction
-South Western,Waterloo,Vauxhall
-South Western,Whitton,Feltham
-South Western,Wimbledon,Raynes Park
-South Western,Worcester Park,Stoneleigh
-Southeastern,Abbey Wood,Belvedere
-Southeastern,Albany Park,Bexley
-Southeastern,Barnehurst,Slade Green
-Southeastern,Beckenham Junction,Shortlands
-Southeastern,Belvedere,Erith
-Southeastern,Bexley,Crayford
-Southeastern,Bexleyheath,Barnehurst
-Southeastern,Bickley,Petts Wood
-Southeastern,Bickley,St Mary Cray
-Southeastern,Blackheath,Charlton
-Southeastern,Blackheath,Kidbrooke
-Southeastern,Brixton,Herne Hill
-Southeastern,Bromley South,Bickley
-Southeastern,Cannon Street,London Bridge
-Southeastern,Catford Bridge,Lower Sydenham
-Southeastern,Charing Cross,Waterloo East
-Southeastern,Charlton,Woolwich Dockyard
-Southeastern,Chelsfield,Knockholt
-Southeastern,Chislehurst,Petts Wood
-Southeastern,Clock House,Elmers End
-Southeastern,Denmark Hill,Peckham Rye
-Southeastern,Deptford,Greenwich
-Southeastern,Eden Park,West Wickham
-Southeastern,Elmers End,Eden Park
-Southeastern,Elmstead Woods,Chislehurst
-Southeastern,Eltham,Falconwood
-Southeastern,Erith,Slade Green
-Southeastern,Falconwood,Welling
-Southeastern,Greenwich,Maze Hill
-Southeastern,Grove Park,Elmstead Woods
-Southeastern,Grove Park,Sundridge Park
-Southeastern,Herne Hill,West Dulwich
-Southeastern,Hither Green,Grove Park
-Southeastern,Hither Green,Lee
-Southeastern,Kent House,Beckenham Junction
-Southeastern,Kidbrooke,Eltham
-Southeastern,Ladywell,Catford Bridge
-Southeastern,Lee,Mottingham
-Southeastern,Lewisham,Blackheath
-Southeastern,Lewisham,Hither Green
-Southeastern,Lewisham,Ladywell
-Southeastern,London Bridge,Deptford
-Southeastern,London Bridge,New Cross
-Southeastern,Lower Sydenham,New Beckenham
-Southeastern,Maze Hill,Westcombe Park
-Southeastern,Mottingham,New Eltham
-Southeastern,New Beckenham,Clock House
-Southeastern,New Cross,St Johns
-Southeastern,New Eltham,Sidcup
-Southeastern,Nunhead,Lewisham
-Southeastern,Orpington,Chelsfield
-Southeastern,Peckham Rye,Nunhead
-Southeastern,Penge East,Kent House
-Southeastern,Petts Wood,Orpington
-Southeastern,Plumstead,Abbey Wood
-Southeastern,Shortlands,Bromley South
-Southeastern,Sidcup,Albany Park
-Southeastern,St Johns,Lewisham
-Southeastern,Sundridge Park,Bromley North
-Southeastern,Sydenham Hill,Penge East
-Southeastern,Victoria,Brixton
-Southeastern,Victoria,Denmark Hill
-Southeastern,Waterloo East,London Bridge
-Southeastern,Welling,Bexleyheath
-Southeastern,West Dulwich,Sydenham Hill
-Southeastern,West Wickham,Hayes
-Southeastern,Westcombe Park,Charlton
-Southeastern,Woolwich Arsenal,Plumstead
-Southeastern,Woolwich Dockyard,Woolwich Arsenal
-Southern,Anerley,Norwood Junction
-Southern,Balham,Mitcham Eastfields
-Southern,Balham,Streatham Common
-Southern,Balham,Streatham Hill
-Southern,Balham,Tooting
-Southern,Banstead,Epsom Downs
-Southern,Battersea Park,Clapham Junction
-Southern,Belmont,Banstead
-Southern,Birkbeck,Beckenham Junction
-Southern,Brockley,Honor Oak Park
-Southern,Carshalton,Sutton
-Southern,Carshalton Beeches,Sutton
-Southern,Cheam,Ewell East
-Southern,Chipstead,Kingswood
-Southern,Clapham Junction,Imperial Wharf
-Southern,Clapham Junction,Wandsworth Common
-Southern,Coulsdon Town,Woodmansterne
-Southern,Crystal Palace,Birkbeck
-Southern,Crystal Palace,Gipsy Hill
-Southern,East Croydon,South Croydon
-Southern,East Dulwich,Peckham Rye
-Southern,Forest Hill,Sydenham
-Southern,Gipsy Hill,West Norwood
-Southern,Hackbridge,Carshalton
-Southern,Harrow and Wealdstone,Watford Junction
-Southern,Haydons Road,Wimbledon
-Southern,Honor Oak Park,Forest Hill
-Southern,Imperial Wharf,West Brompton
-Southern,Kenley,Whyteleafe
-Southern,Kensington (Olympia),Shepherds Bush
-Southern,Kingswood,Tadworth
-Southern,London Bridge,New Cross Gate
-Southern,Mitcham Eastfields,Mitcham Junction
-Southern,Mitcham Junction,Hackbridge
-Southern,Morden South,St Helier
-Southern,New Cross Gate,Brockley
-Southern,Norbury,Thornton Heath
-Southern,North Dulwich,East Dulwich
-Southern,Norwood Junction,East Croydon
-Southern,Norwood Junction,West Croydon
-Southern,Peckham Rye,Queens Road Peckham
-Southern,Penge West,Anerley
-Southern,Purley,Coulsdon South
-Southern,Purley,Kenley
-Southern,Purley,Reedham
-Southern,Purley Oaks,Purley
-Southern,Queens Road Peckham,South Bermondsey
-Southern,Reedham,Coulsdon Town
-Southern,Riddlesdown,Upper Warlingham
-Southern,Sanderstead,Riddlesdown
-Southern,Selhurst,East Croydon
-Southern,Selhurst,West Croydon
-Southern,Shepherds Bush,Wembley Central
-Southern,South Bermondsey,London Bridge
-Southern,South Croydon,Purley Oaks
-Southern,South Croydon,Sanderstead
-Southern,South Merton,Morden South
-Southern,St Helier,Sutton Common
-Southern,Streatham,Mitcham Eastfields
-Southern,Streatham,Streatham Common
-Southern,Streatham Common,Norbury
-Southern,Streatham Hill,West Norwood
-Southern,Sutton,Belmont
-Southern,Sutton,Cheam
-Southern,Sutton Common,West Sutton
-Southern,Sydenham,Crystal Palace
-Southern,Sydenham,Penge West
-Southern,Tadworth,Tattenham Corner
-Southern,Thornton Heath,Selhurst
-Southern,Tooting,Haydons Road
-Southern,Tulse Hill,North Dulwich
-Southern,Tulse Hill,Streatham
-Southern,Tulse Hill,Streatham Hill
-Southern,Victoria,Battersea Park
-Southern,Waddon,Wallington
-Southern,Wallington,Carshalton Beeches
-Southern,Wandsworth Common,Balham
-Southern,Wembley Central,Harrow and Wealdstone
-Southern,West Brompton,Kensington (Olympia)
-Southern,West Croydon,Waddon
-Southern,West Norwood,Streatham Hill
-Southern,West Norwood,Tulse Hill
-Southern,West Sutton,Sutton
-Southern,Whyteleafe,Whyteleafe South
-Southern,Whyteleafe South,Caterham
-Southern,Wimbledon,Wimbledon Chase
-Southern,Wimbledon Chase,South Merton
-Southern,Woodmansterne,Chipstead
 TfL Rail,Acton Main Line,Paddington
 TfL Rail,Brentwood,Shenfield
 TfL Rail,Chadwell Heath,Romford
@@ -866,98 +574,6 @@ TfL Rail,Seven Kings,Goodmayes
 TfL Rail,Southall,Hanwell
 TfL Rail,Stratford,Maryland
 TfL Rail,West Ealing,Ealing Broadway
-Thameslink,Beckenham Hill,Bellingham
-Thameslink,Beckenham Junction,Kent House
-Thameslink,Bellingham,Catford
-Thameslink,Bickley,Bromley South
-Thameslink,Blackfriars,City Thameslink
-Thameslink,Bromley South,Shortlands
-Thameslink,Carshalton,Sutton
-Thameslink,Catford,Crofton Park
-Thameslink,City Thameslink,Farringdon
-Thameslink,Cricklewood,Hendon
-Thameslink,Crofton Park,Nunhead
-Thameslink,Denmark Hill,Elephant and Castle
-Thameslink,East Croydon,Purley
-Thameslink,Elephant and Castle,Blackfriars
-Thameslink,Farringdon,St Pancras
-Thameslink,Hackbridge,Carshalton
-Thameslink,Haydons Road,Tooting
-Thameslink,Hendon,Mill Hill Broadway
-Thameslink,Herne Hill,Loughborough Junction
-Thameslink,Herne Hill,Tulse Hill
-Thameslink,Kent House,Penge East
-Thameslink,Kentish Town,West Hampstead Thameslink
-Thameslink,London Bridge,East Croydon
-Thameslink,Loughborough Junction,Elephant and Castle
-Thameslink,Mill Hill Broadway,Elstree and Borehamwood
-Thameslink,Mitcham Eastfields,Mitcham Junction
-Thameslink,Mitcham Junction,Hackbridge
-Thameslink,Morden South,South Merton
-Thameslink,Nunhead,Peckham Rye
-Thameslink,Orpington,Petts Wood
-Thameslink,Peckham Rye,Denmark Hill
-Thameslink,Penge East,Sydenham Hill
-Thameslink,Petts Wood,Bickley
-Thameslink,Purley,Coulsdon South
-Thameslink,Ravensbourne,Beckenham Hill
-Thameslink,Shortlands,Beckenham Junction
-Thameslink,Shortlands,Ravensbourne
-Thameslink,South Merton,Wimbledon Chase
-Thameslink,St Helier,Morden South
-Thameslink,St Mary Cray,Bickley
-Thameslink,St Pancras,Kentish Town
-Thameslink,Streatham,Mitcham Eastfields
-Thameslink,Sutton,West Sutton
-Thameslink,Sutton Common,St Helier
-Thameslink,Sydenham Hill,West Dulwich
-Thameslink,Tooting,Streatham
-Thameslink,Tulse Hill,East Croydon
-Thameslink,Tulse Hill,Streatham
-Thameslink,West Dulwich,Herne Hill
-Thameslink,West Hampstead Thameslink,Cricklewood
-Thameslink,West Sutton,Sutton Common
-Thameslink,Wimbledon,Haydons Road
-Thameslink,Wimbledon Chase,Wimbledon
-Tramlink,Addington Village,Fieldway
-Tramlink,Addiscombe,Blackhorse Lane
-Tramlink,Ampere Way,Waddon Marsh
-Tramlink,Arena,Elmers End
-Tramlink,Arena,Harrington Road
-Tramlink,Avenue Road,Beckenham Road
-Tramlink,Beckenham Road,Beckenham Junction
-Tramlink,Beddington Lane,Therapia Lane
-Tramlink,Belgrave Walk,Mitcham
-Tramlink,Birkbeck,Avenue Road
-Tramlink,Blackhorse Lane,Woodside
-Tramlink,Centrale,West Croydon
-Tramlink,Church Street,Centrale
-Tramlink,Coombe Lane,Gravel Hill
-Tramlink,Dundonald Road,Merton Park
-Tramlink,East Croydon,George Street
-Tramlink,East Croydon,Lebanon Road
-Tramlink,Fieldway,King Henry's Drive
-Tramlink,George Street,Church Street
-Tramlink,Gravel Hill,Addington Village
-Tramlink,Harrington Road,Birkbeck
-Tramlink,King Henry's Drive,New Addington
-Tramlink,Lebanon Road,Sandilands
-Tramlink,Lloyd Park,Coombe Lane
-Tramlink,Merton Park,Morden Road
-Tramlink,Mitcham,Mitcham Junction
-Tramlink,Mitcham Junction,Beddington Lane
-Tramlink,Morden Road,Phipps Bridge
-Tramlink,Phipps Bridge,Belgrave Walk
-Tramlink,Reeves Corner,Centrale
-Tramlink,Sandilands,Addiscombe
-Tramlink,Sandilands,Lloyd Park
-Tramlink,Therapia Lane,Ampere Way
-Tramlink,Waddon Marsh,Wandle Park
-Tramlink,Wandle Park,Reeves Corner
-Tramlink,Wellesley Road,East Croydon
-Tramlink,West Croydon,Wellesley Road
-Tramlink,Wimbledon,Dundonald Road
-Tramlink,Woodside,Arena
 Victoria,Blackhorse Road,Tottenham Hale
 Victoria,Euston,Warren Street
 Victoria,Finsbury Park,Highbury and Islington
