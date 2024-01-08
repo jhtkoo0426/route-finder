@@ -31,6 +31,7 @@ class MetroMap {
     
         csvData.forEach(row => {
             const [metroLineName, startStationName, endStationName] = row.split(",");
+            console.log(startStationName + " | " + endStationName)
             var startStationObj = this.stations[startStationName];
             var endStationObj = this.stations[endStationName];
             startStationObj.addNeighbour(endStationObj);
@@ -51,6 +52,8 @@ class MetroMap {
 
     // Choose searching algorithms
     searchPath(startStationName, endStationName) {
+        console.log(this.stations[startStationName])
+        console.log(this.stations[endStationName])
         const stations = this.stations;
         const distances = {};
         const visited = {};
@@ -80,7 +83,7 @@ class MetroMap {
             // Check neighbors and update distances
             const neighbors = stations[currentStation].neighbours;
             Object.keys(neighbors).forEach(neighborName => {
-                const neighborDistance = neighbors[neighborName];
+                const neighborDistance = neighbors[neighborName].distance;
                 const newDistance = distances[currentStation] + neighborDistance;
 
                 if (newDistance < distances[neighborName]) {

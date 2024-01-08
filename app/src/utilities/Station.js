@@ -9,16 +9,19 @@ class Station {
         const latRad = this.toRad(this.lat);
         const lngRad = this.toRad(this.lng);
 
-        this.x = (R * lngRad) * 6 + 1000;
-        this.y = (R * Math.log(Math.tan(Math.PI / 4 + latRad / 2)) - 6500) * 5;
+        this.x = (R * lngRad) * 10 + 1200;
+        this.y = (R * Math.log(Math.tan(Math.PI / 4 + latRad / 2))) * 12 - 8000 * 10;
 
         this.x = Math.round(this.x);
         this.y = Math.round(this.y);
     }
 
-    addNeighbour(station) {
+    addNeighbour(station, line) {
         const [stationName, stationLat, stationLng] = [station.name, station.lat, station.lng];
-        this.neighbours[stationName] = this.calculateDistance(this.lat, this.lng, stationLat, stationLng);
+        this.neighbours[stationName] = {
+            distance: this.calculateDistance(this.lat, this.lng, stationLat, stationLng),
+            metroLine: line
+        };
     }
 
     toRad(x) {

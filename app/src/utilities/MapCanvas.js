@@ -67,11 +67,12 @@ class MapCanvas extends Component {
 
   drawStation(stationObj) {
     this.ctx.beginPath();
-    this.ctx.arc(stationObj.x, stationObj.y, 5, 0, 2 * Math.PI, false);
+    this.ctx.arc(stationObj.x, stationObj.y, 3, 0, 2 * Math.PI, false);
     this.ctx.lineWidth = 1;
     this.ctx.strokeStyle = '#000'; // You can set your desired border color
     this.ctx.stroke();
     this.ctx.closePath();
+    this.ctx.fillText(stationObj.name, stationObj.x, stationObj.y);
   }
 
   render() {
