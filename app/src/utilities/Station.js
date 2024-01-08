@@ -6,9 +6,10 @@ class Station {
         this.neighbours = {};
 
         const R = 6371;
-
-        this.x = R * Math.cos(this.lat) * Math.sin(this.lon) + 2000;
-        this.y = R * Math.cos(this.lat) * Math.cos(this.lon) - 500;
+        
+        // TODO: Bad practice for adding constants
+        this.x = R * Math.cos(this.lat) * Math.sin(this.lon) + 1200;
+        this.y = R * Math.cos(this.lat) * Math.cos(this.lon) - 1500;
 
         this.x = Math.round(this.x);
         this.y = Math.round(this.y);
