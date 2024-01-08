@@ -11,15 +11,11 @@ const customStyles = {
     border: '1px solid #ccc',
     borderRadius: '4px',
     boxShadow: state.isFocused ? '0 0 0 2px rgba(0, 123, 255, 0.6)' : null,
-    fontFamily: 'Inter',
-    fontSize: '14px',
   }),
   option: (provided, state) => ({
     ...provided,
     backgroundColor: state.isSelected ? '#007bff' : null,
     color: state.isSelected ? 'white' : 'black',
-    fontFamily: 'Inter',
-    fontSize: '14px',
   }),
 };
 
@@ -78,6 +74,7 @@ class App extends Component {
     return (
       <div className="App">
         <div className="search-panel">
+          <h1>Route Planner</h1>
           <div className="search-menu">
             <div className="search-box-start-station">
               <Select
@@ -101,6 +98,7 @@ class App extends Component {
               Search
             </button>
           </div>
+          <br></br>
           <div className="search-results">
             <h2>Path:</h2>
             <ul>
