@@ -20,6 +20,7 @@ class MapCanvas extends Component {
     this.canvasRef.current.addEventListener('mousemove', this.handleMouseMove);
     this.canvasRef.current.addEventListener('mouseup', this.handleMouseUp);
     this.canvasRef.current.addEventListener('mouseleave', this.handleMouseUp);
+    this.canvasRef.current.addEventListener('wheel', this.handleWheel);
   }
 
   componentWillUnmount() {
@@ -27,6 +28,7 @@ class MapCanvas extends Component {
     this.canvasRef.current.removeEventListener('mousemove', this.handleMouseMove);
     this.canvasRef.current.removeEventListener('mouseup', this.handleMouseUp);
     this.canvasRef.current.removeEventListener('mouseleave', this.handleMouseUp);
+    this.canvasRef.current.removeEventListener('wheel', this.handleWheel);
   }
 
   handleMouseDown = (e) => {
@@ -56,6 +58,18 @@ class MapCanvas extends Component {
     this.setState({
       isDragging: false,
     });
+  };
+
+   handleWheel = (e) => {
+    e.preventDefault();
+    const scaleDelta = e.deltaY > 0 ? 0.9 : 1.1; // Adjust the scale factor as needed
+
+    this.setState((prevState) => ({
+      scale: prevState.scale * scaleDelta,
+    }));
+
+    // Adjust the canvas scale directly without clearing or redrawing
+    this.canvasRef.current.style.transform = `scale(${this.state.scale})`;
   };
 
   drawStations(stations, railwayColourMap) {
@@ -106,7 +120,6 @@ class MapCanvas extends Component {
       })
     }
   }
-  
 
   render() {
     return (
