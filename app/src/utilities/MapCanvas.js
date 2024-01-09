@@ -5,12 +5,12 @@ class MapCanvas extends Component {
         super(props);
 
         this.svgRef = React.createRef();
-        this.svgContainer = React.createRef();
+        this.svgContainerRef = React.createRef();
 
         this.state = {
             pan: { x: 0, y: 0 },
             scale: 1,
-            dragging: false,
+            isDragging: false,
             startPan: { x: 0, y: 0 },
             circles: [],
             connections: [],
@@ -30,7 +30,7 @@ class MapCanvas extends Component {
         });
     
         // Adjust the pan to keep the zoom centered on the mouse position
-        const rect = this.svgContainer.current.getBoundingClientRect();
+        const rect = this.svgContainerRef.current.getBoundingClientRect();
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - rect.top;
         const deltaX = (mouseX - pan.x) * (1 - limitedScale / scale);
@@ -40,17 +40,16 @@ class MapCanvas extends Component {
         });
     };
     
-
     handleMouseDown = (e) => {
         this.setState({
-            dragging: true,
+            isDragging: true,
             startPan: { x: e.clientX, y: e.clientY },
         });
     };
 
     handleMouseMove = (e) => {
-        const { dragging, startPan, pan, scale } = this.state;
-        if (!dragging) return;
+        const { isDragging, startPan, pan, scale } = this.state;
+        if (!isDragging) return;
 
         const dx = e.clientX - startPan.x;
         const dy = e.clientY - startPan.y;
@@ -62,12 +61,11 @@ class MapCanvas extends Component {
     };
 
     handleMouseUp = () => {
-        this.setState({ dragging: false });
+        this.setState({ isDragging: false });
     };
 
     componentDidMount() {
-        const svgContainer = this.svgContainer.current;
-
+        const svgContainer = this.svgContainerRef.current;
         svgContainer.addEventListener('wheel', this.handleWheel);
         svgContainer.addEventListener('mousedown', this.handleMouseDown);
         document.addEventListener('mousemove', this.handleMouseMove);
@@ -75,8 +73,7 @@ class MapCanvas extends Component {
     }
 
     componentWillUnmount() {
-        const svgContainer = this.svgContainer.current;
-
+        const svgContainer = this.svgContainerRef.current;
         svgContainer.removeEventListener('wheel', this.handleWheel);
         svgContainer.removeEventListener('mousedown', this.handleMouseDown);
         document.removeEventListener('mousemove', this.handleMouseMove);
@@ -108,7 +105,6 @@ class MapCanvas extends Component {
             }));
         });
     }
-    
 
     renderCircles() {
         const { circles } = this.state;
@@ -118,11 +114,11 @@ class MapCanvas extends Component {
                 <circle cx={circle.cx} cy={circle.cy} r={this.STATION_RADIUS} fill="black" />
                 <circle cx={circle.cx} cy={circle.cy} r={this.STATION_RADIUS - 2} fill="white" />
                 <text x={circle.cx + 15} y={circle.cy - 15} fontSize="10" fill="black" textAnchor="bottom">
-                {this.transformStationName(circle.name).split('\n').map((line, i) => (
-                    <tspan key={i} x={circle.cx + 10} dy="1.2em">
-                    {line}
-                    </tspan>
-                ))}
+                    {this.transformStationName(circle.name).split('\n').map((line, i) => (
+                        <tspan key={i} x={circle.cx + 10} dy="1.2em">
+                            {line}
+                        </tspan>
+                    ))}
                 </text>
             </g>
         ));
@@ -161,7 +157,6 @@ class MapCanvas extends Component {
         });
     }
     
-      
     transformStationName(name) {
         // Split the input string into an array of words
         const words = name.split(' ');
@@ -192,7 +187,7 @@ class MapCanvas extends Component {
         return (
             <div
                 className='svg-container'
-                ref={this.svgContainer}
+                ref={this.svgContainerRef}
                 style={{ width: '100%', height: '100%', overflow: 'hidden', userSelect: 'none' }}
             >
                 <svg
@@ -202,8 +197,11 @@ class MapCanvas extends Component {
                     height={3000}
                     style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})` }}
                 >
-                    {this.renderCircles()}
+                    {/* Since we need to layer multiple elements on the map canvas, we draw assets
+                    in the order that we want them to appear, where elements drawm later will be
+                    // on top of elemetns drawn earlier. */}
                     {this.renderConnections()}
+                    {this.renderCircles()}
                 </svg>
             </div>
         );

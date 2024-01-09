@@ -4,7 +4,7 @@ import MinPriorityQueue from "./MinPriorityQueue";
 
 // This class manages business logic, including Station instances and supports 
 // stations querying.
-class MetroMap {
+class MetroMapBackend {
     constructor(connectionsFilePath, stationsFilePath, linesFilePath) {
         this.connectionsFilePath = connectionsFilePath;
         this.stationsFilePath = stationsFilePath;
@@ -14,12 +14,15 @@ class MetroMap {
         this.railwayLines = {};
     }
 
+    // Parse all resource files to load assets for visualization.
     async parseCSVFiles() {
         await this.parseStationsCSV();
         await this.parseConnectionsCSV();
         await this.parseRailwaysSCV()
     }
 
+    // This method assumes that the CSV file for unique stations is arranged as follows:
+    // Column 1: Station name, Column 2: Latitude coordinates, Column 3: Longitude coordinates
     async parseStationsCSV() {
         const response = await fetch(this.stationsFilePath);
         const csvText = await response.text();
@@ -66,9 +69,6 @@ class MetroMap {
 
     // Visualise stations and connections
     visualizeMetroMap(mapInstance) {
-        // Since we need to layer multiple elements on the map canvas, we draw assets
-        // in the order that we want them to appear, where elements drawm later will be
-        // on top of elemetns drawn earlier.
         Object.entries(this.stations).forEach(([ stationName, stationObj ]) => {
             mapInstance.drawStation(stationObj.x, stationObj.y, 5, stationName);
         })
@@ -180,4 +180,4 @@ class MetroMap {
     }
 }
 
-export default MetroMap;
+export default MetroMapBackend;

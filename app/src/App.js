@@ -1,23 +1,23 @@
 import React, { Component } from "react";
 import Select from "react-select";
-import MetroMap from "./utilities/MetroMap";
+import MetroMapBackend from "./utilities/MetroMapBackend";
 import MapCanvas from "./utilities/MapCanvas";
-import "./App.css";
+import "./css/app.css";
 
 
 // React-select styling
 const customStyles = {
-  control: (provided, state) => ({
-    ...provided,
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    boxShadow: state.isFocused ? '0 0 0 2px rgba(0, 123, 255, 0.6)' : null,
-  }),
-  option: (provided, state) => ({
-    ...provided,
-    backgroundColor: state.isSelected ? '#007bff' : null,
-    color: state.isSelected ? 'white' : 'black',
-  }),
+    control: (provided, state) => ({
+        ...provided,
+        border: '1px solid #ccc',
+        borderRadius: '4px',
+        boxShadow: state.isFocused ? '0 0 0 2px rgba(0, 123, 255, 0.6)' : null,
+    }),
+    option: (provided, state) => ({
+        ...provided,
+        backgroundColor: state.isSelected ? '#007bff' : null,
+        color: state.isSelected ? 'white' : 'black',
+    }),
 };
 
 class App extends Component {
@@ -31,15 +31,12 @@ class App extends Component {
             path: [],
             pathDistance: null,
         };
-
-        this.metroMap = new MetroMap(
+        
+        this.metroMap = new MetroMapBackend(
             process.env.PUBLIC_URL + '/data/connections.csv',
             process.env.PUBLIC_URL + '/data/stations.csv',
             process.env.PUBLIC_URL + '/data/lines.csv',
         );
-
-        // Remove the following line to avoid creating a new instance of MapCanvas here
-        // this.metroMapCanvas = new MapCanvas();
     }
 
     async componentDidMount() {

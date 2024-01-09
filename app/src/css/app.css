@@ -9,22 +9,22 @@
 
 @font-face {
     font-family: 'InterReg';
-    src: url("../src/fonts/Inter/static/Inter-Regular.ttf");
+    src: url("../fonts/Inter/static/Inter-Regular.ttf");
 }
 
 @font-face {
     font-family: 'InterBold';
-    src: url("../src/fonts/Inter/static/Inter-Black.ttf");
+    src: url("../fonts/Inter/static/Inter-Black.ttf");
 }
 
 @font-face {
     font-family: 'AvertaReg';
-    src: url("../src/fonts/Averta/averta-regular.otf");
+    src: url("../fonts/Averta/averta-regular.otf");
 }
 
 @font-face {
     font-family: 'AvertaBold';
-    src: url("../src/fonts/Averta/averta-bold.otf");
+    src: url("../fonts/Averta/averta-bold.otf");
 }
 
 .App {
