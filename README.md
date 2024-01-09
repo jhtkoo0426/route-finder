@@ -9,7 +9,7 @@ An interactive journey planner for transporting via metro networks in major citi
 ## Approach
 ### Applying design patterns
 I applied sesveral design patterns in this project to offer solutions for common design challenges, while improving code quality and scalability. Ultimately, this enables me to develop more efficient, modular, and adaptable software systems (if I wanted to extend them).
-1. **Abstract Factory**: The data for this project is stored in 3 separate `.csv` files (`connections.csv`, `railways.csv` and `stations.csv`). Every row of data in each file is extracted in the same manner but should be parsed differently. Therefore, I created a base `CSVParserFactory` class which represents a `.csv` parser interface (see `CSVParserFactory.js`).
+1. **Abstract Factory**: The data for this project is stored in 3 separate `.csv` files (`connections.csv`, `railways.csv` and `stations.csv`). Every row of data in each file is extracted in the same manner but should be parsed differently. Therefore, I created a `.csv` parser interface (see `CSVParserFactory.js`).
     <br>
 
     <details>
