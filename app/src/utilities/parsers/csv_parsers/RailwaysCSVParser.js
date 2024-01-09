@@ -1,5 +1,4 @@
-import CSVParserFactory from "../CSVParserFactory";
-import Station from "../../Station";
+import CSVParser from "../CSVParser";
 
 
 // A CSV parser for railways.csv. This parser expects the CSV file to consist of
@@ -8,7 +7,7 @@ import Station from "../../Station";
 // Column 1: Station name
 // Column 2: Latitude coordinates
 // Column 3: Longitude coordinates
-class RailwaysCSVParser extends CSVParserFactory {
+class RailwaysCSVParser extends CSVParser {
     async parse(railwayLines) {
         // @params railwayLines (hashmap): Stores details of each railway, including
         // name and colour.

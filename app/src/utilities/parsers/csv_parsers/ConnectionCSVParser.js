@@ -1,4 +1,4 @@
-import CSVParserFactory from "../CSVParserFactory";
+import CSVParser from "../CSVParser";
 
 
 
@@ -8,7 +8,7 @@ import CSVParserFactory from "../CSVParserFactory";
 // Column 1: Metro line name
 // Column 2: Start station name
 // Column 3: End station name
-class ConnectionsCSVParser extends CSVParserFactory {
+class ConnectionsCSVParser extends CSVParser {
     async parse(stations) {
         // @params stations (hashmap): Stores all Station objects that are previously
         // initialized by a StationsCSVParser instance, with the station name as the 

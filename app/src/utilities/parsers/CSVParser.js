@@ -1,10 +1,10 @@
-// The CSVParserFactory defines an interface for creating CSV parser
+// The CSVParser defines an interface for creating CSV parser
 // objects, where the type of CSV file to parse is determined by its
 // subclasses.
 
 
 
-class CSVParserFactory {
+class CSVParser {
     constructor(filePath) {
         this.filePath = filePath;
     }
@@ -18,4 +18,4 @@ class CSVParserFactory {
     }
 }
 
-export default CSVParserFactory;
+export default CSVParser;

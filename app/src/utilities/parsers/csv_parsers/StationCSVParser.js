@@ -1,4 +1,4 @@
-import CSVParserFactory from "../CSVParserFactory";
+import CSVParser from "../CSVParser";
 import Station from "../../Station";
 
 
@@ -8,7 +8,7 @@ import Station from "../../Station";
 // Column 1: Station name
 // Column 2: Latitude coordinates
 // Column 3: Longitude coordinates
-class StationsCSVParser extends CSVParserFactory {
+class StationsCSVParser extends CSVParser {
     async parse(stations) {
         // @params stations (hashmap): Stores all Station objects that are previously
         // initialized by a StationsCSVParser instance, with the station name as the 

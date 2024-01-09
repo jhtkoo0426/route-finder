@@ -9,14 +9,14 @@ An interactive journey planner for transporting via metro networks in major citi
 ## Approach
 ### Applying design patterns
 I applied sesveral design patterns in this project to offer solutions for common design challenges, while improving code quality and scalability. Ultimately, this enables me to develop more efficient, modular, and adaptable software systems (if I wanted to extend them).
-1. **Abstract Factory**: The data for this project is stored in 3 separate `.csv` files (`connections.csv`, `railways.csv` and `stations.csv`). Every row of data in each file is extracted in the same manner but should be parsed differently. Therefore, I created a `.csv` parser interface (see `CSVParserFactory.js`).
+1. **Strategy**: The data for this project is stored in 3 separate `.csv` files (`connections.csv`, `railways.csv` and `stations.csv`). Every row of data in each file is extracted in the same manner but should be parsed differently. Therefore, I created a `.csv` parser interface (see `CSVParser.js`).
     <br>
 
     <details>
-    <summary>CSVParserFactory.js</summary>
+    <summary>CSVParser.js</summary>
 
     ```
-    class CSVParserFactory {
+    class CSVParser {
         constructor(filePath) {
             this.filePath = filePath;
         }
@@ -30,24 +30,35 @@ I applied sesveral design patterns in this project to offer solutions for common
         }
     }
 
-    export default CSVParserFactory;
+    export default CSVParser;
     ```
 
     </details>
    
     <details>
-    <summary>Usage</summary>
+    <summary>Usage (StationsCSVParser)</summary>
 
     ```
-    async parseCSVFiles() {
-        const stationsCSVParser     = new StationsCSVParser(this.stationsFilePath);
-        const connectionsCSVParser  = new ConnectionsCSVParser(this.connectionsFilePath);
-        const railwaysCSVParser     = new RailwaysCSVParser(this.railwaysFilePath);
+    class StationsCSVParser extends CSVParser {
+        async parse(stations) {
+            // @params stations (hashmap): Stores all Station objects that are previously
+            // initialized by a StationsCSVParser instance, with the station name as the 
+            // keys, and Station objects as the values.
+
+            const csvData = await super.parse();    // The base parse method splits rows by the \n symbol.
+
+            csvData.forEach(row => {
+                const [stationName, latitude, longitude] = row.split(",");
+                stations[stationName] = new Station(stationName, latitude, longitude);
+            });
         
-        this.stations = await stationsCSVParser.parse(this.stations);
-        this.stations = await connectionsCSVParser.parse(this.stations);
-        this.railwayLines = await railwaysCSVParser.parse(this.railwayLines);
+            console.log("All " + Object.entries(stations).length + " stations parsed.");
+            return stations;
+        }
     }
+
+
+    export default StationsCSVParser;
     ```
     
     </details>
