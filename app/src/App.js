@@ -35,7 +35,7 @@ class App extends Component {
         this.metroMap = new MetroMapBackend(
             process.env.PUBLIC_URL + '/data/connections.csv',
             process.env.PUBLIC_URL + '/data/stations.csv',
-            process.env.PUBLIC_URL + '/data/lines.csv',
+            process.env.PUBLIC_URL + '/data/railways.csv',
         );
     }
 

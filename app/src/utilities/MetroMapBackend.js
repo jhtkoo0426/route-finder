@@ -1,14 +1,18 @@
-import Station from "./Station";
 import MinPriorityQueue from "./MinPriorityQueue";
+
+import ConnectionsCSVParser from "./parsers/csv_parsers/ConnectionCSVParser";
+import RailwaysCSVParser from "./parsers/csv_parsers/RailwaysCSVParser";
+import StationsCSVParser from "./parsers/csv_parsers/StationCSVParser";
+
 
 
 // This class manages business logic, including Station instances and supports 
 // stations querying.
 class MetroMapBackend {
-    constructor(connectionsFilePath, stationsFilePath, linesFilePath) {
+    constructor(connectionsFilePath, stationsFilePath, railwaysFilePath) {
         this.connectionsFilePath = connectionsFilePath;
         this.stationsFilePath = stationsFilePath;
-        this.linesFilePath = linesFilePath;
+        this.railwaysFilePath = railwaysFilePath;
         this.mapInstance = null;
         this.stations = {};
         this.railwayLines = {};
@@ -16,55 +20,13 @@ class MetroMapBackend {
 
     // Parse all resource files to load assets for visualization.
     async parseCSVFiles() {
-        await this.parseStationsCSV();
-        await this.parseConnectionsCSV();
-        await this.parseRailwaysSCV()
-    }
-
-    // This method assumes that the CSV file for unique stations is arranged as follows:
-    // Column 1: Station name, Column 2: Latitude coordinates, Column 3: Longitude coordinates
-    async parseStationsCSV() {
-        const response = await fetch(this.stationsFilePath);
-        const csvText = await response.text();
-        const csvData = csvText.split(/\r\n|\n/).filter(Boolean);
-    
-        csvData.forEach(row => {
-            const [stationName, latitude, longitude] = row.split(",");
-            this.stations[stationName] = new Station(stationName, latitude, longitude);
-        });
-        console.log("All " + Object.entries(this.stations).length + " stations parsed.");
-    }
-
-    async parseConnectionsCSV() {
-        const response = await fetch(this.connectionsFilePath);
-        const csvText = await response.text();
-        const csvData = csvText.split(/\r\n|\n/).filter(Boolean);
-
-        csvData.forEach(row => {
-            const [metroLineName, startStationName, endStationName] = row.split(",");
-           
-            // Build adjacency list
-            var startStationObj = this.stations[startStationName];
-            var endStationObj = this.stations[endStationName];
-            
-            if (startStationObj !== undefined && endStationObj !== undefined) {
-                startStationObj.addNeighbour(endStationObj, metroLineName);
-                endStationObj.addNeighbour(startStationObj, metroLineName);
-            }
-        })
-        console.log("All connections parsed.");
-    }
-
-    async parseRailwaysSCV() {
-        const response = await fetch(this.linesFilePath);
-        const csvText = await response.text();
-        const csvData = csvText.split(/\r\n|\n/).filter(Boolean);
-
-        csvData.forEach(row => {
-            const [metroLineName, colour] = row.split(",");
-            this.railwayLines[metroLineName] = colour;
-        })
-        console.log("All railways parsed.");
+        const stationsCSVParser     = new StationsCSVParser(this.stationsFilePath);
+        const connectionsCSVParser  = new ConnectionsCSVParser(this.connectionsFilePath);
+        const railwaysCSVParser     = new RailwaysCSVParser(this.railwaysFilePath);
+        
+        this.stations = await stationsCSVParser.parse(this.stations);
+        this.stations = await connectionsCSVParser.parse(this.stations);
+        this.railwayLines = await railwaysCSVParser.parse(this.railwayLines);
     }
 
     // Visualise stations and connections
