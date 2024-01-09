@@ -5,18 +5,23 @@ import MinPriorityQueue from "./MinPriorityQueue";
 // This class manages business logic, including Station instances and supports 
 // stations querying.
 class MetroMap {
-    constructor(cityName, stationsCSVPath, connectionsCSVPath, metroLinesCSVPath) {
-        this.cityName = cityName;
-        this.stationsCSVPath = stationsCSVPath;
-        this.connectionsCSVPath = connectionsCSVPath;
-        this.metroLinesCSVPath = metroLinesCSVPath;
+    constructor(connectionsFilePath, stationsFilePath, linesFilePath) {
+        this.connectionsFilePath = connectionsFilePath;
+        this.stationsFilePath = stationsFilePath;
+        this.linesFilePath = linesFilePath;
+        this.mapInstance = null;
         this.stations = {};
-        this.metroLineColourMap = {};
+        this.railwayLines = {};
     }
 
-    // Parses the stations file; Assumes that there is no header line
-    async parseStationCSV(filePath) {
-        const response = await fetch(filePath);
+    async parseCSVFiles() {
+        await this.parseStationsCSV();
+        await this.parseConnectionsCSV();
+        await this.parseRailwaysSCV()
+    }
+
+    async parseStationsCSV() {
+        const response = await fetch(this.stationsFilePath);
         const csvText = await response.text();
         const csvData = csvText.split(/\r\n|\n/).filter(Boolean);
     
@@ -24,28 +29,18 @@ class MetroMap {
             const [stationName, latitude, longitude] = row.split(",");
             this.stations[stationName] = new Station(stationName, latitude, longitude);
         });
+        console.log("All " + Object.entries(this.stations).length + " stations parsed.");
     }
 
-    async parseMetroLinesCSV(filePath) {
-        const response = await fetch(filePath);
+    async parseConnectionsCSV() {
+        const response = await fetch(this.connectionsFilePath);
         const csvText = await response.text();
         const csvData = csvText.split(/\r\n|\n/).filter(Boolean);
-        
+
         csvData.forEach(row => {
-            const [metroLineName, colour] = row.split(",");
-            this.metroLineColourMap[metroLineName] = colour;
-        })
-    }
-    
-    async parseConnectionCSV(filePath) {
-        const response = await fetch(filePath);
-        const csvText = await response.text();
-        const csvData = csvText.split(/\r\n|\n/).filter(Boolean);
-        
-        for (let i = 0; i < csvData.length; i++) {
-            const [metroLineName, startStationName, endStationName] = csvData[i].split(",");
-
-            // Build adjacent list
+            const [metroLineName, startStationName, endStationName] = row.split(",");
+           
+            // Build adjacency list
             var startStationObj = this.stations[startStationName];
             var endStationObj = this.stations[endStationName];
             
@@ -53,14 +48,20 @@ class MetroMap {
                 startStationObj.addNeighbour(endStationObj, metroLineName);
                 endStationObj.addNeighbour(startStationObj, metroLineName);
             }
-        };
+        })
+        console.log("All connections parsed.");
     }
 
-    // Parses stationCSV, connectionCSV
-    async parseAssets() {
-        await this.parseStationCSV(this.stationsCSVPath);
-        await this.parseMetroLinesCSV(this.metroLinesCSVPath);
-        await this.parseConnectionCSV(this.connectionsCSVPath);
+    async parseRailwaysSCV() {
+        const response = await fetch(this.linesFilePath);
+        const csvText = await response.text();
+        const csvData = csvText.split(/\r\n|\n/).filter(Boolean);
+
+        csvData.forEach(row => {
+            const [metroLineName, colour] = row.split(",");
+            this.railwayLines[metroLineName] = colour;
+        })
+        console.log("All railways parsed.");
     }
 
     // Visualise stations and connections
@@ -69,10 +70,10 @@ class MetroMap {
         // in the order that we want them to appear, where elements drawm later will be
         // on top of elemetns drawn earlier.
         Object.entries(this.stations).forEach(([ stationName, stationObj ]) => {
-            mapInstance.drawConnections(this.stations, stationName, stationObj, this.metroLineColourMap);
+            mapInstance.drawStation(stationObj.x, stationObj.y, 5, stationName);
         })
         Object.entries(this.stations).forEach(([ stationName, stationObj ]) => {
-            mapInstance.drawStation(stationName, stationObj);
+            mapInstance.drawConnection(this.stations, stationName, this.railwayLines);
         })
     }
 
@@ -144,6 +145,38 @@ class MetroMap {
     // Utility methods
     getStationNames() {
         return Object.keys(this.stations);
+    }
+    
+    geometricToCartesian(lat, lon) {
+        const R = 6371;
+        
+        // TODO: Bad practice for adding constants
+        var x = R * Math.cos(lat) * Math.sin(lon) + 1000;
+        var y = R * Math.cos(lat) * Math.cos(lon) - 1000;
+
+        x = Math.round(x);
+        y = Math.round(y);
+        return [x, y];
+    }
+
+    calculateDistance(startStationObj, endStationObj) {
+        var [lat1, lon1] = [startStationObj.lat, startStationObj.lon];
+        var [lat2, lon2] = [endStationObj.lat, endStationObj.lon]; 
+        const R = 6371; // km
+        var dLat = this.toRad(lat2-lat1);
+        var dLon = this.toRad(lon2-lon1);
+        lat1 = this.toRad(lat1);
+        lat2 = this.toRad(lat2);
+
+        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+        var d = R * c;
+        return d;
+    }
+
+    toRad(x) {
+        return Math.PI * x / 180;
     }
 }
 

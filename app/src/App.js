@@ -4,6 +4,7 @@ import MetroMap from "./utilities/MetroMap";
 import MapCanvas from "./utilities/MapCanvas";
 import "./App.css";
 
+
 // React-select styling
 const customStyles = {
   control: (provided, state) => ({
@@ -20,101 +21,96 @@ const customStyles = {
 };
 
 class App extends Component {
-  constructor(props) {
-    super(props);
+    constructor(props) {
+        super(props);
 
-    this.state = {
-      startStation: "",
-      endStation: "",
-      stationnames: [],
-      path: [],
-      pathDistance: null,
+        this.state = {
+            startStation: "",
+            endStation: "",
+            stationnames: [],
+            path: [],
+            pathDistance: null,
+        };
+
+        this.metroMap = new MetroMap(
+            process.env.PUBLIC_URL + '/data/connections.csv',
+            process.env.PUBLIC_URL + '/data/stations.csv',
+            process.env.PUBLIC_URL + '/data/lines.csv',
+        );
+
+        // Remove the following line to avoid creating a new instance of MapCanvas here
+        // this.metroMapCanvas = new MapCanvas();
+    }
+
+    async componentDidMount() {
+        await this.metroMap.parseCSVFiles();
+        const names = this.metroMap.getStationNames();
+        this.setState({ stationnames: names });
+        this.metroMap.visualizeMetroMap(this.metroMapCanvas);
+    }
+
+    handleSearchClick = async () => {
+        await this.metroMap.parseCSVFiles();
+
+        const { startStation, endStation } = this.state;
+        if (startStation !== "" && endStation !== "") {
+            const result = this.metroMap.searchPath(startStation, endStation);
+            this.setState({
+                path: result.path,
+                pathDistance: result.distance,
+            });
+            } else {
+            console.log("Starting or ending station is not selected.");
+        }
     };
 
-    this.metroMap = new MetroMap(
-      "London",
-      process.env.PUBLIC_URL + '/data/stations.csv',
-      process.env.PUBLIC_URL + '/data/connections.csv',
-      process.env.PUBLIC_URL + '/data/lines.csv',
-    );
+    render() {
+        const { startStation, endStation, stationnames, path, pathDistance } = this.state;
 
-    // Remove the following line to avoid creating a new instance of MapCanvas here
-    // this.metroMapCanvas = new MapCanvas();
-  }
-
-  async componentDidMount() {
-    await this.fetchData();
-    this.metroMap.visualizeMetroMap(this.metroMapCanvas);
-  }
-
-  fetchData = async () => {
-    await this.metroMap.parseAssets();
-    const names = this.metroMap.getStationNames();
-    this.setState({ stationnames: names });
-  };
-
-  handleSearchClick = async () => {
-    await this.metroMap.parseAssets();
-
-    const { startStation, endStation } = this.state;
-    if (startStation !== "" && endStation !== "") {
-      const result = this.metroMap.searchPath(startStation, endStation);
-      this.setState({
-        path: result.path,
-        pathDistance: result.distance,
-      });
-    } else {
-      console.log("Starting or ending station is not selected.");
+        return (
+        <div className="App">
+            <div className="search-panel">
+            <h1>Route Planner</h1>
+            <div className="search-menu">
+                <div className="search-box-start-station">
+                <Select
+                    options={stationnames.map((station) => ({ value: station, label: station }))}
+                    onChange={(selectedOption) => this.setState({ startStation: selectedOption ? selectedOption.value : "" })}
+                    placeholder="Select Start Station"
+                    isSearchable
+                    styles={customStyles}
+                />
+                </div>
+                <div className="search-box-end-station">
+                <Select
+                    options={stationnames.map((station) => ({ value: station, label: station }))}
+                    onChange={(selectedOption) => this.setState({ endStation: selectedOption ? selectedOption.value : "" })}
+                    placeholder="Select End Station"
+                    isSearchable
+                    styles={customStyles}
+                />
+                </div>
+                <button onClick={this.handleSearchClick} className="search-btn">
+                Search
+                </button>
+            </div>
+            <br></br>
+            <div className="search-results">
+                <h2>Path:</h2>
+                <ul>
+                {path.map((station, index) => (
+                    <li key={index}>{station}</li>
+                ))}
+                </ul>
+                {pathDistance !== null && <p>{pathDistance}</p>}
+            </div>
+            </div>
+            <div className="metro-map-container" style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative' }}>
+            <MapCanvas ref={(mapCanvas) => (this.metroMapCanvas = mapCanvas)}/>
+            </div>
+        </div>
+        );
     }
-  };
-
-  render() {
-    const { startStation, endStation, stationnames, path, pathDistance } = this.state;
-
-    return (
-      <div className="App">
-        <div className="search-panel">
-          <h1>Route Planner</h1>
-          <div className="search-menu">
-            <div className="search-box-start-station">
-              <Select
-                options={stationnames.map((station) => ({ value: station, label: station }))}
-                onChange={(selectedOption) => this.setState({ startStation: selectedOption ? selectedOption.value : "" })}
-                placeholder="Select Start Station"
-                isSearchable
-                styles={customStyles}
-              />
-            </div>
-            <div className="search-box-end-station">
-              <Select
-                options={stationnames.map((station) => ({ value: station, label: station }))}
-                onChange={(selectedOption) => this.setState({ endStation: selectedOption ? selectedOption.value : "" })}
-                placeholder="Select End Station"
-                isSearchable
-                styles={customStyles}
-              />
-            </div>
-            <button onClick={this.handleSearchClick} className="search-btn">
-              Search
-            </button>
-          </div>
-          <br></br>
-          <div className="search-results">
-            <h2>Path:</h2>
-            <ul>
-              {path.map((station, index) => (
-                <li key={index}>{station}</li>
-              ))}
-            </ul>
-            {pathDistance !== null && <p>{pathDistance}</p>}
-          </div>
-        </div>
-        <div className="metro-map-container" style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative' }}>
-          <MapCanvas ref={(mapCanvas) => (this.metroMapCanvas = mapCanvas)}/>
-        </div>
-      </div>
-    );
-  }
 }
 
 export default App;
