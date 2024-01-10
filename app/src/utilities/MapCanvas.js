@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { INITIAL_VALUE, ReactSVGPanZoom, TOOL_AUTO } from 'react-svg-pan-zoom';
 
 
-class MapCanvas extends Component {
+class MapCanvas extends PureComponent {
     constructor(props) {
         super(props);
 
@@ -27,10 +27,11 @@ class MapCanvas extends Component {
             circles: [...prevState.circles, { cx, cy, radius, name }],
         }));
     };
-
+    
     drawConnection(stations, stationName, colourMap) {
         const stationObj = stations[stationName];
         const [x, y] = [stationObj.x, stationObj.y];
+        const newConnections = [];
     
         Object.entries(stationObj.neighbours).forEach((neighbour) => {
             const neighbourStationName = neighbour[0];
@@ -38,14 +39,18 @@ class MapCanvas extends Component {
             const neighbourStationObj = stations[neighbourStationName];
             const [x2, y2] = [neighbourStationObj.x, neighbourStationObj.y];
     
-            // Use functional form of setState for correct state updates
-            this.setState(prevState => ({
-                connections: [
-                    ...prevState.connections,
-                    { x, y, x2, y2, colours: metroLines.map(metroLine => colourMap[metroLine]) }
-                ]
-            }));
+            newConnections.push({
+                x,
+                y,
+                x2,
+                y2,
+                colours: metroLines.map(metroLine => colourMap[metroLine]),
+            });
         });
+    
+        this.setState((prevState) => ({
+            connections: [...prevState.connections, ...newConnections],
+        }));
     }
 
     renderCircles() {
@@ -97,7 +102,6 @@ class MapCanvas extends Component {
     renderGridLines() {
         const gridSizeX = Math.ceil(this.SVG_MAP_WIDTH / this.GAP_SIZE);
         const gridSizeY = Math.ceil(this.SVG_MAP_HEIGHT / this.GAP_SIZE);
-        console.log(gridSizeX, gridSizeY)
 
         const verticalLines = Array.from({ length: gridSizeX + 1 }, (_, index) => (
             <line
