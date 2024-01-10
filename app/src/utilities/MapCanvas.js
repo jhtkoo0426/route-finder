@@ -17,6 +17,9 @@ class MapCanvas extends Component {
             mapWidth: window.innerWidth * 0.8,
         };
         this.STATION_RADIUS = 6;
+        this.GAP_SIZE = 60;
+        this.SVG_MAP_WIDTH = 4000;
+        this.SVG_MAP_HEIGHT = 3000;
     }
 
     drawStation = (cx, cy, radius, name) => {
@@ -49,19 +52,19 @@ class MapCanvas extends Component {
         const { circles } = this.state;
     
         return circles.map((circle, index) => (
-          <g key={index}>
-            <circle cx={circle.cx} cy={circle.cy} r={this.STATION_RADIUS} fill="black" />
-            <circle cx={circle.cx} cy={circle.cy} r={this.STATION_RADIUS - 2} fill="white" />
-            <text x={circle.cx + 15} y={circle.cy - 15} fontSize="10" fill="black" textAnchor="bottom">
-              {this.transformStationName(circle.name).split('\n').map((line, i) => (
-                <tspan key={i} x={circle.cx + 10} dy="1.2em">
-                  {line}
-                </tspan>
-              ))}
-            </text>
-          </g>
+            <g key={index}>
+                <circle cx={circle.cx} cy={circle.cy} r={this.STATION_RADIUS} fill="black" />
+                <circle cx={circle.cx} cy={circle.cy} r={this.STATION_RADIUS - 2} fill="white" />
+                <text x={circle.cx + 15} y={circle.cy - 15} fontSize="10" fill="black" textAnchor="bottom">
+                    {this.transformStationName(circle.name).split('\n').map((line, i) => (
+                    <tspan key={i} x={circle.cx + 10} dy="1.2em">
+                        {line}
+                    </tspan>
+                    ))}
+                </text>
+            </g>
         ));
-      }
+    }
 
     renderConnections() {
         const { connections } = this.state;
@@ -81,19 +84,41 @@ class MapCanvas extends Component {
     
                         return (
                             <line
-                                key={lineIndex}
-                                x1={adjustedX1}
-                                y1={adjustedY1}
-                                x2={adjustedX2}
-                                y2={adjustedY2}
-                                stroke={colour}
-                                strokeWidth="2"
+                                key={lineIndex} x1={adjustedX1} y1={adjustedY1} x2={adjustedX2} 
+                                y2={adjustedY2} stroke={colour} strokeWidth="3"
                             />
                         );
                     })}
                 </g>
             );
         });
+    }
+
+    renderGridLines() {
+        const gridSizeX = Math.ceil(this.SVG_MAP_WIDTH / this.GAP_SIZE);
+        const gridSizeY = Math.ceil(this.SVG_MAP_HEIGHT / this.GAP_SIZE);
+        console.log(gridSizeX, gridSizeY)
+
+        const verticalLines = Array.from({ length: gridSizeX + 1 }, (_, index) => (
+            <line
+                key={`vertical-${index}`} x1={index * this.GAP_SIZE} y1={0} x2={index * this.GAP_SIZE} 
+                y2={this.SVG_MAP_HEIGHT} stroke="#ddd" strokeWidth="1"
+            />
+        ));
+
+        const horizontalLines = Array.from({ length: gridSizeY + 1 }, (_, index) => (
+            <line
+                key={`horizontal-${index}`} x1={0} y1={index * this.GAP_SIZE} x2={this.SVG_MAP_WIDTH + 21}
+                y2={index * this.GAP_SIZE} stroke="#ddd" strokeWidth="1"
+            />
+        ));
+
+        return (
+            <g>
+                {verticalLines}
+                {horizontalLines}
+            </g>
+        );
     }
     
     transformStationName(name) {
@@ -120,39 +145,33 @@ class MapCanvas extends Component {
         return result.trim();
     }
 
+    handleResize = () => {
+        this.setState({
+            screenWidth: window.innerWidth,
+            screenHeight: window.innerHeight,
+            mapWidth: window.innerWidth * 0.8,
+        });
+
+        // Additionally, you might want to fit the viewer to the updated dimensions
+        this.Viewer.current.fitToViewer();
+    };
+
     componentDidMount() {
         this.Viewer.current.fitToViewer();
+        window.addEventListener('resize', this.handleResize);
     }
-    
-    /* Read all the available methods in the documentation */
-    // _zoomOnViewerCenter1 = () => this.Viewer.current.zoomOnViewerCenter(1.1);
-    // _fitSelection1 = () => this.Viewer.current.fitSelection(40, 40, 200, 200);
-    // _fitToViewer1 = () => this.Viewer.current.fitToViewer();
 
-    // /* keep attention! handling the state in the following way doesn't fire onZoom and onPam hooks */
-    // _zoomOnViewerCenter2 = () => this.setState({ value: zoomOnViewerCenter(this.state.value, 1.1) });
-    // _fitSelection2 = () => this.setState({ value: fitSelection(this.state.value, 40, 40, 200, 200) });
-    // _fitToViewer2 = () => this.setState({ value: fitToViewer(this.state.value) });
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.handleResize);
+    }
 
     render() {
         return (
             <div
                 className='svg-container'
                 ref={this.svgContainerRef}
-                style={{ width: '100%', height: '100%', overflow: 'hidden', userSelect: 'none' }}>
-                {/* <h1>ReactSVGPanZoom</h1>
-                    <hr />
-            
-                    <button className="btn" onClick={this._zoomOnViewerCenter1}>Zoom on center (mode 1)</button>
-                    <button className="btn" onClick={this._fitSelection1}>Zoom area 200x200 (mode 1)</button>
-                    <button className="btn" onClick={this._fitToViewer1}>Fit (mode 1)</button>
-                    <hr />
-            
-                    <button className="btn" onClick={this._zoomOnViewerCenter2}>Zoom on center (mode 2)</button>
-                    <button className="btn" onClick={this._fitSelection2}>Zoom area 200x200 (mode 2)</button>
-                    <button className="btn" onClick={this._fitToViewer2}>Fit (mode 2)</button>
-                    <hr />
-                */}
+                style={{ width: '100%', height: '100%', overflow: 'hidden', userSelect: 'none' }}
+            >
                 <ReactSVGPanZoom
                     ref={this.Viewer}
                     width={this.state.mapWidth}
@@ -165,8 +184,13 @@ class MapCanvas extends Component {
                     onPan={(e) => {}}
                     onClick={(event) => console.log('click', event.x, event.y, event.originalEvent)}
                     detectAutoPan={false}
+                    scaleFactorMax={2}
+                    scaleFactorMin={0.5}
+                    scaleFactorOnWheel={1.05}
+                    preventPanOutside={true}
                 >
-                    <svg width={2000} height={2000}>
+                    <svg width={this.SVG_MAP_WIDTH} height={this.SVG_MAP_HEIGHT}>
+                        {this.renderGridLines()}
                         {this.renderConnections()}
                         {this.renderCircles()}
                     </svg>
