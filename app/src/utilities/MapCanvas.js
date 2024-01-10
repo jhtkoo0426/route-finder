@@ -1,91 +1,30 @@
 import React, { Component } from 'react';
+import { INITIAL_VALUE, ReactSVGPanZoom, TOOL_AUTO } from 'react-svg-pan-zoom';
+
 
 class MapCanvas extends Component {
     constructor(props) {
         super(props);
 
-        this.svgRef = React.createRef();
-        this.svgContainerRef = React.createRef();
-
+        this.Viewer = React.createRef();
         this.state = {
-            pan: { x: 0, y: 0 },
-            scale: 1,
-            isDragging: false,
-            startPan: { x: 0, y: 0 },
+            tool: TOOL_AUTO,
+            value: INITIAL_VALUE,
             circles: [],
             connections: [],
+            screenWidth: window.innerWidth,
+            screenHeight: window.innerHeight,
+            mapWidth: window.innerWidth * 0.8,
         };
-
         this.STATION_RADIUS = 6;
     }
 
-    handleWheel = (e) => {
-        const { scale, pan } = this.state;
-        const scaleFactor = 0.001;  // Adjust this factor for slower or faster zooming
-        const newScale = scale + e.deltaY * scaleFactor;
-        const limitedScale = Math.max(0.5, Math.min(5, newScale));
-    
-        this.setState({
-            scale: limitedScale,
-        });
-    
-        // Adjust the pan to keep the zoom centered on the mouse position
-        const rect = this.svgContainerRef.current.getBoundingClientRect();
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
-        const deltaX = (mouseX - pan.x) * (1 - limitedScale / scale);
-        const deltaY = (mouseY - pan.y) * (1 - limitedScale / scale);
-        this.setState({
-            pan: { x: pan.x - deltaX, y: pan.y - deltaY },
-        });
-    };
-    
-    handleMouseDown = (e) => {
-        this.setState({
-            isDragging: true,
-            startPan: { x: e.clientX, y: e.clientY },
-        });
-    };
-
-    handleMouseMove = (e) => {
-        const { isDragging, startPan, pan, scale } = this.state;
-        if (!isDragging) return;
-
-        const dx = e.clientX - startPan.x;
-        const dy = e.clientY - startPan.y;
-
-        this.setState({
-            pan: { x: pan.x + dx, y: pan.y + dy },
-            startPan: { x: e.clientX, y: e.clientY },
-        });
-    };
-
-    handleMouseUp = () => {
-        this.setState({ isDragging: false });
-    };
-
-    componentDidMount() {
-        const svgContainer = this.svgContainerRef.current;
-        svgContainer.addEventListener('wheel', this.handleWheel);
-        svgContainer.addEventListener('mousedown', this.handleMouseDown);
-        document.addEventListener('mousemove', this.handleMouseMove);
-        document.addEventListener('mouseup', this.handleMouseUp);
-    }
-
-    componentWillUnmount() {
-        const svgContainer = this.svgContainerRef.current;
-        svgContainer.removeEventListener('wheel', this.handleWheel);
-        svgContainer.removeEventListener('mousedown', this.handleMouseDown);
-        document.removeEventListener('mousemove', this.handleMouseMove);
-        document.removeEventListener('mouseup', this.handleMouseUp);
-    }
-
     drawStation = (cx, cy, radius, name) => {
-        this.setState(prevState => ({
-            circles: [...prevState.circles, { cx, cy, radius, name }]
+        this.setState((prevState) => ({
+            circles: [...prevState.circles, { cx, cy, radius, name }],
         }));
     };
-    
+
     drawConnection(stations, stationName, colourMap) {
         const stationObj = stations[stationName];
         const [x, y] = [stationObj.x, stationObj.y];
@@ -108,21 +47,21 @@ class MapCanvas extends Component {
 
     renderCircles() {
         const { circles } = this.state;
-      
+    
         return circles.map((circle, index) => (
-            <g key={index}>
-                <circle cx={circle.cx} cy={circle.cy} r={this.STATION_RADIUS} fill="black" />
-                <circle cx={circle.cx} cy={circle.cy} r={this.STATION_RADIUS - 2} fill="white" />
-                <text x={circle.cx + 15} y={circle.cy - 15} fontSize="10" fill="black" textAnchor="bottom">
-                    {this.transformStationName(circle.name).split('\n').map((line, i) => (
-                        <tspan key={i} x={circle.cx + 10} dy="1.2em">
-                            {line}
-                        </tspan>
-                    ))}
-                </text>
-            </g>
+          <g key={index}>
+            <circle cx={circle.cx} cy={circle.cy} r={this.STATION_RADIUS} fill="black" />
+            <circle cx={circle.cx} cy={circle.cy} r={this.STATION_RADIUS - 2} fill="white" />
+            <text x={circle.cx + 15} y={circle.cy - 15} fontSize="10" fill="black" textAnchor="bottom">
+              {this.transformStationName(circle.name).split('\n').map((line, i) => (
+                <tspan key={i} x={circle.cx + 10} dy="1.2em">
+                  {line}
+                </tspan>
+              ))}
+            </text>
+          </g>
         ));
-    }
+      }
 
     renderConnections() {
         const { connections } = this.state;
@@ -181,28 +120,57 @@ class MapCanvas extends Component {
         return result.trim();
     }
 
-    render() {
-        const { pan, scale } = this.state;
+    componentDidMount() {
+        this.Viewer.current.fitToViewer();
+    }
+    
+    /* Read all the available methods in the documentation */
+    // _zoomOnViewerCenter1 = () => this.Viewer.current.zoomOnViewerCenter(1.1);
+    // _fitSelection1 = () => this.Viewer.current.fitSelection(40, 40, 200, 200);
+    // _fitToViewer1 = () => this.Viewer.current.fitToViewer();
 
+    // /* keep attention! handling the state in the following way doesn't fire onZoom and onPam hooks */
+    // _zoomOnViewerCenter2 = () => this.setState({ value: zoomOnViewerCenter(this.state.value, 1.1) });
+    // _fitSelection2 = () => this.setState({ value: fitSelection(this.state.value, 40, 40, 200, 200) });
+    // _fitToViewer2 = () => this.setState({ value: fitToViewer(this.state.value) });
+
+    render() {
         return (
             <div
                 className='svg-container'
                 ref={this.svgContainerRef}
-                style={{ width: '100%', height: '100%', overflow: 'hidden', userSelect: 'none' }}
-            >
-                <svg
-                    className='metro-map'
-                    ref={this.svgRef}
-                    width={4000}
-                    height={3000}
-                    style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})` }}
+                style={{ width: '100%', height: '100%', overflow: 'hidden', userSelect: 'none' }}>
+                {/* <h1>ReactSVGPanZoom</h1>
+                    <hr />
+            
+                    <button className="btn" onClick={this._zoomOnViewerCenter1}>Zoom on center (mode 1)</button>
+                    <button className="btn" onClick={this._fitSelection1}>Zoom area 200x200 (mode 1)</button>
+                    <button className="btn" onClick={this._fitToViewer1}>Fit (mode 1)</button>
+                    <hr />
+            
+                    <button className="btn" onClick={this._zoomOnViewerCenter2}>Zoom on center (mode 2)</button>
+                    <button className="btn" onClick={this._fitSelection2}>Zoom area 200x200 (mode 2)</button>
+                    <button className="btn" onClick={this._fitToViewer2}>Fit (mode 2)</button>
+                    <hr />
+                */}
+                <ReactSVGPanZoom
+                    ref={this.Viewer}
+                    width={this.state.mapWidth}
+                    height={this.state.screenHeight}
+                    tool={this.state.tool}
+                    onChangeTool={(tool) => this.setState({ tool })}
+                    onChangeValue={(value) => this.setState({ value })}
+                    value={this.state.value}
+                    onZoom={(e) => {}}
+                    onPan={(e) => {}}
+                    onClick={(event) => console.log('click', event.x, event.y, event.originalEvent)}
+                    detectAutoPan={false}
                 >
-                    {/* Since we need to layer multiple elements on the map canvas, we draw assets
-                    in the order that we want them to appear, where elements drawm later will be
-                    // on top of elemetns drawn earlier. */}
-                    {this.renderConnections()}
-                    {this.renderCircles()}
-                </svg>
+                    <svg width={2000} height={2000}>
+                        {this.renderConnections()}
+                        {this.renderCircles()}
+                    </svg>
+                </ReactSVGPanZoom>
             </div>
         );
     }
