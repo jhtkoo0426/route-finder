@@ -19,17 +19,19 @@ import {
 
 
 
+// This class implements the SVG representation of a metro map. It should be
+// initialized in the render() method in App.js
 class MapCanvas extends PureComponent {
     constructor(props) {
         super(props);
 
         this.Viewer = createRef();
         this.state = {
-            tool: TOOL_AUTO,
-            value: INITIAL_VALUE,
-            stations: [],
-            connections: [],
-            railwayLines: null,
+            tool: TOOL_AUTO,        // ReactSVGPanZoom component config
+            value: INITIAL_VALUE,   // ReactSVGPanZoom component config
+            stations: [],           // Collection of all metro stations
+            connections: [],        // Collection of all connections between metro stations
+            railwayLines: null,     // Colour map for metro lines
             screenWidth: window.innerWidth,
             screenHeight: window.innerHeight,
             mapWidth: window.innerWidth * 0.8,

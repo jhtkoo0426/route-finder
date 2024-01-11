@@ -7,14 +7,19 @@ class Station {
         this.trunicatedName = this.transformStationName();
         this.lat = lat;
         this.lon = lon;
-        this.neighbours = {};   // Nested hashmap
-        
-        // TODO: Bad practice for adding constants
         [this.x, this.y] = this.calculateXY(this.lat, this.lon);
+
+        // neighbours is an adjacency list of neighbouring stations relative to this
+        // station. The keys are station names of the neighbouring stations, and the
+        // values are hashmaps which contain 2 values: distance between this station
+        // and the neighbour station, as well as a list of all metro lines that
+        // connect bewteen these stations.
+        this.neighbours = {};
     }
 
     addNeighbour(station, metroLineName) {
         const [stationName, stationLat, stationLon] = [station.name, station.lat, station.lon];
+        
         if (stationName in this.neighbours) {
             this.neighbours[stationName].lines.add(metroLineName);
         } else {

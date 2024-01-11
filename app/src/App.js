@@ -20,16 +20,19 @@ const customStyles = {
     }),
 };
 
+
+
+// Core application code
 class App extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            startStation: "",
-            endStation: "",
-            stationnames: [],
-            path: [],
-            pathDistance: null,
+            startStation: "",       // Variable for input start station
+            endStation: "",         // Variable for input end station
+            stationNames: [],       // A collection of metro station names
+            path: [],               // Variable to display minimum-distance path
+            pathDistance: null,     // Variable to display mimimum distance
         };
         
         this.metroMap = new MetroMapBackend(
@@ -42,7 +45,7 @@ class App extends Component {
     async componentDidMount() {
         await this.metroMap.parseCSVFiles();
         const names = this.metroMap.getStationNames();
-        this.setState({ stationnames: names });
+        this.setState({ stationNames: names });
         this.metroMap.visualizeMetroMap(this.metroMapCanvas);
     }
 
@@ -56,13 +59,13 @@ class App extends Component {
                 path: result.path,
                 pathDistance: result.distance,
             });
-            } else {
+        } else {
             console.log("Starting or ending station is not selected.");
         }
     };
 
     render() {
-        const { startStation, endStation, stationnames, path, pathDistance } = this.state;
+        const { startStation, endStation, stationNames, path, pathDistance } = this.state;
 
         return (
             <div className="App">
@@ -71,7 +74,7 @@ class App extends Component {
                     <div className="search-menu">
                         <div className="search-box-start-station">
                             <Select
-                                options={stationnames.map((station) => ({ value: station, label: station }))}
+                                options={stationNames.map((station) => ({ value: station, label: station }))}
                                 onChange={(selectedOption) => this.setState({ startStation: selectedOption ? selectedOption.value : "" })}
                                 placeholder="Select Start Station"
                                 isSearchable
@@ -80,7 +83,7 @@ class App extends Component {
                         </div>
                         <div className="search-box-end-station">
                             <Select
-                                options={stationnames.map((station) => ({ value: station, label: station }))}
+                                options={stationNames.map((station) => ({ value: station, label: station }))}
                                 onChange={(selectedOption) => this.setState({ endStation: selectedOption ? selectedOption.value : "" })}
                                 placeholder="Select End Station"
                                 isSearchable

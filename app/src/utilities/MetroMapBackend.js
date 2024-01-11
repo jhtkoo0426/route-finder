@@ -37,6 +37,9 @@ class MetroMapBackend {
 
     // Choose searching algorithms
     searchPath(startStationName, endStationName) {
+        if (startStationName === "Bank") {
+            console.log(this.stations[startStationName]);
+        }
         const stations = this.stations;
         const distances = {};
         const visited = {};
@@ -105,5 +108,6 @@ class MetroMapBackend {
         return Object.keys(this.stations);
     }
 }
+
 
 export default MetroMapBackend;
