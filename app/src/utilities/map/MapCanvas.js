@@ -48,6 +48,10 @@ class MapCanvas extends PureComponent {
     componentDidMount() {
         this.Viewer.current.fitToViewer();
         window.addEventListener('resize', this.handleResize);
+
+        // Set initial viewer position
+        this.Viewer.current.zoom(-6500, -5500, 0.4);
+        this.Viewer.current.pan(-6500, -5500);
     }
 
     componentWillUnmount() {
@@ -118,13 +122,13 @@ class MapCanvas extends PureComponent {
         const createLines = (length, keyPrefix, coordinate, isVertical) =>
             Array.from({ length }, (_, index) => (
                 <line
-                key={`${keyPrefix}-${index}`}
-                x1={isVertical ? index * coordinate : 0}
-                y1={isVertical ? 0 : index * coordinate}
-                x2={isVertical ? index * coordinate : SVG_MAP_WIDTH + 21}
-                y2={isVertical ? SVG_MAP_HEIGHT : index * coordinate}
-                stroke={SVG_GRID_LINE_STROKE}
-                strokeWidth={SVG_GRID_LINE_WIDTH}
+                    key={`${keyPrefix}-${index}`}
+                    x1={isVertical ? index * coordinate : 0}
+                    y1={isVertical ? 0 : index * coordinate}
+                    x2={isVertical ? index * coordinate : SVG_MAP_WIDTH}
+                    y2={isVertical ? SVG_MAP_HEIGHT : index * coordinate}
+                    stroke={SVG_GRID_LINE_STROKE}
+                    strokeWidth={SVG_GRID_LINE_WIDTH}
                 />
             ));
 
@@ -132,10 +136,7 @@ class MapCanvas extends PureComponent {
         const horizontalLines = createLines(gridSizeY + 1, 'horizontal', SVG_GRID_LINE_GAP_INTERVAL, false);
 
         return (
-            <g>
-                {verticalLines}
-                {horizontalLines}
-            </g>
+            <g>{verticalLines}{horizontalLines}</g>
         );
     }
 

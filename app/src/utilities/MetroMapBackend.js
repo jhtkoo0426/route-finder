@@ -6,7 +6,7 @@ import StationsCSVParser from "./parsers/csv_parsers/StationCSVParser";
 
 
 
-// This class manages business logic, including Station instances and supports 
+// This class handles business logic, including Station instances and supports 
 // stations querying.
 class MetroMapBackend {
     constructor(connectionsFilePath, stationsFilePath, railwaysFilePath) {
