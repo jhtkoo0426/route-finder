@@ -67,43 +67,43 @@ class App extends Component {
         return (
             <div className="App">
                 <div className="search-panel">
-                <h1>Route Planner</h1>
-                <div className="search-menu">
-                    <div className="search-box-start-station">
-                    <Select
-                        options={stationnames.map((station) => ({ value: station, label: station }))}
-                        onChange={(selectedOption) => this.setState({ startStation: selectedOption ? selectedOption.value : "" })}
-                        placeholder="Select Start Station"
-                        isSearchable
-                        styles={customStyles}
-                    />
+                    <h1>Route Planner</h1>
+                    <div className="search-menu">
+                        <div className="search-box-start-station">
+                            <Select
+                                options={stationnames.map((station) => ({ value: station, label: station }))}
+                                onChange={(selectedOption) => this.setState({ startStation: selectedOption ? selectedOption.value : "" })}
+                                placeholder="Select Start Station"
+                                isSearchable
+                                styles={customStyles}
+                            />
+                        </div>
+                        <div className="search-box-end-station">
+                            <Select
+                                options={stationnames.map((station) => ({ value: station, label: station }))}
+                                onChange={(selectedOption) => this.setState({ endStation: selectedOption ? selectedOption.value : "" })}
+                                placeholder="Select End Station"
+                                isSearchable
+                                styles={customStyles}
+                            />
+                        </div>
+                        <button onClick={this.handleSearchClick} className="search-btn">
+                            Search
+                        </button>
                     </div>
-                    <div className="search-box-end-station">
-                    <Select
-                        options={stationnames.map((station) => ({ value: station, label: station }))}
-                        onChange={(selectedOption) => this.setState({ endStation: selectedOption ? selectedOption.value : "" })}
-                        placeholder="Select End Station"
-                        isSearchable
-                        styles={customStyles}
-                    />
+                    <br></br>
+                    <div className="search-results">
+                        <h2>Path:</h2>
+                            <ul>
+                            {path.map((station, index) => (
+                                <li key={index}>{station}</li>
+                            ))}
+                        </ul>
+                        {pathDistance !== null && <p>{pathDistance}</p>}
                     </div>
-                    <button onClick={this.handleSearchClick} className="search-btn">
-                    Search
-                    </button>
-                </div>
-                <br></br>
-                <div className="search-results">
-                    <h2>Path:</h2>
-                    <ul>
-                    {path.map((station, index) => (
-                        <li key={index}>{station}</li>
-                    ))}
-                    </ul>
-                    {pathDistance !== null && <p>{pathDistance}</p>}
-                </div>
                 </div>
                 <div className="metro-map-container" style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative' }}>
-                <MapCanvas ref={(mapCanvas) => (this.metroMapCanvas = mapCanvas)}/>
+                    <MapCanvas ref={(mapCanvas) => (this.metroMapCanvas = mapCanvas)}/>
                 </div>
             </div>
         );

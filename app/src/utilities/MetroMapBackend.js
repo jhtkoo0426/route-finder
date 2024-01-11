@@ -31,8 +31,6 @@ class MetroMapBackend {
 
     // Visualise stations and connections
     visualizeMetroMap(mapInstance) {
-        console.log(this.stations["Euston Square"]);
-        console.log(this.stations["Euston"]);
         mapInstance.loadStations(this.stations);
         mapInstance.loadRailwayLines(this.railwayLines);
     }
@@ -105,38 +103,6 @@ class MetroMapBackend {
     // Utility methods
     getStationNames() {
         return Object.keys(this.stations);
-    }
-    
-    geometricToCartesian(lat, lon) {
-        const R = 6371;
-        
-        // TODO: Bad practice for adding constants
-        var x = R * Math.cos(lat) * Math.sin(lon) + 1000;
-        var y = R * Math.cos(lat) * Math.cos(lon) - 1000;
-
-        x = Math.round(x);
-        y = Math.round(y);
-        return [x, y];
-    }
-
-    calculateDistance(startStationObj, endStationObj) {
-        var [lat1, lon1] = [startStationObj.lat, startStationObj.lon];
-        var [lat2, lon2] = [endStationObj.lat, endStationObj.lon]; 
-        const R = 6371; // km
-        var dLat = this.toRad(lat2-lat1);
-        var dLon = this.toRad(lon2-lon1);
-        lat1 = this.toRad(lat1);
-        lat2 = this.toRad(lat2);
-
-        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-            Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-        var d = R * c;
-        return d;
-    }
-
-    toRad(x) {
-        return Math.PI * x / 180;
     }
 }
 

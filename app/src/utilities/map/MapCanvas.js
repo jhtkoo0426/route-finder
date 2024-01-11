@@ -143,21 +143,18 @@ class MapCanvas extends PureComponent {
         return (
             <div className="svg-container" ref={this.svgContainerRef}>
                 <ReactSVGPanZoom
-                ref={this.Viewer}
-                width={this.state.mapWidth}
-                height={this.state.screenHeight}
-                tool={this.state.tool}
-                onChangeTool={(tool) => this.setState({ tool })}
-                onChangeValue={(value) => this.setState({ value })}
-                value={this.state.value}
-                onZoom={(e) => {}}
-                onPan={(e) => {}}
-                onClick={(event) => console.log('click', event.x, event.y, event.originalEvent)}
-                detectAutoPan={false}
-                scaleFactorMax={SVG_MAP_SCALE_MAX}
-                scaleFactorMin={SVG_MAP_SCALE_MIN}
-                scaleFactorOnWheel={SVG_MAP_SCALE_SPEED}
-                preventPanOutside={true}>
+                    ref={this.Viewer}
+                    width={this.state.mapWidth}
+                    height={this.state.screenHeight}
+                    tool={this.state.tool}
+                    onChangeTool={(tool) => this.setState({ tool })}
+                    onChangeValue={(value) => this.setState({ value })}
+                    value={this.state.value}
+                    detectAutoPan={false}
+                    scaleFactorMax={SVG_MAP_SCALE_MAX}
+                    scaleFactorMin={SVG_MAP_SCALE_MIN}
+                    scaleFactorOnWheel={SVG_MAP_SCALE_SPEED}
+                    preventPanOutside={true}>
                     <svg width={SVG_MAP_WIDTH} height={SVG_MAP_HEIGHT}>
                         {this.renderGridLines()}
                         {this.renderConnections()}
