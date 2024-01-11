@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Select from "react-select";
 import MetroMapBackend from "./utilities/MetroMapBackend";
-import MapCanvas from "./utilities/MapCanvas";
+import MapCanvas from "./utilities/map/MapCanvas";
 import "./css/app.css";
 
 

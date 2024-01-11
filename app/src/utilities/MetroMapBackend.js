@@ -31,12 +31,8 @@ class MetroMapBackend {
 
     // Visualise stations and connections
     visualizeMetroMap(mapInstance) {
-        Object.entries(this.stations).forEach(([ stationName, stationObj ]) => {
-            mapInstance.drawStation(stationObj.x, stationObj.y, 5, stationName);
-        })
-        Object.entries(this.stations).forEach(([ stationName, stationObj ]) => {
-            mapInstance.drawConnection(this.stations, stationName, this.railwayLines);
-        })
+        mapInstance.loadStations(this.stations);
+        mapInstance.loadRailwayLines(this.railwayLines);
     }
 
     // Choose searching algorithms

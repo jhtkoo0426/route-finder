@@ -11,8 +11,8 @@ class Station {
         this.x = R * Math.cos(this.lat) * Math.sin(this.lon) + 2000;
         this.y = R * Math.cos(this.lat) * Math.cos(this.lon) - 500;
 
-        this.x = Math.round(this.x);
-        this.y = Math.round(this.y);
+        this.x = Math.round(this.x) * 2;
+        this.y = Math.round(this.y) * 2;
     }
 
     addNeighbour(station, metroLineName) {
