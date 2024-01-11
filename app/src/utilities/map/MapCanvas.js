@@ -68,7 +68,7 @@ class MapCanvas extends PureComponent {
                 <circle cx={stationObj.x} cy={stationObj.y} r={SVG_STATION_RADIUS} fill={SVG_STATION_OUTER_CIRCLE_STROKE} />
                 <circle cx={stationObj.x} cy={stationObj.y} r={SVG_STATION_RADIUS - 2} fill={SVG_STATION_INNER_CIRCLE_STROKE} />
                 <text x={stationObj.x + 15} y={stationObj.y - 15} fontSize={SVG_STATION_NAME_FONT_SIZE} fill={SVG_STATION_NAME_FONT_COLOR} textAnchor="bottom">
-                    {this.transformStationName(stationObj.name).split('\n').map((line, i) => (
+                    {stationObj.trunicatedName.split('\n').map((line, i) => (
                         <tspan key={i} x={stationObj.x + 10} dy="1.2em">
                         {line}
                         </tspan>
@@ -135,23 +135,6 @@ class MapCanvas extends PureComponent {
                 {horizontalLines}
             </g>
         );
-    }
-
-    transformStationName(name) {
-        const words = name.split(' ');
-        let currentLineLength = 0;
-        let result = '';
-
-        for (const word of words) {
-            if (currentLineLength + word.length > SVG_STATION_NAME_LINE_MAX_CHARS) {
-                result += '\n';
-                currentLineLength = word.length + 1;
-            } else {
-                currentLineLength += word.length + 1;
-            }
-            result += word + ' ';
-        }
-        return result.trim();
     }
 
     render() {

@@ -1,6 +1,11 @@
+import { SVG_STATION_NAME_LINE_MAX_CHARS } from "./map/MapCanvasConstants";
+
+
+
 class Station {
     constructor(name, lat, lon) {
         this.name = name;
+        this.trunicatedName = this.transformStationName();
         this.lat = lat;
         this.lon = lon;
         this.neighbours = {};   // Nested hashmap
@@ -43,6 +48,23 @@ class Station {
         var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
         var d = R * c;
         return d;
+    }
+
+    transformStationName() {
+        const words = this.name.split(' ');
+        let currentLineLength = 0;
+        let result = '';
+
+        for (const word of words) {
+            if (currentLineLength + word.length > SVG_STATION_NAME_LINE_MAX_CHARS) {
+                result += '\n';
+                currentLineLength = word.length + 1;
+            } else {
+                currentLineLength += word.length + 1;
+            }
+            result += word + ' ';
+        }
+        return result.trim();
     }
 }
 
