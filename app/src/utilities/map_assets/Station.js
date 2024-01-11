@@ -1,5 +1,4 @@
-import { SVG_STATION_NAME_LINE_MAX_CHARS } from "./map/MapCanvasConstants";
-
+import { SVG_MAP_SHIFT_X, SVG_MAP_SHIFT_Y, SVG_STATION_NAME_LINE_MAX_CHARS, EARTH_RADIUS } from "../Constants";
 
 
 class Station {
@@ -9,15 +8,9 @@ class Station {
         this.lat = lat;
         this.lon = lon;
         this.neighbours = {};   // Nested hashmap
-
-        const R = 6371;
         
         // TODO: Bad practice for adding constants
-        this.x = R * Math.cos(this.lat) * Math.sin(this.lon) + 2000;
-        this.y = R * Math.cos(this.lat) * Math.cos(this.lon) - 500;
-
-        this.x = Math.round(this.x) * 2;
-        this.y = Math.round(this.y) * 2;
+        [this.x, this.y] = this.calculateXY(this.lat, this.lon);
     }
 
     addNeighbour(station, metroLineName) {
@@ -32,12 +25,18 @@ class Station {
         }        
     }
 
+    calculateXY(lat, lon) {
+        var a = EARTH_RADIUS * Math.cos(lat);
+        var x = Math.round(a * Math.sin(lon) + SVG_MAP_SHIFT_X) * 4;
+        var y = Math.round(a * Math.cos(lon) + SVG_MAP_SHIFT_Y) * 4;
+        return [x, y];
+    }
+
     toRad(x) {
         return Math.PI * x / 180;
     }
 
     calculateDistance(lat1, lon1, lat2, lon2) {
-        var R = 6371; // km
         var dLat = this.toRad(lat2-lat1);
         var dLon = this.toRad(lon2-lon1);
         lat1 = this.toRad(lat1);
@@ -46,7 +45,7 @@ class Station {
         var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
             Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
         var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-        var d = R * c;
+        var d = EARTH_RADIUS * c;
         return d;
     }
 

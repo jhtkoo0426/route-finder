@@ -3,6 +3,9 @@ import { INITIAL_VALUE, ReactSVGPanZoom, TOOL_AUTO } from 'react-svg-pan-zoom';
 import {
     SVG_MAP_WIDTH,
     SVG_MAP_HEIGHT,
+    SVG_MAP_SCALE_MIN,
+    SVG_MAP_SCALE_MAX,
+    SVG_MAP_SCALE_SPEED,
     SVG_GRID_LINE_WIDTH,
     SVG_GRID_LINE_STROKE,
     SVG_GRID_LINE_GAP_INTERVAL,
@@ -11,9 +14,8 @@ import {
     SVG_STATION_INNER_CIRCLE_STROKE,
     SVG_STATION_NAME_FONT_SIZE,
     SVG_STATION_NAME_FONT_COLOR,
-    SVG_STATION_NAME_LINE_MAX_CHARS,
     SVG_CONNECTION_STROKE_WIDTH,
-} from './MapCanvasConstants';
+} from '../Constants';
 
 
 
@@ -152,9 +154,9 @@ class MapCanvas extends PureComponent {
                 onPan={(e) => {}}
                 onClick={(event) => console.log('click', event.x, event.y, event.originalEvent)}
                 detectAutoPan={false}
-                scaleFactorMax={2}
-                scaleFactorMin={0.5}
-                scaleFactorOnWheel={1.05}
+                scaleFactorMax={SVG_MAP_SCALE_MAX}
+                scaleFactorMin={SVG_MAP_SCALE_MIN}
+                scaleFactorOnWheel={SVG_MAP_SCALE_SPEED}
                 preventPanOutside={true}>
                     <svg width={SVG_MAP_WIDTH} height={SVG_MAP_HEIGHT}>
                         {this.renderGridLines()}

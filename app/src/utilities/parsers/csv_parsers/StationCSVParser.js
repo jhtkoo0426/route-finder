@@ -1,5 +1,5 @@
 import CSVParser from "../BaseCSVParser";
-import Station from "../../Station";
+import Station from "../../map_assets/Station";
 
 
 // A CSV parser for station.csv. This parser expects the CSV file to consist of

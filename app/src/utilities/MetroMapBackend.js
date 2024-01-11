@@ -31,6 +31,8 @@ class MetroMapBackend {
 
     // Visualise stations and connections
     visualizeMetroMap(mapInstance) {
+        console.log(this.stations["Euston Square"]);
+        console.log(this.stations["Euston"]);
         mapInstance.loadStations(this.stations);
         mapInstance.loadRailwayLines(this.railwayLines);
     }
