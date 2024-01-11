@@ -64,4 +64,6 @@ I applied sesveral design patterns in this project to offer solutions for common
     
     </details>
 
-2. 
+
+## Challenges
+1. While translating latitude/longitude coordinates of stations into Cartesian coordinates may provide an approximation of their true positions, the final outcome will deviate from official metro maps. This discrepancy arises because official maps prioritize clarity over accurately depicting the precise positions of stations in reality.
