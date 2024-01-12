@@ -18,4 +18,5 @@ class CSVParser {
     }
 }
 
+
 export default CSVParser;

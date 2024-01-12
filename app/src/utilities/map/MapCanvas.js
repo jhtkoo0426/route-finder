@@ -74,11 +74,11 @@ class MapCanvas extends PureComponent {
     }
 
     renderConnections() {
-        return this.state.connections.map((connection, index) => {
-            const colour = this.state.railwayLines[connection.metroLineName];
-            return connection.renderConnection(colour, 1, 2);  // Adjusted parameters as needed
-        });
+        return Object.entries(this.state.connections).map(([connectionKey, connection]) => (
+            connection.renderConnection(this.state.railwayLines)
+        ));
     }
+    
 
     renderGridLines() {
         const gridSizeX = Math.ceil(SVG_MAP_WIDTH / SVG_GRID_LINE_GAP_INTERVAL);

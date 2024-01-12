@@ -6,47 +6,41 @@ import {
 
 
 class Connection {
-    constructor(startStation, endStation, metroLineName) {
+    constructor(startStation, endStation) {
         this.startStation = startStation;
         this.endStation = endStation;
-        this.metroLineName = metroLineName;
-        this.identicalConnections = [];
-        this.positionAmongNeighbours = -1;
+        this.metroLines = [];       // An array of metro lines that pass through this connection.
+    }
+    
+    addMetroLine(metroLineName) {
+        if (!this.metroLines.includes(metroLineName)) {
+            this.metroLines.push(metroLineName);
+        }
     }
 
-    renderConnection(colour) {
+    renderConnection(colourMap) {
         const { x: x1, y: y1 } = this.startStation;
         const { x: x2, y: y2 } = this.endStation;
-        const shiftAmount = this.identicalConnections.length;
-
-        return (
-            <line
-                key={`${this.startStation.name}-${this.endStation.name}-${this.metroLineName}`}
-                x1={x1 + (this.positionAmongNeighbours * 2 - shiftAmount)}
-                y1={y1 + (this.positionAmongNeighbours * 2 - shiftAmount)}
-                x2={x2 + (this.positionAmongNeighbours * 2 - shiftAmount)}
-                y2={y2 + (this.positionAmongNeighbours * 2 - shiftAmount)}
-                stroke={colour}
-                strokeWidth={SVG_CONNECTION_STROKE_WIDTH}
-            />
-        );
-    }
-
-    findNeighbours(allConnections) {
-        const sameStationsConnections = allConnections.filter(connection =>
-            (connection.metroLineName !== this.metroLineName) &&
-            ((connection.startStation === this.startStation && connection.endStation === this.endStation) ||
-            (connection.startStation === this.endStation && connection.endStation === this.startStation))
-        );
-
-        this.identicalConnections = sameStationsConnections;
-        sameStationsConnections.forEach((connection, i) => {
-            connection.positionAmongNeighbours = i + 1;
+        const totalLines = this.metroLines.length;
+    
+        return this.metroLines.map((metroLineName, index) => {
+            const shiftAmount = (index - (totalLines - 1) / 2) * 2; // Adjust the shift amount as needed
+    
+            return (
+                <line
+                    key={`${this.startStation.name}-${this.endStation.name}-${metroLineName}`}
+                    x1={x1 + shiftAmount}
+                    y1={y1 + shiftAmount}
+                    x2={x2 + shiftAmount}
+                    y2={y2 + shiftAmount}
+                    stroke={colourMap[metroLineName]}
+                    strokeWidth={SVG_CONNECTION_STROKE_WIDTH}
+                />
+            );
         });
-
-        // Find the position of the current connection among neighbours
-        this.positionAmongNeighbours = 0;
     }
+    
 }
+
 
 export default Connection;
