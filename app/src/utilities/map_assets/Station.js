@@ -1,4 +1,14 @@
-import { SVG_MAP_SHIFT_X, SVG_MAP_SHIFT_Y, SVG_STATION_NAME_LINE_MAX_CHARS, EARTH_RADIUS } from "../Constants";
+import {
+    SVG_MAP_SHIFT_X,
+    SVG_MAP_SHIFT_Y,
+    SVG_STATION_RADIUS,
+    SVG_STATION_OUTER_CIRCLE_STROKE,
+    SVG_STATION_INNER_CIRCLE_STROKE,
+    SVG_STATION_NAME_FONT_SIZE,
+    SVG_STATION_NAME_FONT_COLOR,
+    SVG_STATION_NAME_LINE_MAX_CHARS,
+    EARTH_RADIUS
+} from "../Constants";
 
 
 class Station {
@@ -69,6 +79,23 @@ class Station {
             result += word + ' ';
         }
         return result.trim();
+    }
+
+    // Renders the Station object on the MapCanvas
+    renderStation() {
+        return (
+            <g key={this.name}>
+                <circle cx={this.x} cy={this.y} r={SVG_STATION_RADIUS} fill={SVG_STATION_OUTER_CIRCLE_STROKE} />
+                <circle cx={this.x} cy={this.y} r={SVG_STATION_RADIUS - 2} fill={SVG_STATION_INNER_CIRCLE_STROKE} />
+                <text x={this.x + 15} y={this.y - 15} fontSize={SVG_STATION_NAME_FONT_SIZE} fill={SVG_STATION_NAME_FONT_COLOR} textAnchor="bottom">
+                    {this.trunicatedName.split('\n').map((line, i) => (
+                        <tspan key={i} x={this.x + 10} dy="1.2em">
+                        {line}
+                        </tspan>
+                    ))}
+                </text>
+            </g>
+        )
     }
 }
 

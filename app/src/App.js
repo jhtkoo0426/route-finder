@@ -28,11 +28,11 @@ class App extends Component {
         super(props);
 
         this.state = {
-            startStation: "",       // Variable for input start station
-            endStation: "",         // Variable for input end station
-            stationNames: [],       // A collection of metro station names
-            path: [],               // Variable to display minimum-distance path
-            pathDistance: null,     // Variable to display mimimum distance
+            startStation:   "",       // Variable for input start station
+            endStation:     "",       // Variable for input end station
+            stationNames:   [],       // A collection of metro station names
+            path:           [],       // Variable to display minimum-distance path
+            pathDistance:   null,     // Variable to display mimimum distance
         };
         
         this.metroMap = new MetroMapBackend(

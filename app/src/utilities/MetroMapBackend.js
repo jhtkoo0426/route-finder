@@ -10,12 +10,12 @@ import StationsCSVParser from "./parsers/csv_parsers/StationCSVParser";
 // stations querying.
 class MetroMapBackend {
     constructor(connectionsFilePath, stationsFilePath, railwaysFilePath) {
-        this.connectionsFilePath = connectionsFilePath;
-        this.stationsFilePath = stationsFilePath;
-        this.railwaysFilePath = railwaysFilePath;
-        this.mapInstance = null;
-        this.stations = {};
-        this.railwayLines = {};
+        this.connectionsFilePath    = connectionsFilePath;
+        this.stationsFilePath       = stationsFilePath;
+        this.railwaysFilePath       = railwaysFilePath;
+        this.mapInstance            = null;
+        this.stations               = {};
+        this.railwayLines           = {};
     }
 
     // Parse all resource files to load assets for visualization.
@@ -24,9 +24,9 @@ class MetroMapBackend {
         const connectionsCSVParser  = new ConnectionsCSVParser(this.connectionsFilePath);
         const railwaysCSVParser     = new RailwaysCSVParser(this.railwaysFilePath);
         
-        this.stations = await stationsCSVParser.parse(this.stations);
-        this.stations = await connectionsCSVParser.parse(this.stations);
-        this.railwayLines = await railwaysCSVParser.parse(this.railwayLines);
+        this.stations       = await stationsCSVParser.parse(this.stations);
+        this.stations       = await connectionsCSVParser.parse(this.stations);
+        this.railwayLines   = await railwaysCSVParser.parse(this.railwayLines);
     }
 
     // Visualise stations and connections
@@ -37,9 +37,6 @@ class MetroMapBackend {
 
     // Choose searching algorithms
     searchPath(startStationName, endStationName) {
-        if (startStationName === "Bank") {
-            console.log(this.stations[startStationName]);
-        }
         const stations = this.stations;
         const distances = {};
         const visited = {};
