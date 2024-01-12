@@ -16,23 +16,26 @@ class MetroMapBackend {
         this.mapInstance            = null;
         this.stations               = {};
         this.railwayLines           = {};
+        this.connections            = [];
     }
 
     // Parse all resource files to load assets for visualization.
     async parseCSVFiles() {
-        const stationsCSVParser     = new StationsCSVParser(this.stationsFilePath);
-        const connectionsCSVParser  = new ConnectionsCSVParser(this.connectionsFilePath);
         const railwaysCSVParser     = new RailwaysCSVParser(this.railwaysFilePath);
-        
-        this.stations       = await stationsCSVParser.parse(this.stations);
-        this.stations       = await connectionsCSVParser.parse(this.stations);
-        this.railwayLines   = await railwaysCSVParser.parse(this.railwayLines);
+        this.railwayLines = await railwaysCSVParser.parse(this.railwayLines);
+
+        const stationsCSVParser     = new StationsCSVParser(this.stationsFilePath);
+        this.stations = await stationsCSVParser.parse(this.stations);
+
+        const connectionsCSVParser  = new ConnectionsCSVParser(this.connectionsFilePath);
+        [this.stations, this.connections] = await connectionsCSVParser.parse(this.stations);
     }
 
     // Visualise stations and connections
     visualizeMetroMap(mapInstance) {
-        mapInstance.loadStations(this.stations);
         mapInstance.loadRailwayLines(this.railwayLines);
+        mapInstance.loadStations(this.stations);
+        mapInstance.loadConnections(this.connections);
     }
 
     // Choose searching algorithms

@@ -1,3 +1,4 @@
+import Connection from "../../map_assets/Connection";
 import CSVParser from "../BaseCSVParser";
 
 
@@ -16,6 +17,7 @@ class ConnectionsCSVParser extends CSVParser {
 
         const csvData = await super.parse();    // The base parse method splits rows by the \n symbol.
 
+        var connections = [];
         csvData.forEach(row => {
             const [metroLineName, startStationName, endStationName] = row.split(",");
            
@@ -25,13 +27,24 @@ class ConnectionsCSVParser extends CSVParser {
             var endStationObj = stations[endStationName];
             
             if (startStationObj !== undefined && endStationObj !== undefined) { 
+                // Add neighbours to adjacenct neighbours of both stations
                 startStationObj.addNeighbour(endStationObj, metroLineName);
                 endStationObj.addNeighbour(startStationObj, metroLineName);
+                // Add station pair to unique connections.
+                var connection = new Connection(startStationObj, endStationObj, metroLineName);
+                connections.push(connection);
             }
         })
 
+        // For every Connection, check if any other Connection object share the same
+        // start and end station. This will help prevent any rendered Connection 
+        // objects from overlapping.
+        for (let i = 0; i < connections.length; i++) {
+            connections[i].findNeighbours(connections);
+        }
+
         console.log("All connections parsed.");
-        return stations;
+        return [stations, connections];
     }
 }
 

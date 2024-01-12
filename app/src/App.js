@@ -50,8 +50,6 @@ class App extends Component {
     }
 
     handleSearchClick = async () => {
-        await this.metroMap.parseCSVFiles();
-
         const { startStation, endStation } = this.state;
         if (startStation !== "" && endStation !== "") {
             const result = this.metroMap.searchPath(startStation, endStation);

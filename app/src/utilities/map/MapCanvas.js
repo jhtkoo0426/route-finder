@@ -9,11 +9,6 @@ import {
     SVG_GRID_LINE_WIDTH,
     SVG_GRID_LINE_STROKE,
     SVG_GRID_LINE_GAP_INTERVAL,
-    SVG_STATION_RADIUS,
-    SVG_STATION_OUTER_CIRCLE_STROKE,
-    SVG_STATION_INNER_CIRCLE_STROKE,
-    SVG_STATION_NAME_FONT_SIZE,
-    SVG_STATION_NAME_FONT_COLOR,
     SVG_CONNECTION_STROKE_WIDTH,
 } from '../Constants';
 
@@ -60,12 +55,16 @@ class MapCanvas extends PureComponent {
         window.removeEventListener('resize', this.handleResize);
     }
 
+    loadRailwayLines = (railwayLinesList) => {
+        this.setState({ railwayLines: railwayLinesList });
+    }
+
     loadStations = (stationsList) => {
         this.setState({ stations: stationsList });
     };
 
-    loadRailwayLines = (railwayLinesList) => {
-        this.setState({ railwayLines: railwayLinesList });
+    loadConnections = (connectionsList) => {
+        this.setState({ connections: connectionsList });
     }
 
     renderStations() {
@@ -75,33 +74,9 @@ class MapCanvas extends PureComponent {
     }
 
     renderConnections() {
-        return Object.entries(this.state.stations).map(([stationName, stationObj]) => {
-            const [x, y] = [stationObj.x, stationObj.y];
-    
-            return Object.entries(stationObj.neighbours).map(([neighbourStationName, neighbour]) => {
-                const [x2, y2] = [
-                    this.state.stations[neighbourStationName].x,
-                    this.state.stations[neighbourStationName].y
-                ];
-                const colours = Array.from(neighbour.lines).map(metroLine => this.state.railwayLines[metroLine]);
-                const shiftAmount = (colours.length - 1) * 2;
-    
-                return (
-                    <g key={`${stationName}-${neighbourStationName}`}>
-                        {colours.map((colour, lineIndex) => (
-                            <line
-                                key={lineIndex}
-                                x1={x + (lineIndex * 2 - shiftAmount)}
-                                y1={y + (lineIndex * 2 - shiftAmount)}
-                                x2={x2 + (lineIndex * 2 - shiftAmount)}
-                                y2={y2 + (lineIndex * 2 - shiftAmount)}
-                                stroke={colour}
-                                strokeWidth={SVG_CONNECTION_STROKE_WIDTH}
-                            />
-                        ))}
-                    </g>
-                );
-            });
+        return this.state.connections.map((connection, index) => {
+            const colour = this.state.railwayLines[connection.metroLineName];
+            return connection.renderConnection(colour, 1, 2);  // Adjusted parameters as needed
         });
     }
 
