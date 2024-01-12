@@ -10,13 +10,13 @@ import StationsCSVParser from "./parsers/csv_parsers/StationCSVParser";
 // stations querying.
 class MetroMapBackend {
     constructor(connectionsFilePath, stationsFilePath, railwaysFilePath) {
-        this.connectionsFilePath    = connectionsFilePath;
-        this.stationsFilePath       = stationsFilePath;
-        this.railwaysFilePath       = railwaysFilePath;
-        this.mapInstance            = null;
-        this.stations               = {};
-        this.railwayLines           = {};
-        this.connections            = [];
+        this.connectionsFilePath = connectionsFilePath;
+        this.stationsFilePath = stationsFilePath;
+        this.railwaysFilePath = railwaysFilePath;
+        this.mapInstance = null;
+        this.stations = new Map();
+        this.railwayLines = new Map();
+        this.connections = [];
     }
 
     // Parse all resource files to load assets for visualization.
@@ -41,9 +41,9 @@ class MetroMapBackend {
     // Choose searching algorithms
     searchPath(startStationName, endStationName) {
         const stations = this.stations;
-        const distances = {};
-        const visited = {};
-        const previousStation = {};
+        const distances = new Map();
+        const visited = new Map();
+        const previousStation = new Map();
         const priorityQueue = new MinPriorityQueue();
 
         // Initialize distances

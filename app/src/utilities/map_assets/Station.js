@@ -25,7 +25,7 @@ class Station {
         // values are hashmaps which contain 2 values: distance between this station
         // and the neighbour station, as well as a list of all metro lines that
         // connect bewteen these stations.
-        this.neighbours = {};
+        this.neighbours = new Map();
     }
 
     addNeighbour(station, metroLineName) {

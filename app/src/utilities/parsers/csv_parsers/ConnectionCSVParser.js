@@ -5,7 +5,7 @@ class ConnectionsCSVParser extends CSVParser {
     async parse(stations) {
         const csvData = await super.parse();
 
-        let connections = {};
+        let connections = new Map();
 
         csvData.forEach(row => {
             const [metroLineName, startStationName, endStationName] = row.split(",");
