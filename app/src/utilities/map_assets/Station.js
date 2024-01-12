@@ -29,16 +29,16 @@ class Station {
     }
 
     addNeighbour(station, metroLineName) {
-        const [stationName, stationLat, stationLon] = [station.name, station.lat, station.lon];
-        
-        if (stationName in this.neighbours) {
-            this.neighbours[stationName].lines.add(metroLineName);
+        const { name, lat, lon } = station;
+
+        if (name in this.neighbours) {
+            this.neighbours[name].lines.add(metroLineName);
         } else {
-            this.neighbours[stationName] = {
-                distance: this.calculateDistance(this.lat, this.lon, stationLat, stationLon),
+            this.neighbours[name] = {
+                distance: this.calculateDistance(this.lat, this.lon, lat, lon),
                 lines: new Set([metroLineName]),
             };
-        }        
+        }
     }
 
     calculateXY(lat, lon) {
@@ -88,7 +88,7 @@ class Station {
             <g key={this.name}>
                 <circle cx={this.x} cy={this.y} r={SVG_STATION_RADIUS} fill={SVG_STATION_OUTER_CIRCLE_STROKE} />
                 <circle cx={this.x} cy={this.y} r={SVG_STATION_RADIUS - 2} fill={SVG_STATION_INNER_CIRCLE_STROKE} />
-                <text x={this.x + 15} y={this.y - 15} fontSize={SVG_STATION_NAME_FONT_SIZE} fill={SVG_STATION_NAME_FONT_COLOR} textAnchor="bottom">
+                <text x={this.x + 10} y={this.y - 20} fontSize={SVG_STATION_NAME_FONT_SIZE} fill={SVG_STATION_NAME_FONT_COLOR} textAnchor="bottom">
                     {this.trunicatedName.split('\n').map((line, i) => (
                         <tspan key={i} x={this.x + 10} dy="1.2em">
                         {line}

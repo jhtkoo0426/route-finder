@@ -17,21 +17,21 @@ class ConnectionsCSVParser extends CSVParser {
 
         const csvData = await super.parse();    // The base parse method splits rows by the \n symbol.
 
-        var connections = [];
+        let connections = [];
         csvData.forEach(row => {
             const [metroLineName, startStationName, endStationName] = row.split(",");
            
             // Each initialized Station object contains a neighbours variable, which is
             // a hashmap representing an adjacency list.
-            var startStationObj = stations[startStationName];
-            var endStationObj = stations[endStationName];
+            const startStationObj = stations[startStationName];
+            const endStationObj = stations[endStationName];
             
             if (startStationObj !== undefined && endStationObj !== undefined) { 
                 // Add neighbours to adjacenct neighbours of both stations
                 startStationObj.addNeighbour(endStationObj, metroLineName);
                 endStationObj.addNeighbour(startStationObj, metroLineName);
                 // Add station pair to unique connections.
-                var connection = new Connection(startStationObj, endStationObj, metroLineName);
+                const connection = new Connection(startStationObj, endStationObj, metroLineName);
                 connections.push(connection);
             }
         })
@@ -41,6 +41,9 @@ class ConnectionsCSVParser extends CSVParser {
         // objects from overlapping.
         for (let i = 0; i < connections.length; i++) {
             connections[i].findNeighbours(connections);
+            if (connections[i].startStation.name === "Kings Cross St. Pancras") {
+                console.log(connections[i])
+            }
         }
 
         console.log("All connections parsed.");

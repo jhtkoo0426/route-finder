@@ -10,14 +10,14 @@ class Connection {
         this.startStation = startStation;
         this.endStation = endStation;
         this.metroLineName = metroLineName;
-        this.neighbours = [];
+        this.identicalConnections = [];
         this.positionAmongNeighbours = -1;
     }
 
     renderConnection(colour) {
-        const [x1, y1] = [this.startStation.x, this.startStation.y];
-        const [x2, y2] = [this.endStation.x, this.endStation.y];
-        const shiftAmount = (this.neighbours.length - 1) * 2;
+        const { x: x1, y: y1 } = this.startStation;
+        const { x: x2, y: y2 } = this.endStation;
+        const shiftAmount = this.identicalConnections.length;
 
         return (
             <line
@@ -34,19 +34,16 @@ class Connection {
 
     findNeighbours(allConnections) {
         const sameStationsConnections = allConnections.filter(connection =>
-          (connection.metroLineName !== this.metroLineName) &&
-          ((connection.startStation === this.startStation && connection.endStation === this.endStation) ||
-          (connection.startStation === this.endStation && connection.endStation === this.startStation))
+            (connection.metroLineName !== this.metroLineName) &&
+            ((connection.startStation === this.startStation && connection.endStation === this.endStation) ||
+            (connection.startStation === this.endStation && connection.endStation === this.startStation))
         );
-    
-        this.neighbours = sameStationsConnections;
-        if (this.neighbours.length >= 1) {
-            for (let i = 0; i < sameStationsConnections.length; i++) {
-                const connection = sameStationsConnections[i];
-                connection.positionAmongNeighbours = i+1;
-            }
-        }
-    
+
+        this.identicalConnections = sameStationsConnections;
+        sameStationsConnections.forEach((connection, i) => {
+            connection.positionAmongNeighbours = i + 1;
+        });
+
         // Find the position of the current connection among neighbours
         this.positionAmongNeighbours = 0;
     }
