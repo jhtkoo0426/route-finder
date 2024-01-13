@@ -33,6 +33,7 @@ class App extends Component {
             stationNames:   [],       // A collection of metro station names
             path:           [],       // Variable to display minimum-distance path
             pathDistance:   null,     // Variable to display mimimum distance
+            algorithm:      null,
         };
         
         this.metroMap = new MetroMapBackend(
@@ -50,9 +51,9 @@ class App extends Component {
     }
 
     handleSearchClick = async () => {
-        const { startStation, endStation } = this.state;
-        if (startStation !== "" && endStation !== "") {
-            const result = this.metroMap.searchPath(startStation, endStation);
+        const { startStation, endStation, algorithm } = this.state;
+        if (startStation !== "" && endStation !== "" && algorithm !== "") {
+            const result = this.metroMap.findPath(startStation, endStation, algorithm);
             this.setState({
                 path: result.path,
                 pathDistance: result.distance,
@@ -84,6 +85,15 @@ class App extends Component {
                                 options={stationNames.map((station) => ({ value: station, label: station }))}
                                 onChange={(selectedOption) => this.setState({ endStation: selectedOption ? selectedOption.value : "" })}
                                 placeholder="Select End Station"
+                                isSearchable
+                                styles={customStyles}
+                            />
+                        </div>
+                        <div className="search-box-algorithm">
+                            <Select
+                                options={['Dijkstra', 'Test'].map((algo) => ({value: algo, label: algo }))}
+                                onChange={(algorithmOption) => this.setState({ algorithm: algorithmOption })}
+                                placeholder="Select algorithm"
                                 isSearchable
                                 styles={customStyles}
                             />
