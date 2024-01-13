@@ -53,9 +53,8 @@ class App extends Component {
 
     handleSearchClick = async () => {
         const { startStation, endStation, algorithm } = this.state;
-        console.log(startStation, endStation, algorithm);
         if (startStation !== null && endStation !== null && algorithm !== null) {
-            const result = this.metroMap.findPath(startStation, endStation, algorithm);
+            const result = this.metroMap.executeAlgorithm(startStation, endStation, algorithm);
             this.setState({
                 path: result.path,
                 pathDistance: result.distance,

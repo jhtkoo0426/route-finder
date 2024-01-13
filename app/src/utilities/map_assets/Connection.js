@@ -19,13 +19,13 @@ class Connection {
     }
 
     renderConnection(colourMap) {
-        const { x: x1, y: y1 } = this.startStation;
-        const { x: x2, y: y2 } = this.endStation;
         const totalLines = this.metroLines.length;
     
         return this.metroLines.map((metroLineName, index) => {
-            const shiftAmount = (index - (totalLines - 1) / 2) * 2; // Adjust the shift amount as needed
-    
+            const shiftAmount = (SVG_CONNECTION_STROKE_WIDTH * 0.5) * (0.5 - 0.5 * totalLines + index);
+
+            const {x: x1, y: y1} = this.startStation;
+            const {x: x2, y: y2} = this.endStation;
             return (
                 <line
                     key={`${this.startStation.name}-${this.endStation.name}-${metroLineName}`}
@@ -39,7 +39,6 @@ class Connection {
             );
         });
     }
-    
 }
 
 

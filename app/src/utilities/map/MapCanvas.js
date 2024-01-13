@@ -9,7 +9,6 @@ import {
     SVG_GRID_LINE_WIDTH,
     SVG_GRID_LINE_STROKE,
     SVG_GRID_LINE_GAP_INTERVAL,
-    SVG_CONNECTION_STROKE_WIDTH,
 } from '../Constants';
 
 
@@ -78,7 +77,6 @@ class MapCanvas extends PureComponent {
             connection.renderConnection(this.state.railwayLines)
         ));
     }
-    
 
     renderGridLines() {
         const gridSizeX = Math.ceil(SVG_MAP_WIDTH / SVG_GRID_LINE_GAP_INTERVAL);

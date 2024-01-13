@@ -41,28 +41,11 @@ class MetroMapBackend {
     }
 
     // Choose searching algorithms
-    findPath(startStationName, endStationName, algorithmOption) {
+    executeAlgorithm(startStationName, endStationName, algorithmOption) {
         if (algorithmOption.value === 'Dijkstra') {
-            console.log(algorithmOption);
             this.algorithm = new Dijkstra(this.stations);
         }
         return this.algorithm.searchPath(startStationName, endStationName);
-    }
-
-    constructPath(previousStation, startStation, endStation) {
-        const path = [];
-        let currentStation = endStation;
-
-        while (currentStation !== startStation && currentStation !== null) {
-            path.unshift(currentStation);
-            currentStation = previousStation[currentStation];
-        }
-
-        if (currentStation === startStation) {
-            path.unshift(startStation);
-        }
-
-        return path;
     }
 
     // Utility methods
