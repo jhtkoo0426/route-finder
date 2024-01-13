@@ -57,11 +57,12 @@
     flex-direction: column;
 }
 
-.search-box-start-station, .search-box-end-station {
+.search-box-start-station, .search-box-end-station, .search-box-algorithm {
     margin: 5px 0;
 }
 
 .search-btn {
+    margin-top: 5px;
     padding: 10px;
     border: none;
     border-radius: 4px;
@@ -71,6 +72,17 @@
 
 .search-btn:hover {
     cursor:pointer;
+}
+
+.debugger {
+    height: 100px;
+}
+
+.debugger > p {
+    padding: 6px 10px;
+    border-radius: 6px;
+    background-color: #ff5d5d;
+    color: #8b0a0a;
 }
 
 /* Canvas element to display stations, connections and search result path */

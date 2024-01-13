@@ -28,12 +28,13 @@ class App extends Component {
         super(props);
 
         this.state = {
-            startStation:   "",       // Variable for input start station
-            endStation:     "",       // Variable for input end station
-            stationNames:   [],       // A collection of metro station names
-            path:           [],       // Variable to display minimum-distance path
-            pathDistance:   null,     // Variable to display mimimum distance
-            algorithm:      null,
+            startStation:   null,       // Variable for input start station
+            endStation:     null,       // Variable for input end station
+            stationNames:   [],         // A collection of metro station names
+            path:           [],         // Variable to display minimum-distance path
+            pathDistance:   null,       // Variable to display mimimum distance
+            algorithm:      null,       // Variable for algorithm selection
+            debugger:       "",         // Logs error in the search panel
         };
         
         this.metroMap = new MetroMapBackend(
@@ -52,14 +53,21 @@ class App extends Component {
 
     handleSearchClick = async () => {
         const { startStation, endStation, algorithm } = this.state;
-        if (startStation !== "" && endStation !== "" && algorithm !== "") {
+        console.log(startStation, endStation, algorithm);
+        if (startStation !== null && endStation !== null && algorithm !== null) {
             const result = this.metroMap.findPath(startStation, endStation, algorithm);
             this.setState({
                 path: result.path,
                 pathDistance: result.distance,
+                debugger: ""
             });
         } else {
-            console.log("Starting or ending station is not selected.");
+            this.setState({
+                debugger: "The following fields are not selected: " + 
+                  (startStation === null ? "Start station, " : "") +
+                  (endStation === null ? "End station, " : "") +
+                  (algorithm === null ? "Algorithm, " : "")
+            })              
         }
     };
 
@@ -101,6 +109,10 @@ class App extends Component {
                         <button onClick={this.handleSearchClick} className="search-btn">
                             Search
                         </button>
+                    </div>
+                    <br></br>
+                    <div className="debugger">
+                        {this.state.debugger !== "" ? <p>{this.state.debugger}</p> : <div></div>}
                     </div>
                     <br></br>
                     <div className="search-results">
