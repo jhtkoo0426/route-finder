@@ -52,6 +52,10 @@ class MetroMapBackend {
     getStationNames() {
         return Object.keys(this.stations);
     }
+
+    getConnections() {
+        return this.connections;
+    }
 }
 
 

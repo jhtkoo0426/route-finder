@@ -4,6 +4,8 @@ import MetroMapBackend from "./utilities/MetroMapBackend";
 import MapCanvas from "./utilities/map/MapCanvas";
 import "./css/app.css";
 
+import { SVG_CONNECTION_OPACITY_VISITED } from "./utilities/Constants";
+
 
 // React-select styling
 const customStyles = {
@@ -35,6 +37,7 @@ class App extends Component {
             pathDistance:   null,       // Variable to display mimimum distance
             algorithm:      null,       // Variable for algorithm selection
             debugger:       "",         // Logs error in the search panel
+            visitedConnectionsOrder: null,
         };
         
         this.metroMap = new MetroMapBackend(
@@ -47,28 +50,54 @@ class App extends Component {
     async componentDidMount() {
         await this.metroMap.parseCSVFiles();
         const names = this.metroMap.getStationNames();
-        this.setState({ stationNames: names });
+        this.setState({
+            stationNames: names,
+        });
         this.metroMap.visualizeMetroMap(this.metroMapCanvas);
     }
 
     handleSearchClick = async () => {
         const { startStation, endStation, algorithm } = this.state;
+    
         if (startStation !== null && endStation !== null && algorithm !== null) {
             const result = this.metroMap.executeAlgorithm(startStation, endStation, algorithm);
+    
+            const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    
+            for (let i = 0; i < result.visitedConnectionsOrder.length; i++) {
+                const { start, end } = result.visitedConnectionsOrder[i];
+    
+                // Assuming your connections are stored in a hashmap with keys `${start}-${end}`
+                const connectionKey = `${start}-${end}`;
+                const connections = { ...this.metroMapCanvas.state.connections };
+    
+                // Update the opacity of the visited connection
+                if (connections[connectionKey]) {
+                    connections[connectionKey].state.opacity = SVG_CONNECTION_OPACITY_VISITED;
+                    this.metroMapCanvas.setState({ connections });
+                }
+    
+                // Wait for 100ms before processing the next visited connection
+                await delay(100);
+            }
+    
             this.setState({
                 path: result.path,
                 pathDistance: result.distance,
-                debugger: ""
+                debugger: "",
             });
         } else {
             this.setState({
-                debugger: "The following fields are not selected: " + 
-                  (startStation === null ? "Start station, " : "") +
-                  (endStation === null ? "End station, " : "") +
-                  (algorithm === null ? "Algorithm, " : "")
-            })              
+                debugger:
+                    "The following fields are not selected: " +
+                    (startStation === null ? "Start station, " : "") +
+                    (endStation === null ? "End station, " : "") +
+                    (algorithm === null ? "Algorithm, " : ""),
+            });
         }
     };
+    
+    
 
     render() {
         const { startStation, endStation, stationNames, path, pathDistance } = this.state;
@@ -124,8 +153,10 @@ class App extends Component {
                         {pathDistance !== null && <p>{pathDistance}</p>}
                     </div>
                 </div>
-                <div className="metro-map-container" style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative' }}>
-                    <MapCanvas ref={(mapCanvas) => (this.metroMapCanvas = mapCanvas)}/>
+                <div className="metro-map-container" style={{  height: '100vh', overflow: 'hidden', position: 'relative' }}>
+                    <MapCanvas
+                        ref={(mapCanvas) => (this.metroMapCanvas = mapCanvas)}
+                    />
                 </div>
             </div>
         );

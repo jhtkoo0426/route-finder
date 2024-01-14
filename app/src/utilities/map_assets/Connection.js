@@ -1,6 +1,9 @@
 import React from "react";
 import {
     SVG_CONNECTION_STROKE_WIDTH,
+    SVG_CONNECTION_OPACITY_UNVISITED,
+    SVG_CONNECTION_OPACITY_VISITED,
+    SVG_CONNECTION_OPACITY_SELECTED,
 } from "../Constants";
 
 
@@ -9,9 +12,14 @@ class Connection {
     constructor(startStation, endStation) {
         this.startStation = startStation;
         this.endStation = endStation;
-        this.metroLines = [];       // An array of metro lines that pass through this connection.
+        this.metroLines = [];
+        this.state = {
+            visited: false,
+            selected: false,
+            opacity: SVG_CONNECTION_OPACITY_UNVISITED,
+        };
     }
-    
+
     addMetroLine(metroLineName) {
         if (!this.metroLines.includes(metroLineName)) {
             this.metroLines.push(metroLineName);
@@ -20,21 +28,20 @@ class Connection {
 
     renderConnection(colourMap) {
         const totalLines = this.metroLines.length;
-    
+
         return this.metroLines.map((metroLineName, index) => {
             const shiftAmount = (SVG_CONNECTION_STROKE_WIDTH * 0.5) * (0.5 - 0.5 * totalLines + index);
 
-            const {x: x1, y: y1} = this.startStation;
-            const {x: x2, y: y2} = this.endStation;
             return (
                 <line
                     key={`${this.startStation.name}-${this.endStation.name}-${metroLineName}`}
-                    x1={x1 + shiftAmount}
-                    y1={y1 + shiftAmount}
-                    x2={x2 + shiftAmount}
-                    y2={y2 + shiftAmount}
+                    x1={this.startStation.x + shiftAmount}
+                    y1={this.startStation.y + shiftAmount}
+                    x2={this.endStation.x + shiftAmount}
+                    y2={this.endStation.y + shiftAmount}
                     stroke={colourMap[metroLineName]}
                     strokeWidth={SVG_CONNECTION_STROKE_WIDTH}
+                    opacity={this.state.opacity}
                 />
             );
         });

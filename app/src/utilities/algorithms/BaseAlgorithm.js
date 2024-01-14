@@ -4,6 +4,7 @@ class BaseAlgorithm {
         this.distances = new Map();
         this.visited = new Map();
         this.previousStation = new Map();
+        this.visitedConnections = [];
     }
 
     initializeDistances(startStationName) {
@@ -17,6 +18,10 @@ class BaseAlgorithm {
 
     markStationAsVisited(stationName) {
         this.visited[stationName] = true;
+    }
+    
+    markConnectionAsVisited(startStation, endStation) {
+        this.visitedConnections.push({ start: startStation, end: endStation });
     }
 
     updateDistances(currentStation, neighborName, neighborDistance) {

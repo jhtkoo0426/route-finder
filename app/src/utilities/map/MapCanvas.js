@@ -9,6 +9,8 @@ import {
     SVG_GRID_LINE_WIDTH,
     SVG_GRID_LINE_STROKE,
     SVG_GRID_LINE_GAP_INTERVAL,
+    SVG_CONNECTION_OPACITY_UNVISITED,
+    SVG_CONNECTION_OPACITY_VISITED
 } from '../Constants';
 
 
@@ -56,7 +58,7 @@ class MapCanvas extends PureComponent {
 
     loadRailwayLines = (railwayLinesList) => {
         this.setState({ railwayLines: railwayLinesList });
-    }
+    };
 
     loadStations = (stationsList) => {
         this.setState({ stations: stationsList });
@@ -64,7 +66,7 @@ class MapCanvas extends PureComponent {
 
     loadConnections = (connectionsList) => {
         this.setState({ connections: connectionsList });
-    }
+    };
 
     renderStations() {
         return Object.entries(this.state.stations).map(([stationName, stationObj]) => (
@@ -118,8 +120,9 @@ class MapCanvas extends PureComponent {
                     scaleFactorMax={SVG_MAP_SCALE_MAX}
                     scaleFactorMin={SVG_MAP_SCALE_MIN}
                     scaleFactorOnWheel={SVG_MAP_SCALE_SPEED}
-                    preventPanOutside={true}>
-                    <svg width={SVG_MAP_WIDTH} height={SVG_MAP_HEIGHT}>
+                    preventPanOutside={true}
+                    disableDoubleClickZoomWithToolAuto={true}>
+                    <svg key={this.state.forceRerender} width={SVG_MAP_WIDTH} height={SVG_MAP_HEIGHT}>
                         {this.renderGridLines()}
                         {this.renderConnections()}
                         {this.renderStations()}

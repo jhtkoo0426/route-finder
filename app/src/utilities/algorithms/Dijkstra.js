@@ -3,6 +3,8 @@ import MinPriorityQueue from "../MinPriorityQueue";
 
 
 
+// This Dijkstra's algorithm implementation will explore all possible connections
+// of a metro map. It is NOT OPTIMISED in any manner.
 class Dijkstra extends BaseAlgorithm {
     constructor(stations) {
         super(stations);
@@ -35,12 +37,16 @@ class Dijkstra extends BaseAlgorithm {
             const neighbors = this.stations[currentStation].neighbours;
             Object.keys(neighbors).forEach(neighborName => {
                 this.updateDistances(currentStation, neighborName, neighbors[neighborName].distance);
+                this.markConnectionAsVisited(currentStation, neighborName);
             });
         }
 
         const path = this.constructPath(this.previousStation, startStationName, endStationName);
-
-        return { distance: this.distances[endStationName], path };
+        return {
+            distance: this.distances[endStationName],
+            path: path,
+            visitedConnectionsOrder: this.visitedConnections,
+        };
     }
 
     constructPath(previousStation, startStation, endStation) {
