@@ -4,7 +4,11 @@ import MetroMapBackend from "./utilities/MetroMapBackend";
 import MapCanvas from "./utilities/map/MapCanvas";
 import "./css/app.css";
 
-import { SVG_CONNECTION_OPACITY_VISITED } from "./utilities/Constants";
+import {
+    SVG_CONNECTION_OPACITY_VISITED,
+    VISUALISE_PATH_NODE_DELAY
+} from "./utilities/Constants";
+
 
 
 // React-select styling
@@ -61,7 +65,6 @@ class App extends Component {
     
         if (startStation !== null && endStation !== null && algorithm !== null) {
             const result = this.metroMap.executeAlgorithm(startStation, endStation, algorithm);
-    
             const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     
             for (let i = 0; i < result.visitedConnectionsOrder.length; i++) {
@@ -76,9 +79,7 @@ class App extends Component {
                     connections[connectionKey].state.opacity = SVG_CONNECTION_OPACITY_VISITED;
                     this.metroMapCanvas.setState({ connections });
                 }
-    
-                // Wait for 100ms before processing the next visited connection
-                await delay(100);
+                await delay(VISUALISE_PATH_NODE_DELAY);
             }
     
             this.setState({

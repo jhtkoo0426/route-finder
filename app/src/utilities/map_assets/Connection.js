@@ -2,8 +2,6 @@ import React from "react";
 import {
     SVG_CONNECTION_STROKE_WIDTH,
     SVG_CONNECTION_OPACITY_UNVISITED,
-    SVG_CONNECTION_OPACITY_VISITED,
-    SVG_CONNECTION_OPACITY_SELECTED,
 } from "../Constants";
 
 
@@ -14,8 +12,6 @@ class Connection {
         this.endStation = endStation;
         this.metroLines = [];
         this.state = {
-            visited: false,
-            selected: false,
             opacity: SVG_CONNECTION_OPACITY_UNVISITED,
         };
     }

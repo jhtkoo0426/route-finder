@@ -1,9 +1,13 @@
 import {
+    SVG_MAP_SCALE_X,
+    SVG_MAP_SCALE_Y,
     SVG_MAP_SHIFT_X,
     SVG_MAP_SHIFT_Y,
     SVG_STATION_RADIUS,
     SVG_STATION_OUTER_CIRCLE_STROKE,
     SVG_STATION_INNER_CIRCLE_STROKE,
+    SVG_STATION_NAME_SHIFT_X,
+    SVG_STATION_NAME_SHIFT_Y,
     SVG_STATION_NAME_FONT_SIZE,
     SVG_STATION_NAME_FONT_COLOR,
     SVG_STATION_NAME_LINE_MAX_CHARS,
@@ -43,8 +47,8 @@ class Station {
 
     calculateXY(lat, lon) {
         var a = EARTH_RADIUS * Math.cos(lat);
-        var x = Math.round(a * Math.sin(lon) + SVG_MAP_SHIFT_X) * 4;
-        var y = Math.round(a * Math.cos(lon) + SVG_MAP_SHIFT_Y) * 4;
+        var x = Math.round(a * Math.sin(lon) + SVG_MAP_SHIFT_X) * SVG_MAP_SCALE_X;
+        var y = Math.round(a * Math.cos(lon) + SVG_MAP_SHIFT_Y) * SVG_MAP_SCALE_Y;
         return [x, y];
     }
 
@@ -88,7 +92,12 @@ class Station {
             <g key={this.name}>
                 <circle cx={this.x} cy={this.y} r={SVG_STATION_RADIUS} fill={SVG_STATION_OUTER_CIRCLE_STROKE} />
                 <circle cx={this.x} cy={this.y} r={SVG_STATION_RADIUS - 2} fill={SVG_STATION_INNER_CIRCLE_STROKE} />
-                <text x={this.x + 10} y={this.y - 20} fontSize={SVG_STATION_NAME_FONT_SIZE} fill={SVG_STATION_NAME_FONT_COLOR} textAnchor="bottom">
+                <text
+                    x={this.x + SVG_STATION_NAME_SHIFT_X}
+                    y={this.y + SVG_STATION_NAME_SHIFT_X}
+                    fontSize={SVG_STATION_NAME_FONT_SIZE}
+                    fill={SVG_STATION_NAME_FONT_COLOR}
+                    textAnchor="bottom">
                     {this.trunicatedName.split('\n').map((line, i) => (
                         <tspan key={i} x={this.x + 10} dy="1.2em">
                         {line}

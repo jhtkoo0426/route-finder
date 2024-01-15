@@ -9,8 +9,8 @@ import {
     SVG_GRID_LINE_WIDTH,
     SVG_GRID_LINE_STROKE,
     SVG_GRID_LINE_GAP_INTERVAL,
-    SVG_CONNECTION_OPACITY_UNVISITED,
-    SVG_CONNECTION_OPACITY_VISITED
+    SVG_VIEWER_INITIAL_PAN_X,
+    SVG_VIEWER_INITIAL_PAN_Y,
 } from '../Constants';
 
 
@@ -30,7 +30,7 @@ class MapCanvas extends PureComponent {
             railwayLines: null,     // Colour map for metro lines
             screenWidth: window.innerWidth,
             screenHeight: window.innerHeight,
-            mapWidth: window.innerWidth * 0.8,
+            mapWidth: window.innerWidth * 0.8,      // Scale factor adjusts to grid width
         };
     }
 
@@ -48,8 +48,7 @@ class MapCanvas extends PureComponent {
         window.addEventListener('resize', this.handleResize);
 
         // Set initial viewer position
-        this.Viewer.current.zoom(-6500, -5500, 0.4);
-        this.Viewer.current.pan(-6500, -5500);
+        this.Viewer.current.pan(SVG_VIEWER_INITIAL_PAN_X, SVG_VIEWER_INITIAL_PAN_Y);
     }
 
     componentWillUnmount() {
