@@ -4,7 +4,7 @@
     box-sizing: border-box;
     scroll-behavior: smooth;
     font-family: 'InterReg';
-    font-size: 14px;
+    font-size: 12px;
 }
 
 @font-face {
@@ -47,8 +47,19 @@
     padding: 10px;
 }
 
-.search-panel > h1 {
-    font-size: 20px;
+.title {
+    display: flex;
+    align-items: center;
+}
+
+.title > h1 {
+    font-size: 18px;
+}
+
+.title > a {
+    margin-left: 10px;
+    font-size: 14px !important;
+    color: black;
 }
 
 .search-menu {
@@ -72,6 +83,14 @@
 
 .search-btn:hover {
     cursor:pointer;
+}
+
+.notes > ol {
+    margin-left: 14px;
+}
+
+.notes > ol > ul {
+    margin-left: 16px;
 }
 
 .debugger {

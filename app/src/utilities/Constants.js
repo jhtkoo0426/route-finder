@@ -32,4 +32,4 @@ export const SVG_CONNECTION_OPACITY_SELECTED = 1.0;
 
 export const EARTH_RADIUS = 6371;
 
-export const VISUALISE_PATH_NODE_DELAY = 20;
+export const VISUALISE_PATH_NODE_DELAY = 1;
