@@ -1,5 +1,3 @@
-import MinPriorityQueue from "./MinPriorityQueue";
-
 import ConnectionsCSVParser from "./parsers/csv_parsers/ConnectionCSVParser";
 import RailwaysCSVParser from "./parsers/csv_parsers/RailwaysCSVParser";
 import StationsCSVParser from "./parsers/csv_parsers/StationCSVParser";
@@ -51,6 +49,10 @@ class MetroMapBackend {
     // Utility methods
     getStationNames() {
         return Object.keys(this.stations);
+    }
+
+    getStationObjects() {
+        return this.stations;
     }
 
     getConnections() {

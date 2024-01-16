@@ -43,6 +43,11 @@ class MapCanvas extends PureComponent {
         this.Viewer.current.fitToViewer();
     };
 
+    panToLocation(mapX, mapY) {
+        // this.Viewer.current.pan(mapX, mapY);
+        this.Viewer.current.setPointOnViewerCenter(mapX, mapY, 1);
+    }
+
     componentDidMount() {
         this.Viewer.current.fitToViewer();
         window.addEventListener('resize', this.handleResize);

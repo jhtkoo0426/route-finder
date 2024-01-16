@@ -38,6 +38,7 @@ class App extends Component {
             startStation:   null,                   // Input variable for start station
             endStation:     null,                   // Input variable for input end station
             stationNames:   [],                     // A collection of metro station names
+            stations:       [],                     // Array of Station objects
             path:           [],                     // Array of station names to show minimum distance path
             pathDistance:   null,                   // Variable for mimimum distance
             algorithm:      null,                   // Variable for algorithm selection
@@ -56,8 +57,10 @@ class App extends Component {
     async componentDidMount() {
         await this.metroMap.parseCSVFiles();
         const names = this.metroMap.getStationNames();
+        const stationObjects = this.metroMap.getStationObjects();
         this.setState({
             stationNames: names,
+            stations: stationObjects,
         });
         this.metroMap.visualizeMetroMap(this.metroMapCanvas);
     }
@@ -74,16 +77,23 @@ class App extends Component {
 
     handleSearchClick = async () => {
         const { startStation, endStation, algorithm } = this.state;
+        const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
         // Only execute algorithm if all form fields are filled with valid values.
         if (startStation !== null && endStation !== null && algorithm !== null) {
             this.resetStates();
+
             // Results of executing the algorithm is a hashmap
             const { distance, path, visitedConnectionsOrder } = this.metroMap.executeAlgorithm(startStation, endStation, algorithm);
             this.setState({
                 path: path,
                 pathDistance: distance,
             })
+
+            // Move viewer to start station position on map
+            const startStationObj = this.state.stations[startStation];
+            this.metroMapCanvas.panToLocation(startStationObj.x, startStationObj.y);
+            await delay(1000);
             await this.animateConnections("connectionsOrder", visitedConnectionsOrder, SVG_CONNECTION_OPACITY_VISITED);
             await this.animateConnections("selectedPath", path, SVG_CONNECTION_OPACITY_SELECTED);
         } else {
