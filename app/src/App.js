@@ -6,6 +6,7 @@ import "./css/app.css";
 
 import {
     SVG_CONNECTION_OPACITY_VISITED,
+    SVG_CONNECTION_OPACITY_SELECTED,
     VISUALISE_PATH_NODE_DELAY
 } from "./utilities/Constants";
 
@@ -64,8 +65,15 @@ class App extends Component {
         
         // Only execute algorithm if all form fields are filled with valid values.
         if (startStation !== null && endStation !== null && algorithm !== null) {
-            const algorithmResult = this.metroMap.executeAlgorithm(startStation, endStation, algorithm);
-            await this.animateAlgorithmResult(algorithmResult);
+            // Results of executing the algorithm is a hashmap
+            const { distance, path, visitedConnectionsOrder } = this.metroMap.executeAlgorithm(startStation, endStation, algorithm);
+            this.setState({
+                path: path,
+                pathDistance: distance,
+                debugger: null,
+            });
+            await this.animateVisitedConnectionsOrder(visitedConnectionsOrder);
+            await this.animateSelectedPath(path);
         } else {
             this.setDebuggerState();
         }
@@ -82,26 +90,42 @@ class App extends Component {
         });
     }
 
-    animateAlgorithmResult = async (result) => {
+    animateVisitedConnectionsOrder = async (visitedConnectionsOrder) => {
         // Apply a delay function to each visited connection
         const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     
-        for (let i = 0; i < result.visitedConnectionsOrder.length; i++) {
-            const { start, end } = result.visitedConnectionsOrder[i];
-            const connectionKey = `${start}-${end}`;
+        for (let i = 0; i < visitedConnectionsOrder.length; i++) {
+            const { start, end } = visitedConnectionsOrder[i];
+            let connectionKey = `${start}-${end}`;
             const connections = { ...this.metroMapCanvas.state.connections };
+            if (!connections[connectionKey]) {
+                connectionKey = `${end}-${start}`;
+            }
+            connections[connectionKey].state.opacity = SVG_CONNECTION_OPACITY_VISITED;
+            this.metroMapCanvas.setState({ connections });
+            await delay(VISUALISE_PATH_NODE_DELAY);
+        }
+    }
+
+    animateSelectedPath = async (selectedPath) => {
+        // Apply a delay function to each visited connection
+        const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+        for (let i = 0; i < selectedPath.length-1; i++) {
+            const start = selectedPath[i];
+            const end = selectedPath[i+1];
+            let connectionKey = `${start}-${end}`;
+            const connections = { ...this.metroMapCanvas.state.connections };
+            if (!connections[connectionKey]) {
+                connectionKey = `${end}-${start}`;
+            }
+            console.log(connectionKey);
             if (connections[connectionKey]) {
-                connections[connectionKey].state.opacity = SVG_CONNECTION_OPACITY_VISITED;
+                connections[connectionKey].state.opacity = SVG_CONNECTION_OPACITY_SELECTED;
                 this.metroMapCanvas.setState({ connections });
             }
             await delay(VISUALISE_PATH_NODE_DELAY);
         }
-
-        this.setState({
-            path: result.path,
-            pathDistance: result.distance,
-            debugger: null,
-        });
     }
     
     render() {
