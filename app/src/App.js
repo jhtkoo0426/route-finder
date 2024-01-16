@@ -41,7 +41,6 @@ class App extends Component {
             pathDistance:   null,       // Variable to display mimimum distance
             algorithm:      null,       // Variable for algorithm selection
             debugger:       "",         // Logs error in the search panel
-            visitedConnectionsOrder: null,
         };
         
         this.metroMap = new MetroMapBackend(
@@ -62,41 +61,48 @@ class App extends Component {
 
     handleSearchClick = async () => {
         const { startStation, endStation, algorithm } = this.state;
-    
+        
+        // Only execute algorithm if all form fields are filled with valid values.
         if (startStation !== null && endStation !== null && algorithm !== null) {
-            const result = this.metroMap.executeAlgorithm(startStation, endStation, algorithm);
-            const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-    
-            for (let i = 0; i < result.visitedConnectionsOrder.length; i++) {
-                const { start, end } = result.visitedConnectionsOrder[i];
-    
-                // Assuming your connections are stored in a hashmap with keys `${start}-${end}`
-                const connectionKey = `${start}-${end}`;
-                const connections = { ...this.metroMapCanvas.state.connections };
-    
-                // Update the opacity of the visited connection
-                if (connections[connectionKey]) {
-                    connections[connectionKey].state.opacity = SVG_CONNECTION_OPACITY_VISITED;
-                    this.metroMapCanvas.setState({ connections });
-                }
-                await delay(VISUALISE_PATH_NODE_DELAY);
-            }
-    
-            this.setState({
-                path: result.path,
-                pathDistance: result.distance,
-                debugger: "",
-            });
+            const algorithmResult = this.metroMap.executeAlgorithm(startStation, endStation, algorithm);
+            await this.animateAlgorithmResult(algorithmResult);
         } else {
-            this.setState({
-                debugger:
-                    "The following fields are not selected: " +
-                    (startStation === null ? "Start station, " : "") +
-                    (endStation === null ? "End station, " : "") +
-                    (algorithm === null ? "Algorithm, " : ""),
-            });
+            this.setDebuggerState();
         }
     };
+
+    setDebuggerState() {
+        const { startStation, endStation, algorithm } = this.state;
+        this.setState({
+            debugger:
+                "The following fields are not selected: " +
+                (startStation === null ? "Start station, " : "") +
+                (endStation === null ? "End station, " : "") +
+                (algorithm === null ? "Algorithm, " : ""),
+        });
+    }
+
+    animateAlgorithmResult = async (result) => {
+        // Apply a delay function to each visited connection
+        const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    
+        for (let i = 0; i < result.visitedConnectionsOrder.length; i++) {
+            const { start, end } = result.visitedConnectionsOrder[i];
+            const connectionKey = `${start}-${end}`;
+            const connections = { ...this.metroMapCanvas.state.connections };
+            if (connections[connectionKey]) {
+                connections[connectionKey].state.opacity = SVG_CONNECTION_OPACITY_VISITED;
+                this.metroMapCanvas.setState({ connections });
+            }
+            await delay(VISUALISE_PATH_NODE_DELAY);
+        }
+
+        this.setState({
+            path: result.path,
+            pathDistance: result.distance,
+            debugger: "",
+        });
+    }
     
     render() {
         const { stationNames, path, pathDistance } = this.state;
@@ -126,7 +132,7 @@ class App extends Component {
                         </div>
                         <div className="search-box-algorithm">
                             <Select
-                                options={['Dijkstra', 'Test'].map((algo) => ({value: algo, label: algo }))}
+                                options={['Dijkstra'].map((algo) => ({value: algo, label: algo }))}
                                 onChange={(algorithmOption) => this.setState({ algorithm: algorithmOption })}
                                 placeholder="Select algorithm"
                                 isSearchable
