@@ -94,7 +94,7 @@ class Station {
                 <circle cx={this.x} cy={this.y} r={SVG_STATION_RADIUS - 2} fill={SVG_STATION_INNER_CIRCLE_STROKE} />
                 <text
                     x={this.x + SVG_STATION_NAME_SHIFT_X}
-                    y={this.y + SVG_STATION_NAME_SHIFT_X}
+                    y={this.y + SVG_STATION_NAME_SHIFT_Y}
                     fontSize={SVG_STATION_NAME_FONT_SIZE}
                     fill={SVG_STATION_NAME_FONT_COLOR}
                     textAnchor="bottom">

@@ -98,10 +98,8 @@ class App extends Component {
         }
     };
     
-    
-
     render() {
-        const { startStation, endStation, stationNames, path, pathDistance } = this.state;
+        const { stationNames, path, pathDistance } = this.state;
 
         return (
             <div className="App">
