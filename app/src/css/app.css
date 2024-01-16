@@ -132,3 +132,27 @@
 .svg-container > div > svg > rect {
     fill: #ddd;
 }
+
+.map-legend {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    padding: 10px;
+    border: 1px solid #000;
+    background-color: #fff;
+}
+
+.map-legend > div {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+}
+
+.map-legend > div > div {
+    width: 20px;
+    height: 8px;
+}
+
+.map-legend > div > p {
+    margin-left: 5px;
+}

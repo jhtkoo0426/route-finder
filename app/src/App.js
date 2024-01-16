@@ -166,10 +166,10 @@ class App extends Component {
                         </a>
                     </div>
                     <br></br>
-                    <p>An interactive journey planner for transporting via metro in major cities.
-                        To use this planner, select a starting, ending station, and a path-finding 
-                        algorithm from the dropdowns.
-                    </p>
+                    <p>An interactive journey planner for transporting via metro in major cities. The map 
+                       on the right consists of stationts (represented by circles) and connections
+                       (represented by coloured lines). To use this planner, select a starting, ending 
+                       station, and a path-finding algorithm from the dropdowns.</p>
                     <br></br>
                     <div className="search-menu">
                         <div className="search-box-start-station">
@@ -207,8 +207,8 @@ class App extends Component {
                     <p>Upon entering all fields, the planner will perform the following:</p>
                     <ol>
                         <li>Visualize the order of exploring station connections, starting from stations
-                        around the starting station.</li>
-                        <li>Visualize the selected path.</li>
+                        around the starting station. <b>Connections will have increased opacity</b>.</li>
+                        <li>Visualize the selected path, <b>with 100% opacity</b>.</li>
                     </ol>
                     <br></br>
                     <p>Notes:</p>

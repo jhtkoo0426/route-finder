@@ -27,7 +27,7 @@ class MapCanvas extends PureComponent {
             value: INITIAL_VALUE,   // ReactSVGPanZoom component config
             stations: [],           // Collection of all metro stations
             connections: [],        // Collection of all connections between metro stations
-            railwayLines: null,     // Colour map for metro lines
+            railwayLines: new Set(),     // Colour map for metro lines
             screenWidth: window.innerWidth,
             screenHeight: window.innerHeight,
             mapWidth: window.innerWidth * 0.8,      // Scale factor adjusts to grid width
@@ -108,6 +108,20 @@ class MapCanvas extends PureComponent {
             <g>{verticalLines}{horizontalLines}</g>
         );
     }
+
+    renderRailwayLinesLegend() {
+        return (
+            <div className='map-legend'>
+                {Object.keys(this.state.railwayLines).map((metroLineName, index) => (
+                    <div key={metroLineName}>
+                        <div style={{ backgroundColor: this.state.railwayLines[metroLineName] }}></div>
+                        <p>{metroLineName}</p>
+                    </div>
+                ))}
+            </div>
+        );
+    }
+    
     
     renderMap() {
         return (
@@ -129,6 +143,7 @@ class MapCanvas extends PureComponent {
                     {this.renderGridLines()}
                     {this.renderConnections()}
                     {this.renderStations()}
+                    {this.renderRailwayLinesLegend()}
                 </svg>
             </ReactSVGPanZoom>
         );
@@ -138,6 +153,7 @@ class MapCanvas extends PureComponent {
         return (
             <div className="svg-container" ref={this.svgContainerRef}>
                 {this.renderMap()}
+                {this.renderRailwayLinesLegend()}
             </div>
         );
     }
