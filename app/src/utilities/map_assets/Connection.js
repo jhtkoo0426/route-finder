@@ -10,24 +10,21 @@ class Connection {
     constructor(startStation, endStation) {
         this.startStation = startStation;
         this.endStation = endStation;
-        this.metroLines = [];
+        this.metroLines = new Set();
         this.state = {
             opacity: SVG_CONNECTION_OPACITY_UNVISITED,
         };
     }
 
     addMetroLine(metroLineName) {
-        if (!this.metroLines.includes(metroLineName)) {
-            this.metroLines.push(metroLineName);
-        }
+        this.metroLines.add(metroLineName);
     }
 
     renderConnection(colourMap) {
-        const totalLines = this.metroLines.length;
-
-        return this.metroLines.map((metroLineName, index) => {
+        const totalLines = Array.from(this.metroLines).length;
+        
+        return Array.from(this.metroLines).map((metroLineName, index) => {
             const shiftAmount = (SVG_CONNECTION_STROKE_WIDTH * 0.5) * (0.5 - 0.5 * totalLines + index);
-
             return (
                 <line
                     key={`${this.startStation.name}-${this.endStation.name}-${metroLineName}`}

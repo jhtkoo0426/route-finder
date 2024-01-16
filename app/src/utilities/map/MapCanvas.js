@@ -103,30 +103,36 @@ class MapCanvas extends PureComponent {
             <g>{verticalLines}{horizontalLines}</g>
         );
     }
+    
+    renderMap() {
+        return (
+            <ReactSVGPanZoom
+                ref={this.Viewer}
+                width={this.state.mapWidth}
+                height={this.state.screenHeight}
+                tool={this.state.tool}
+                onChangeTool={(tool) => this.setState({ tool })}
+                onChangeValue={(value) => this.setState({ value })}
+                value={this.state.value}
+                detectAutoPan={false}
+                scaleFactorMax={SVG_MAP_SCALE_MAX}
+                scaleFactorMin={SVG_MAP_SCALE_MIN}
+                scaleFactorOnWheel={SVG_MAP_SCALE_SPEED}
+                preventPanOutside={true}
+                disableDoubleClickZoomWithToolAuto={true}>
+                <svg key={this.state.forceRerender} width={SVG_MAP_WIDTH} height={SVG_MAP_HEIGHT}>
+                    {this.renderGridLines()}
+                    {this.renderConnections()}
+                    {this.renderStations()}
+                </svg>
+            </ReactSVGPanZoom>
+        );
+    }
 
     render() {
         return (
             <div className="svg-container" ref={this.svgContainerRef}>
-                <ReactSVGPanZoom
-                    ref={this.Viewer}
-                    width={this.state.mapWidth}
-                    height={this.state.screenHeight}
-                    tool={this.state.tool}
-                    onChangeTool={(tool) => this.setState({ tool })}
-                    onChangeValue={(value) => this.setState({ value })}
-                    value={this.state.value}
-                    detectAutoPan={false}
-                    scaleFactorMax={SVG_MAP_SCALE_MAX}
-                    scaleFactorMin={SVG_MAP_SCALE_MIN}
-                    scaleFactorOnWheel={SVG_MAP_SCALE_SPEED}
-                    preventPanOutside={true}
-                    disableDoubleClickZoomWithToolAuto={true}>
-                    <svg key={this.state.forceRerender} width={SVG_MAP_WIDTH} height={SVG_MAP_HEIGHT}>
-                        {this.renderGridLines()}
-                        {this.renderConnections()}
-                        {this.renderStations()}
-                    </svg>
-                </ReactSVGPanZoom>
+                {this.renderMap()}
             </div>
         );
     }

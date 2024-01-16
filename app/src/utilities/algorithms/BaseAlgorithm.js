@@ -36,23 +36,23 @@ class BaseAlgorithm {
 
     // Abstract methods to be implemented by subclasses
     enqueue(stationName, distance) {
-        throw new Error("enqueue method must be implemented by subclasses");
+        throw new Error("enqueue method must be implemented by subclasses, returning a boolean value");
     }
-
+    
     dequeue() {
-        throw new Error("dequeue method must be implemented by subclasses");
+        throw new Error("dequeue method must be implemented by subclasses, returning a boolean value");
     }
-
+    
     isEmpty() {
-        throw new Error("isEmpty method must be implemented by subclasses");
+        throw new Error("isEmpty method must be implemented by subclasses, returning a boolean value");
     }
-
+    
     searchPath(startStationName, endStationName) {
-        throw new Error("isEmpty method must be implemented by subclasses");
+        throw new Error("searchPath method must be implemented by subclasses, returning a boolean value");
     }
-
+    
     constructPath(previousStation, startStation, endStation) {
-        throw new Error("isEmpty method must be implemented by subclasses");
+        throw new Error("constructPath method must be implemented by subclasses, returning a boolean value");
     }
 }
 

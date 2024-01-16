@@ -40,7 +40,7 @@ class App extends Component {
             path:           [],         // Variable to display minimum-distance path
             pathDistance:   null,       // Variable to display mimimum distance
             algorithm:      null,       // Variable for algorithm selection
-            debugger:       "",         // Logs error in the search panel
+            debugger:       null,         // Logs error in the search panel
         };
         
         this.metroMap = new MetroMapBackend(
@@ -100,7 +100,7 @@ class App extends Component {
         this.setState({
             path: result.path,
             pathDistance: result.distance,
-            debugger: "",
+            debugger: null,
         });
     }
     
@@ -145,7 +145,7 @@ class App extends Component {
                     </div>
                     <br></br>
                     <div className="debugger">
-                        {this.state.debugger !== "" ? <p>{this.state.debugger}</p> : <div></div>}
+                        {this.state.debugger !== null ? <p>{this.state.debugger}</p> : <div></div>}
                     </div>
                     <br></br>
                     <div className="search-results">

@@ -71,19 +71,16 @@ class Station {
 
     transformStationName() {
         const words = this.name.split(' ');
-        let currentLineLength = 0;
-        let result = '';
-
-        for (const word of words) {
-            if (currentLineLength + word.length > SVG_STATION_NAME_LINE_MAX_CHARS) {
-                result += '\n';
-                currentLineLength = word.length + 1;
+        let result = words.reduce((acc, word) => {
+            if (acc.length === 0 || acc[acc.length - 1].length + word.length > SVG_STATION_NAME_LINE_MAX_CHARS) {
+                acc.push(word);
             } else {
-                currentLineLength += word.length + 1;
+                acc[acc.length - 1] += ` ${word}`;
             }
-            result += word + ' ';
-        }
-        return result.trim();
+            return acc;
+        }, []);
+
+        return result.join('\n');
     }
 
     // Renders the Station object on the MapCanvas
