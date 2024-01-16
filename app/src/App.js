@@ -74,10 +74,10 @@ class App extends Component {
 
     handleSearchClick = async () => {
         const { startStation, endStation, algorithm } = this.state;
-        // this.resetStates();
 
         // Only execute algorithm if all form fields are filled with valid values.
         if (startStation !== null && endStation !== null && algorithm !== null) {
+            this.resetStates();
             // Results of executing the algorithm is a hashmap
             const { distance, path, visitedConnectionsOrder } = this.metroMap.executeAlgorithm(startStation, endStation, algorithm);
             this.setState({
@@ -93,14 +93,17 @@ class App extends Component {
 
     setDebuggerState() {
         const { startStation, endStation, algorithm } = this.state;
+    
+        const missingFields = [
+            startStation === null ? "Start station" : "",
+            endStation === null ? "End station" : "",
+            algorithm === null ? "Algorithm" : "",
+        ];
+    
         this.setState({
-            debugger:
-                "The following fields are not selected: " +
-                (startStation === null ? "Start station, " : "") +
-                (endStation === null ? "End station, " : "") +
-                (algorithm === null ? "Algorithm, " : ""),
+            debugger: "The following fields are not selected: " + missingFields.filter(Boolean).join(', '),
         });
-    }
+    }    
 
     animateConnections = async (type, connectionsOrder, opacity) => {
         const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -192,12 +195,13 @@ class App extends Component {
                     </div>
                     <br></br>
                     <p>Upon entering all fields, the planner will perform the following:</p>
-                    <p>1. Visualize the order of exploring station connections, starting from stations
-                        around the starting station.</p>
-                    <p>2. Visualize the selected path.</p>
+                    <ol>
+                        <li>Visualize the order of exploring station connections, starting from stations
+                        around the starting station.</li>
+                        <li>Visualize the selected path.</li>
+                    </ol>
                     <br></br>
-                    <div className="notes">
-                        <p>Notes:</p>
+                    <p>Notes:</p>
                         <ol>
                             <li>The aim of this planner is to find and visualize the <b>shortest distance path</b>
                                 , not the shortest duration path.</li>
@@ -207,14 +211,22 @@ class App extends Component {
                                 <li>All metro lines are always available (i.e. not real-time).</li>
                             </ul>
                         </ol>
-                    </div>
                     <br></br>
-                    <div className="debugger">
-                        { this.state.debugger !== null ? <p>{this.state.debugger}</p> : null }
-                    </div>
-                    <div className="app-status">
+                    <hr></hr>
+                    <br></br>
+                    {
+                        this.state.debugger !== null
+                        ?<div className="debugger">
+                            <p>{this.state.debugger}</p>
+                        </div>
+                        :null
+                    }
+                    
+                    <div className="exploration-status">
                         { this.state.isVisualisingConnectionOrder ? <p>Exploring connections...</p> : null }
-                        { this.state.isVisualisingSelectedPath ? <p>Visualised optimal path...</p> : null }
+                    </div>
+                    <div className="visualisation-status">
+                        { this.state.isVisualisingSelectedPath ? <p>Visualised optimal path.</p> : null }
                     </div>
                     <br></br>
                     <div className="search-results">
