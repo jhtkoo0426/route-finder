@@ -14,8 +14,9 @@ import {
     SVG_STATION_OUTER_CIRCLE_STROKE,
     SVG_CONNECTION_STROKE_WIDTH,
     SVG_CONNECTION_OPACITY_VISITED,
+    SVG_CONNECTION_OPACITY_UNVISITED,
     SVG_CONNECTION_OPACITY_SELECTED,
-    VISUALISE_PATH_NODE_DELAY
+    VISUALISE_PATH_NODE_DELAY,
 } from "./utilities/Constants";
 
 // React-select styling
@@ -52,6 +53,7 @@ class App extends Component {
             railwayLines:   null,                   // Variable for metro line colour mappings
             isVisualisingConnectionOrder: false,
             isVisualisingSelectedPath: false,
+            isVisualised:   false,
         };
         
         this.metroMap = new MetroMapBackend(
@@ -84,23 +86,37 @@ class App extends Component {
         })
     }
 
+    resetVisualisedConnections() {        
+        // Reset connection opacities in MapCanvas
+        const connections = { ...this.metroMapCanvas.state.connections };
+        Object.keys(connections).forEach((key) => {
+            connections[key].state.opacity = SVG_CONNECTION_OPACITY_UNVISITED;  // Set opacity back to default (1)
+        });
+    }
+
     handleSearchClick = async () => {
         const { startStation, endStation, algorithm } = this.state;
 
         // Only execute algorithm if all form fields are filled with valid values.
         if (startStation !== null && endStation !== null && algorithm !== null) {
+            this.resetStates();
+            if (this.state.isVisualised) {
+                this.resetVisualisedConnections();
+                this.setState({ isVisualised: false })
+            }            
+            
             // Results of executing the algorithm is a hashmap
             const { distance, path, visitedConnectionsOrder } = this.metroMap.executeAlgorithm(startStation, endStation, algorithm);
-            this.resetStates();
             this.setState({
                 path: path,
                 pathDistance: distance,
+                isVisualised: true,
             })
 
             // Move viewer to start station position on map
             const startStationObj = this.state.stations[startStation];
             this.metroMapCanvas.panToLocation(startStationObj.x, startStationObj.y);
-            // await this.animateConnections("connectionsOrder", visitedConnectionsOrder, SVG_CONNECTION_OPACITY_VISITED);
+            await this.animateConnections("connectionsOrder", visitedConnectionsOrder, SVG_CONNECTION_OPACITY_VISITED);
             await this.animateConnections("selectedPath", path, SVG_CONNECTION_OPACITY_SELECTED);
         } else {
             this.setDebuggerState();
@@ -190,7 +206,6 @@ class App extends Component {
             } else if (metroLines[0] !== prevMetroLine) {
                 processTransit(start, metroLines[0], prevStops);
             }
-            console.log(start, end, prevStart, prevMetroLine, prevStops);
         }
 
         // Call processTransit after the loop to handle the last segment
@@ -202,7 +217,6 @@ class App extends Component {
         });
         
         let [startX, startY] = [10, 10];
-        console.log(travelSegments);
         return (
             <svg className="travel-path" height={500}>
                 {travelSegments.length !== 0 ? (
@@ -245,9 +259,8 @@ class App extends Component {
         );          
     }
     
-    
     render() {
-        const { stationNames, path, pathDistance } = this.state;
+        const { stationNames, pathDistance } = this.state;
 
         return (
             <div className="App">
@@ -338,8 +351,8 @@ class App extends Component {
                     </div>
                     <br></br>
                     <div className="search-results">
-                        {path.length !== 0 && this.renderTravelPlan()}
-                        {pathDistance !== null && <p>{pathDistance}</p>}
+                        {this.state.path.length !== 0 && this.renderTravelPlan()}
+                        {pathDistance !== null && <p>{this.state.pathDistance}</p>}
                     </div>
                 </div>
                 <div className="metro-map-container" style={{  height: '100vh', overflow: 'hidden', position: 'relative' }}>

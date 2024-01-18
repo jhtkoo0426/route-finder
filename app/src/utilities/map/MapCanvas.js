@@ -23,11 +23,11 @@ class MapCanvas extends PureComponent {
 
         this.Viewer = createRef();
         this.state = {
-            tool: TOOL_AUTO,        // ReactSVGPanZoom component config
-            value: INITIAL_VALUE,   // ReactSVGPanZoom component config
-            stations: [],           // Collection of all metro stations
-            connections: [],        // Collection of all connections between metro stations
-            railwayLines: new Set(),     // Colour map for metro lines
+            tool: TOOL_AUTO,                        // ReactSVGPanZoom component config
+            value: INITIAL_VALUE,                   // ReactSVGPanZoom component config
+            stations: [],                           // Collection of all metro stations
+            connections: [],                        // Collection of all connections between metro stations
+            railwayLines: new Set(),                // Colour map for metro lines
             screenWidth: window.innerWidth,
             screenHeight: window.innerHeight,
             mapWidth: window.innerWidth * 0.8,      // Scale factor adjusts to grid width
@@ -121,7 +121,6 @@ class MapCanvas extends PureComponent {
             </div>
         );
     }
-    
     
     renderMap() {
         return (
