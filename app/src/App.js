@@ -19,7 +19,7 @@ import {
     VISUALISE_PATH_NODE_DELAY,
 } from "./utilities/Constants";
 
-// React-select styling
+// React-select component styling
 const customStyles = {
     control: (provided, state) => ({
         ...provided,
@@ -68,6 +68,7 @@ class App extends Component {
         const names = this.metroMap.getStationNames();
         const stationObjects = this.metroMap.getStationObjects();
         const railwayLinesColourMap = this.metroMap.getMetroLineColours();
+
         this.setState({
             stationNames: names,
             stations: stationObjects,
@@ -111,7 +112,7 @@ class App extends Component {
                 path: path,
                 pathDistance: distance,
                 isVisualised: true,
-            })
+            });
 
             // Move viewer to start station position on map
             const startStationObj = this.state.stations[startStation];
@@ -174,14 +175,14 @@ class App extends Component {
             await delay(VISUALISE_PATH_NODE_DELAY);
         }
     };
-
-    renderTravelPlan() {
+    
+    generateTravelSegments() {
         const { path } = this.state;
         const travelSegments = [];
         let [prevStart, prevMetroLine, prevStops] = [null, null, 1];
         if (!path) { return null; }
 
-        const processTransit = (start, metroLine, prevStops) => {
+        const processTransit = (prevStops) => {
             travelSegments.push({
                 start: prevStart,
                 line: prevMetroLine,
@@ -201,7 +202,7 @@ class App extends Component {
             } else if (metroLines.includes(prevMetroLine)) {
                 prevStops += 1;
             } else if (!metroLines.includes(prevMetroLine)) {
-                processTransit(start, metroLines[0], prevStops);
+                processTransit(prevStops);
                 prevMetroLine = metroLines[0];
                 prevStart = start;
                 prevStops = 1;
@@ -209,54 +210,79 @@ class App extends Component {
         }
 
         // Call processTransit after the loop to handle the last segment
-        processTransit(path[path.length - 1], prevMetroLine, prevStops);
+        processTransit(prevStops);
         travelSegments.push({
             start: path[path.length-1],
             line: null,
             stops: 0,
         });
-        
+
+        return travelSegments;
+    }
+
+    renderTravelPlan() {
+        const travelSegments = this.generateTravelSegments();
         let [startX, startY] = [10, 10];
+
         return (
-            <svg className="travel-path" height={500}>
+            <svg className="travel-path" height={600}>
                 {travelSegments.length !== 0 ? (
                     travelSegments.map((segment, index) => {
-                        const updatedStartY = startY + index * 35;
+                        const updatedStartY = startY + index * 45;
                         return (
                             <g key={index}>
-                                {
-                                    segment.line !== null ?
+                                {segment.line !== null ? (
+                                    <>
                                         <line
-                                        key={"a"}
-                                        x1={startX}
-                                        x2={startX}
-                                        y1={updatedStartY}
-                                        y2={updatedStartY+35}
-                                        stroke={this.state.railwayLines[segment.line]}
-                                        strokeWidth={SVG_CONNECTION_STROKE_WIDTH}
-                                    />
-                                    : null
-                                }
-                                
+                                            key={"a"}
+                                            x1={startX}
+                                            x2={startX}
+                                            y1={updatedStartY}
+                                            y2={updatedStartY + 45}
+                                            stroke={this.state.railwayLines[segment.line]}
+                                            strokeWidth={SVG_CONNECTION_STROKE_WIDTH}
+                                        />
+                                    </>
+                                ) : null}
+
+                                {/* Text for transiting station name */}
                                 <text
                                     x={startX + 10}
                                     y={updatedStartY + SVG_STATION_RADIUS - 2}
                                     fontSize={SVG_STATION_NAME_FONT_SIZE}
                                     fill={SVG_STATION_NAME_FONT_COLOR}
-                                    textAnchor="bottom"
+                                    textAnchor="start"
                                 >
-                                    {
-                                        segment.stops !== 0 ? (segment.start + " (" + segment.stops + " stop" + (segment.stops > 1 ? "s" : "") + ")") : segment.start
-                                    }
+                                    <tspan>{segment.start}</tspan>
                                 </text>
+
+                                {/* Text for line and stops */}
+                                <text
+                                    x={startX + 10}
+                                    y={updatedStartY + SVG_STATION_RADIUS * 3.5}
+                                    fontSize={SVG_STATION_NAME_FONT_SIZE}
+                                    fill={SVG_STATION_NAME_FONT_COLOR}
+                                    textAnchor="start"
+                                >
+                                    <tspan>{segment.line}</tspan>
+                                    {segment.stops !== 0 ? (
+                                        <tspan>
+                                            {" (" + segment.stops + " stop" + (segment.stops > 1 ? "s" : "") + ")"}
+                                        </tspan>
+                                    ) : null}
+                                </text>
+
+                                {/* Circles for station */}
                                 <circle cx={startX} cy={updatedStartY} r={SVG_STATION_RADIUS} fill={SVG_STATION_OUTER_CIRCLE_STROKE} />
                                 <circle cx={startX} cy={updatedStartY} r={SVG_STATION_RADIUS - 2} fill={SVG_STATION_INNER_CIRCLE_STROKE} />
                             </g>
+
                         );
                     })
                 ) : null}
             </svg>
-        );          
+         );
+               
     }
     
     render() {
@@ -318,7 +344,6 @@ class App extends Component {
                             <li>Visualize the selected path, <b>with 100% opacity</b>.</li>
                         </ol>
                     </details>
-                    
                     <br></br>
                     <details>
                         <summary>Notes:</summary>
@@ -342,7 +367,6 @@ class App extends Component {
                         </div>
                         :null
                     }
-                    
                     <div className="exploration-status">
                         { this.state.isVisualisingConnectionOrder ? <p>Exploring connections...</p> : null }
                     </div>
@@ -351,8 +375,8 @@ class App extends Component {
                     </div>
                     <br></br>
                     <div className="search-results">
+                        {pathDistance !== null && <p>Distance: {this.state.pathDistance.toFixed(3)}km</p>}
                         {this.state.path.length !== 0 && this.renderTravelPlan()}
-                        {pathDistance !== null && <p>{this.state.pathDistance}</p>}
                     </div>
                 </div>
                 <div className="metro-map-container" style={{  height: '100vh', overflow: 'hidden', position: 'relative' }}>

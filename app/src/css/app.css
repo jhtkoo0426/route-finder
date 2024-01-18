@@ -61,6 +61,7 @@
     background-color: transparent;
     border-right: 1px solid grey;
     padding: 10px;
+    overflow: auto;
 }
 
 .search-panel > details > ol {
@@ -160,4 +161,5 @@
 /* Travel path */
 .travel-path {
     width: 100%;
+    padding: 10% 0;
 }
