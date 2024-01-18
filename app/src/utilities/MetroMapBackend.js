@@ -58,6 +58,10 @@ class MetroMapBackend {
     getConnections() {
         return this.connections;
     }
+
+    getMetroLineColours() {
+        return this.railwayLines;
+    }
 }
 
 

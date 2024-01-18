@@ -7,6 +7,12 @@ import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import "./css/app.css";
 
 import {
+    SVG_STATION_RADIUS,
+    SVG_STATION_NAME_FONT_SIZE,
+    SVG_STATION_NAME_FONT_COLOR,
+    SVG_STATION_INNER_CIRCLE_STROKE,
+    SVG_STATION_OUTER_CIRCLE_STROKE,
+    SVG_CONNECTION_STROKE_WIDTH,
     SVG_CONNECTION_OPACITY_VISITED,
     SVG_CONNECTION_OPACITY_SELECTED,
     VISUALISE_PATH_NODE_DELAY
@@ -43,6 +49,7 @@ class App extends Component {
             pathDistance:   null,                   // Variable for mimimum distance
             algorithm:      null,                   // Variable for algorithm selection
             debugger:       null,                   // Logs error in the search panel
+            railwayLines:   null,                   // Variable for metro line colour mappings
             isVisualisingConnectionOrder: false,
             isVisualisingSelectedPath: false,
         };
@@ -58,9 +65,11 @@ class App extends Component {
         await this.metroMap.parseCSVFiles();
         const names = this.metroMap.getStationNames();
         const stationObjects = this.metroMap.getStationObjects();
+        const railwayLinesColourMap = this.metroMap.getMetroLineColours();
         this.setState({
             stationNames: names,
             stations: stationObjects,
+            railwayLines: railwayLinesColourMap,
         });
         this.metroMap.visualizeMetroMap(this.metroMapCanvas);
     }
@@ -77,14 +86,12 @@ class App extends Component {
 
     handleSearchClick = async () => {
         const { startStation, endStation, algorithm } = this.state;
-        const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
         // Only execute algorithm if all form fields are filled with valid values.
         if (startStation !== null && endStation !== null && algorithm !== null) {
-            this.resetStates();
-
             // Results of executing the algorithm is a hashmap
             const { distance, path, visitedConnectionsOrder } = this.metroMap.executeAlgorithm(startStation, endStation, algorithm);
+            this.resetStates();
             this.setState({
                 path: path,
                 pathDistance: distance,
@@ -93,8 +100,7 @@ class App extends Component {
             // Move viewer to start station position on map
             const startStationObj = this.state.stations[startStation];
             this.metroMapCanvas.panToLocation(startStationObj.x, startStationObj.y);
-            await delay(1000);
-            await this.animateConnections("connectionsOrder", visitedConnectionsOrder, SVG_CONNECTION_OPACITY_VISITED);
+            // await this.animateConnections("connectionsOrder", visitedConnectionsOrder, SVG_CONNECTION_OPACITY_VISITED);
             await this.animateConnections("selectedPath", path, SVG_CONNECTION_OPACITY_SELECTED);
         } else {
             this.setDebuggerState();
@@ -152,6 +158,93 @@ class App extends Component {
             await delay(VISUALISE_PATH_NODE_DELAY);
         }
     };
+
+    renderTravelPlan() {
+        const { path } = this.state;
+        const travelSegments = [];
+        let [prevStart, prevMetroLine, prevStops] = [null, null, 1];
+        if (!path) { return null; }
+
+        const processTransit = (start, metroLine, prevStops) => {
+            travelSegments.push({
+                start: prevStart,
+                line: prevMetroLine,
+                stops: prevStops,
+            });
+            prevMetroLine = metroLine;
+            prevStart = start;
+            prevStops = 1;
+        };
+
+        for (let i = 1; i < path.length; i++) {
+            const [start, end] = [path[i - 1], path[i]];
+            const connections = { ...this.metroMapCanvas.state.connections };
+            const connectionKey = connections[`${start}-${end}`] ? `${start}-${end}` : `${end}-${start}`;
+            const metroLines = Array.from(connections[connectionKey].metroLines);
+
+            if (i === 1) {
+                prevMetroLine = metroLines[0];
+                prevStart = start;
+            } else if (metroLines[0] === prevMetroLine) {
+                prevStops += 1;
+            } else if (metroLines[0] !== prevMetroLine) {
+                processTransit(start, metroLines[0], prevStops);
+            }
+            console.log(start, end, prevStart, prevMetroLine, prevStops);
+        }
+
+        // Call processTransit after the loop to handle the last segment
+        processTransit(path[path.length - 1], prevMetroLine, prevStops);
+        travelSegments.push({
+            start: path[path.length-1],
+            line: null,
+            stops: 0,
+        });
+        
+        let [startX, startY] = [10, 10];
+        console.log(travelSegments);
+        return (
+            <svg className="travel-path" height={500}>
+                {travelSegments.length !== 0 ? (
+                    travelSegments.map((segment, index) => {
+                        const updatedStartY = startY + index * 35;
+                        return (
+                            <g key={index}>
+                                {
+                                    segment.line !== null ?
+                                        <line
+                                        key={"a"}
+                                        x1={startX}
+                                        x2={startX}
+                                        y1={updatedStartY}
+                                        y2={updatedStartY+35}
+                                        stroke={this.state.railwayLines[segment.line]}
+                                        strokeWidth={SVG_CONNECTION_STROKE_WIDTH}
+                                    />
+                                    : null
+                                }
+                                
+                                <text
+                                    x={startX + 10}
+                                    y={updatedStartY + SVG_STATION_RADIUS - 2}
+                                    fontSize={SVG_STATION_NAME_FONT_SIZE}
+                                    fill={SVG_STATION_NAME_FONT_COLOR}
+                                    textAnchor="bottom"
+                                >
+                                    {
+                                        segment.stops !== 0 ? (segment.start + " (" + segment.stops + " stop" + (segment.stops > 1 ? "s" : "") + ")") : segment.start
+                                    }
+                                </text>
+                                <circle cx={startX} cy={updatedStartY} r={SVG_STATION_RADIUS} fill={SVG_STATION_OUTER_CIRCLE_STROKE} />
+                                <circle cx={startX} cy={updatedStartY} r={SVG_STATION_RADIUS - 2} fill={SVG_STATION_INNER_CIRCLE_STROKE} />
+                            </g>
+                        );
+                    })
+                ) : null}
+            </svg>
+        );          
+    }
+    
     
     render() {
         const { stationNames, path, pathDistance } = this.state;
@@ -204,23 +297,28 @@ class App extends Component {
                         </button>
                     </div>
                     <br></br>
-                    <p>Upon entering all fields, the planner will perform the following:</p>
-                    <ol>
-                        <li>Visualize the order of exploring station connections, starting from stations
-                        around the starting station. <b>Connections will have increased opacity</b>.</li>
-                        <li>Visualize the selected path, <b>with 100% opacity</b>.</li>
-                    </ol>
+                    <details>
+                        <summary>Upon entering all fields, the planner will perform the following:</summary>
+                        <ol>
+                            <li>Visualize the order of exploring station connections, starting from stations
+                            around the starting station. <b>Connections will have increased opacity</b>.</li>
+                            <li>Visualize the selected path, <b>with 100% opacity</b>.</li>
+                        </ol>
+                    </details>
+                    
                     <br></br>
-                    <p>Notes:</p>
+                    <details>
+                        <summary>Notes:</summary>
                         <ol>
                             <li>The aim of this planner is to find and visualize the <b>shortest distance path</b>
-                                , not the shortest duration path.</li>
+                            , not the shortest duration path.</li>
                             <li>The planner assumes that:</li>
                             <ul>
                                 <li>Waiting times between station transits are neglible.</li>
                                 <li>All metro lines are always available (i.e. not real-time).</li>
                             </ul>
                         </ol>
+                    </details>
                     <br></br>
                     <hr></hr>
                     <br></br>
@@ -240,12 +338,7 @@ class App extends Component {
                     </div>
                     <br></br>
                     <div className="search-results">
-                        <h2>Path:</h2>
-                            <ul>
-                            {path.map((station, index) => (
-                                <li key={index}>{station}</li>
-                            ))}
-                        </ul>
+                        {path.length !== 0 && this.renderTravelPlan()}
                         {pathDistance !== null && <p>{pathDistance}</p>}
                     </div>
                 </div>
