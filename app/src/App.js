@@ -187,9 +187,6 @@ class App extends Component {
                 line: prevMetroLine,
                 stops: prevStops,
             });
-            prevMetroLine = metroLine;
-            prevStart = start;
-            prevStops = 1;
         };
 
         for (let i = 1; i < path.length; i++) {
@@ -201,10 +198,13 @@ class App extends Component {
             if (i === 1) {
                 prevMetroLine = metroLines[0];
                 prevStart = start;
-            } else if (metroLines[0] === prevMetroLine) {
+            } else if (metroLines.includes(prevMetroLine)) {
                 prevStops += 1;
-            } else if (metroLines[0] !== prevMetroLine) {
+            } else if (!metroLines.includes(prevMetroLine)) {
                 processTransit(start, metroLines[0], prevStops);
+                prevMetroLine = metroLines[0];
+                prevStart = start;
+                prevStops = 1;
             }
         }
 
