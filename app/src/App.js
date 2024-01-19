@@ -1,34 +1,24 @@
+// Core imports
 import React, { Component } from "react";
-import Select from "react-select";
+
+// Components
 import MapCanvas from "./utilities/map_assets/MapCanvas";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGithub } from '@fortawesome/free-brands-svg-icons'
-import "./css/app.css";
-
+import MetroMapAssetsManager from "./utilities/MetroMapAssetsManager";
 import Dijkstra from "./utilities/algorithms/Dijkstra"
+import SelectDropdown from "./utilities/components/SelectDropdown";
 
+// Constants
 import {
     SVG_CONNECTION_OPACITY_VISITED,
     SVG_CONNECTION_OPACITY_UNVISITED,
     SVG_CONNECTION_OPACITY_SELECTED,
     VISUALISE_PATH_NODE_DELAY,
 } from "./utilities/Constants";
-import MetroMapAssetsManager from "./utilities/MetroMapAssetsManager";
 
-// React-select component styling
-const customStyles = {
-    control: (provided, state) => ({
-        ...provided,
-        border: '1px solid #ccc',
-        borderRadius: '4px',
-        boxShadow: state.isFocused ? '0 0 0 2px rgba(0, 123, 255, 0.6)' : null,
-    }),
-    option: (provided, state) => ({
-        ...provided,
-        backgroundColor: state.isSelected ? '#007bff' : null,
-        color: state.isSelected ? 'white' : 'black',
-    }),
-};
+// Styling
+import "./css/app.css";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faGithub } from '@fortawesome/free-brands-svg-icons'
 
 
 
@@ -37,20 +27,23 @@ class App extends Component {
     constructor(props) {
         super(props);
 
+        this.algorithmOptions = ["Dijkstra"];
+
         this.state = {
+            debugger: null,                         // Logs error in the search panel
+
+            // Visualization variables
+            isVisualizingExploredPath: false,
+            isVisualizingSelectedPath: false,
+            isVisualized: false,
+
+            // User-dependent variables
             selectedStartStation: null,             // Input variable for start station
             selectedEndStation: null,               // Input variable for input end station
             selectedAlgorithm: null,                // Variable for algorithm selection
-            stationNames: [],                       // A collection of metro station names
-            stationObjects: [],                           // Array of Station.js objects
-            railwayLinesColourMap: null,            // Variable for metro line colour mappings
             selectedAlgoPath: [],                   // Array of station names to show minimum distance path
             selectedAlgoPathDistance: null,         // Variable for mimimum distance
             selectedAlgoDuration:  null,            // Variable for measuring time elapsed for algorithm
-            debugger: null,                         // Logs error in the search panel
-            isVisualisingExploredPath: false,
-            isVisualisingSelectedPath: false,
-            isVisualised: false,
         };
 
         this.metroMapAssetsManager = new MetroMapAssetsManager(
@@ -63,10 +56,11 @@ class App extends Component {
     // Initialize all metro map assets once the application has started.
     async componentDidMount() {
         await this.metroMapAssetsManager.parseCSVFiles();
+
+        // Mount MetroMapAssetsManager to the required classes.
         this.metroMapBackendCanvas.loadAssets(this.metroMapAssetsManager);
         this.setState({
             stationNames: this.metroMapAssetsManager.getStationNames(),
-            stationObjects: this.metroMapAssetsManager.getStationObjects(),
         })
     }
 
@@ -113,7 +107,7 @@ class App extends Component {
             selectedAlgoDuration: null,
             debugger: null,
             isVisualisingConnectionOrder: false,
-            isVisualisingSelectedPath: false,
+            isVisualizingSelectedPath: false,
         })
     }
 
@@ -123,7 +117,7 @@ class App extends Component {
             selectedAlgoPath: path,
             selectedAlgoPathDistance: distance,
             selectedAlgoDuration: duration,
-            isVisualised: true,
+            isVisualized: true,
         });
     }
 
@@ -163,7 +157,7 @@ class App extends Component {
         if (this.isSearchFormValid()) {
             this.resetStates();
             this.resetVisualisedConnections();
-            this.setState({ isVisualised: false });       
+            this.setState({ isVisualized: false });       
             
             // Run all available algorithms and fetch the results and metrics (to be used for comparison).
             const algorithmResults = this.executeAlgorithms(selectedStartStation, selectedEndStation);
@@ -173,7 +167,7 @@ class App extends Component {
             this.setAlgorithmResultState(path, distance, duration);
 
             // Move viewer to start station position on map
-            const startStationObj = this.state.stationObjects[selectedStartStation];
+            const startStationObj = this.metroMapAssetsManager.stations[selectedStartStation];
             this.metroMapBackendCanvas.panToLocation(startStationObj.x, startStationObj.y);
             await this.animateConnections("exploredPath", visitedConnectionsOrder, SVG_CONNECTION_OPACITY_VISITED);
             await this.animateConnections("selectedPath", path, SVG_CONNECTION_OPACITY_SELECTED);
@@ -187,15 +181,15 @@ class App extends Component {
     // is an array of objects.
     animateConnections = async (type, connectionsOrder, opacity) => {
         const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-        const isVisualisingExploredPath = type === "exploredPath";
-        const isVisualisingSelectedPath = !isVisualisingExploredPath;
+        const isVisualizingExploredPath = type === "exploredPath";
+        const isVisualizingSelectedPath = !isVisualizingExploredPath;
         this.setState({
-            isVisualisingExploredPath,
-            isVisualisingSelectedPath,
+            isVisualizingExploredPath,
+            isVisualizingSelectedPath,
         });
     
         for (let i = 0; i < connectionsOrder.length; i++) {
-            let [start, end] = isVisualisingExploredPath
+            let [start, end] = isVisualizingExploredPath
                 ? [connectionsOrder[i].start, connectionsOrder[i].end]
                 : [connectionsOrder[i], connectionsOrder[i + 1]];
             const connections = { ...this.metroMapAssetsManager.connections };
@@ -240,30 +234,26 @@ class App extends Component {
                     <br></br>
                     <div className="search-menu">
                         <div className="search-box-start-station">
-                            <Select
-                                options={this.state.stationNames.map((station) => ({ value: station, label: station }))}
-                                onChange={(selectedOption) => this.setState({ selectedStartStation: selectedOption ? selectedOption.value : "" })}
+                            <SelectDropdown
+                                options={this.metroMapAssetsManager.getStationNames()}
+                                onChange={(selectedOption) =>
+                                    this.setState({ selectedStartStation: selectedOption ? selectedOption.value : "" })
+                                }
                                 placeholder="Select Start Station"
-                                isSearchable
-                                styles={customStyles}
                             />
                         </div>
                         <div className="search-box-end-station">
-                            <Select
-                                options={this.state.stationNames.map((station) => ({ value: station, label: station }))}
+                            <SelectDropdown
+                                options={this.metroMapAssetsManager.getStationNames()}
                                 onChange={(selectedOption) => this.setState({ selectedEndStation: selectedOption ? selectedOption.value : "" })}
                                 placeholder="Select End Station"
-                                isSearchable
-                                styles={customStyles}
                             />
                         </div>
                         <div className="search-box-algorithm">
-                            <Select
-                                options={['Dijkstra'].map((algo) => ({value: algo, label: algo }))}
+                            <SelectDropdown
+                                options={this.algorithmOptions}
                                 onChange={(algorithmOption) => this.setState({ selectedAlgorithm: algorithmOption.value })}
                                 placeholder="Select algorithm"
-                                isSearchable
-                                styles={customStyles}
                             />
                         </div>
                         <button onClick={this.handleSearchClick} className="search-btn">
@@ -303,10 +293,10 @@ class App extends Component {
                         :null
                     }
                     <div className="exploration-status">
-                        { this.state.isVisualisingExploredPath ? <p>Exploring connections...</p> : null }
+                        { this.state.isVisualizingExploredPath ? <p>Exploring connections...</p> : null }
                     </div>
                     <div className="visualisation-status">
-                        { this.state.isVisualisingSelectedPath ? <p>Visualised optimal path.</p> : null }
+                        { this.state.isVisualizingSelectedPath ? <p>Visualised optimal path.</p> : null }
                     </div>
                     <br></br>
                     <div className="search-results">
