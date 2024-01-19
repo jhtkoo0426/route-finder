@@ -54,6 +54,14 @@ class BaseAlgorithm {
     constructPath(previousStation, startStation, endStation) {
         throw new Error("constructPath method must be implemented by subclasses, returning a boolean value");
     }
+
+    runAlgorithm(startStationName, endStationName) {
+        const startTime = performance.now();
+        const result = this.searchPath(startStationName, endStationName);
+        const endTime = performance.now();
+        result['duration'] = endTime - startTime;
+        return result;
+    }
 }
 
 

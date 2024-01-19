@@ -1,7 +1,6 @@
 import ConnectionsCSVParser from "./parsers/csv_parsers/ConnectionCSVParser";
 import RailwaysCSVParser from "./parsers/csv_parsers/RailwaysCSVParser";
 import StationsCSVParser from "./parsers/csv_parsers/StationCSVParser";
-
 import Dijkstra from "./algorithms/Dijkstra";
 
 
@@ -39,11 +38,12 @@ class MetroMapBackend {
     }
 
     // Choose searching algorithms
-    executeAlgorithm(startStationName, endStationName, algorithmOption) {
-        if (algorithmOption.value === 'Dijkstra') {
-            this.algorithm = new Dijkstra(this.stations);
+    executeAlgorithms(startStationName, endStationName) {
+        const dijkstra = new Dijkstra(this.stations);
+        const algorithmResults = {
+            "Dijkstra": dijkstra.runAlgorithm(startStationName, endStationName)
         }
-        return this.algorithm.searchPath(startStationName, endStationName);
+        return algorithmResults;
     }
 
     // Utility methods
