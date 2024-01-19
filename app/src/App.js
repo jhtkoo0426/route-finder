@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import Select from "react-select";
-import MetroMapBackend from "./utilities/MetroMapBackend";
 import MapCanvas from "./utilities/map_assets/MapCanvas";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import "./css/app.css";
+
+import Dijkstra from "./utilities/algorithms/Dijkstra"
 
 import {
     SVG_CONNECTION_OPACITY_VISITED,
@@ -12,6 +13,7 @@ import {
     SVG_CONNECTION_OPACITY_SELECTED,
     VISUALISE_PATH_NODE_DELAY,
 } from "./utilities/Constants";
+import MetroMapAssetsManager from "./utilities/MetroMapAssetsManager";
 
 // React-select component styling
 const customStyles = {
@@ -50,28 +52,57 @@ class App extends Component {
             isVisualisingSelectedPath: false,
             isVisualised: false,
         };
-        
-        this.metroMap = new MetroMapBackend(
+
+        this.metroMapAssetsManager = new MetroMapAssetsManager(
             process.env.PUBLIC_URL + '/data/connections.csv',
             process.env.PUBLIC_URL + '/data/stations.csv',
             process.env.PUBLIC_URL + '/data/railways.csv',
-        );
+        )
     }
 
     // Initialize all metro map assets once the application has started.
     async componentDidMount() {
-        await this.metroMap.parseCSVFiles();
-        const names = this.metroMap.getStationNames();
-        const stationObjects = this.metroMap.getStationObjects();
-        const railwayLinesColourMap = this.metroMap.getRailwayLineColourMap();
-
+        await this.metroMapAssetsManager.parseCSVFiles();
+        this.metroMapBackendCanvas.loadAssets(this.metroMapAssetsManager);
         this.setState({
-            stationNames: names,
-            stationObjects: stationObjects,
-            railwayLinesColourMap: railwayLinesColourMap,
-        });
-        this.metroMap.visualizeMetroMap(this.metroMapCanvas);
+            stationNames: this.metroMapAssetsManager.getStationNames(),
+            stationObjects: this.metroMapAssetsManager.getStationObjects(),
+        })
     }
+
+    // Path-finding methods
+    executeAlgorithms(startStationName, endStationName) {
+        const dijkstra = new Dijkstra(this.metroMapAssetsManager.stations);
+        const algorithmResults = {
+            "Dijkstra": dijkstra.runAlgorithm(startStationName, endStationName)
+        }
+        return algorithmResults;
+    }
+    
+    // Returns an optimised path with minimum transits.
+    generateTravelSegments(path) {
+        if (!path || path.length === 0) return null;
+    
+        const segments = [];
+        let [start, line, stops] = [null, null, 0];    
+        for (let i = 0; i < path.length - 1; i++) {
+            const current = path[i];
+            const next = path[i + 1];
+            const connection = this.metroMapAssetsManager.connections[`${current}-${next}`] || this.metroMapAssetsManager.connections[`${next}-${current}`];
+            const lines = Array.from(connection.metroLines);
+    
+            if (!start) [start, line] = [current, lines[0]];
+            if (!lines.includes(line)) {
+                segments.push({ start, line, stops });
+                [start, line, stops] = [current, lines[0], 1];
+            } else {
+                stops++;
+            }
+        }
+        segments.push({ start, line, stops });
+        segments.push({ start: path[path.length-1], line: null, stops: 0 });
+        return segments;
+    }  
 
     // State-setting methods
     // Resets states of visualization state variables. Used whenever a new search query is made.
@@ -111,7 +142,7 @@ class App extends Component {
 
     // Resets the opacity of Connection object SVG representations in the MapCanvas.
     resetVisualisedConnections() {     
-        const connections = { ...this.metroMapCanvas.state.connections };
+        const connections = { ...this.metroMapAssetsManager.connections };
         Object.keys(connections).forEach((key) => {
             // Revert opacity to default (UNVISITED)
             connections[key].state.opacity = SVG_CONNECTION_OPACITY_UNVISITED;
@@ -135,7 +166,7 @@ class App extends Component {
             this.setState({ isVisualised: false });       
             
             // Run all available algorithms and fetch the results and metrics (to be used for comparison).
-            const algorithmResults = this.metroMap.executeAlgorithms(selectedStartStation, selectedEndStation);
+            const algorithmResults = this.executeAlgorithms(selectedStartStation, selectedEndStation);
 
             // Only update the path, distance and duration states to that of the selected algorithm.
             const { distance, path, visitedConnectionsOrder, duration } = algorithmResults[selectedAlgorithm];
@@ -143,7 +174,7 @@ class App extends Component {
 
             // Move viewer to start station position on map
             const startStationObj = this.state.stationObjects[selectedStartStation];
-            this.metroMapCanvas.panToLocation(startStationObj.x, startStationObj.y);
+            this.metroMapBackendCanvas.panToLocation(startStationObj.x, startStationObj.y);
             await this.animateConnections("exploredPath", visitedConnectionsOrder, SVG_CONNECTION_OPACITY_VISITED);
             await this.animateConnections("selectedPath", path, SVG_CONNECTION_OPACITY_SELECTED);
         } else {
@@ -167,25 +198,25 @@ class App extends Component {
             let [start, end] = isVisualisingExploredPath
                 ? [connectionsOrder[i].start, connectionsOrder[i].end]
                 : [connectionsOrder[i], connectionsOrder[i + 1]];
-            const connections = { ...this.metroMapCanvas.state.connections };
+            const connections = { ...this.metroMapAssetsManager.connections };
             const connectionKey = connections[`${start}-${end}`] ? `${start}-${end}` : `${end}-${start}`;
             if (connections[connectionKey]) {
                 connections[connectionKey].state.opacity = opacity;
-                this.metroMapCanvas.setState({ connections });
+                this.metroMapBackendCanvas.setState({ connections });
             }
             await delay(VISUALISE_PATH_NODE_DELAY);
         }
     };  
 
     renderTravelPlan(travelPath) {
-        const travelSegments = this.metroMap.generateTravelSegments(travelPath);
+        const travelSegments = this.generateTravelSegments(travelPath);
         let [startX, startY] = [10, 10];
 
         return (
             <svg className="travel-path" height={600}>
                 {travelSegments.length !== 0 && travelSegments.map((segment, index) => {
                     const updatedStartY = startY + index * 45;
-                    return this.metroMapCanvas.renderTravelPathSegment(segment, index, startX, updatedStartY);
+                    return this.metroMapBackendCanvas.renderTravelPathSegment(segment, index, startX, updatedStartY);
                 })}
             </svg>
         );
@@ -297,7 +328,7 @@ class App extends Component {
                     </div>
                 </div>
                 <div className="metro-map-container" style={{  height: '100vh', overflow: 'hidden', position: 'relative' }}>
-                    <MapCanvas ref={(mapCanvas) => (this.metroMapCanvas = mapCanvas)}/>
+                    <MapCanvas ref={(mapCanvas) => (this.metroMapBackendCanvas = mapCanvas)}/>
                 </div>
             </div>
         );

@@ -33,7 +33,7 @@ class MapCanvas extends PureComponent {
             value: INITIAL_VALUE,                   // ReactSVGPanZoom component config
             stations: [],                           // Collection of all metro stations
             connections: [],                        // Collection of all connections between metro stations
-            railwayLines: new Set(),                // Colour map for metro lines
+            railwayLinesColourMap: new Set(),                // Colour map for metro lines
             screenWidth: window.innerWidth,
             screenHeight: window.innerHeight,
             mapWidth: window.innerWidth * 0.8,      // Scale factor adjusts to grid width
@@ -66,17 +66,13 @@ class MapCanvas extends PureComponent {
         window.removeEventListener('resize', this.handleResize);
     }
 
-    loadRailwayLines = (railwayLinesList) => {
-        this.setState({ railwayLines: railwayLinesList });
-    };
-
-    loadStations = (stationsList) => {
-        this.setState({ stations: stationsList });
-    };
-
-    loadConnections = (connectionsList) => {
-        this.setState({ connections: connectionsList });
-    };
+    loadAssets(assetManager) {
+        this.setState({
+            stations: assetManager.stations,
+            connections: assetManager.connections,
+            railwayLinesColourMap: assetManager.railwayLinesColourMap,
+        })
+    }
 
     renderStations() {
         return Object.entries(this.state.stations).map(([stationName, stationObj]) => (
@@ -86,7 +82,7 @@ class MapCanvas extends PureComponent {
 
     renderConnections() {
         return Object.entries(this.state.connections).map(([connectionKey, connection]) => (
-            connection.renderConnection(this.state.railwayLines)
+            connection.renderConnection(this.state.railwayLinesColourMap)
         ));
     }
 
@@ -118,9 +114,9 @@ class MapCanvas extends PureComponent {
     renderRailwayLinesLegend() {
         return (
             <div className='map-legend'>
-                {Object.keys(this.state.railwayLines).map((metroLineName, index) => (
+                {Object.keys(this.state.railwayLinesColourMap).map((metroLineName, index) => (
                     <div key={metroLineName}>
-                        <div style={{ backgroundColor: this.state.railwayLines[metroLineName] }}></div>
+                        <div style={{ backgroundColor: this.state.railwayLinesColourMap[metroLineName] }}></div>
                         <p>{metroLineName}</p>
                     </div>
                 ))}
@@ -163,7 +159,7 @@ class MapCanvas extends PureComponent {
     renderTravelPathSegment(segment, index, startX, updatedStartY) {
         return (
             <g key={index}>
-                {segment.line !== null && this.renderTravelPathLine(startX, updatedStartY, this.state.railwayLines[segment.line])}
+                {segment.line !== null && this.renderTravelPathLine(startX, updatedStartY, this.state.railwayLinesColourMap[segment.line])}
                 {this.renderTravelPathStationText(startX, updatedStartY, segment.start, SVG_STATION_NAME_FONT_SIZE, SVG_STATION_NAME_FONT_COLOR, "start")}
                 {this.renderTravelPathStationText(startX, updatedStartY + SVG_STATION_RADIUS * 3.5, segment.stops !== 0 ? `${segment.line} (${segment.stops} stop${segment.stops > 1 ? 's' : ''})` : null, SVG_STATION_NAME_FONT_SIZE, SVG_STATION_NAME_FONT_COLOR, "start")}
                 {this.renderTravelPathStationCircles(startX, updatedStartY)}

@@ -8,9 +8,8 @@ import CSVParser from "../BaseCSVParser";
 // Column 2: Latitude coordinates
 // Column 3: Longitude coordinates
 class RailwaysCSVParser extends CSVParser {
-    async parse(railwayLines) {
-        // @params railwayLines (hashmap): Stores details of each railway, including
-        // name and colour.
+    async parse() {
+        let railwayLines = new Map();
         const csvData = await super.parse();    // The base parse method splits rows by the \n symbol.
 
         csvData.forEach(row => {
