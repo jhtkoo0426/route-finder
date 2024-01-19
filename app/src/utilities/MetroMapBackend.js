@@ -2,6 +2,7 @@ import ConnectionsCSVParser from "./parsers/csv_parsers/ConnectionCSVParser";
 import RailwaysCSVParser from "./parsers/csv_parsers/RailwaysCSVParser";
 import StationsCSVParser from "./parsers/csv_parsers/StationCSVParser";
 import Dijkstra from "./algorithms/Dijkstra";
+import CSVParserFactory from "./parsers/CSVParserFactory";
 
 
 
@@ -20,13 +21,12 @@ class MetroMapBackend {
 
     // Parse all resource files to load assets for visualization.
     async parseCSVFiles() {
-        const railwaysCSVParser     = new RailwaysCSVParser(this.railwaysFilePath);
+        const csvParserFactory = new CSVParserFactory();
+        const railwaysCSVParser = csvParserFactory.createParser('railways', this.railwaysFilePath);
+        const stationsCSVParser = csvParserFactory.createParser('stations', this.stationsFilePath);
+        const connectionsCSVParser = csvParserFactory.createParser('connections', this.connectionsFilePath);
         this.railwayLines = await railwaysCSVParser.parse(this.railwayLines);
-
-        const stationsCSVParser     = new StationsCSVParser(this.stationsFilePath);
         this.stations = await stationsCSVParser.parse(this.stations);
-
-        const connectionsCSVParser  = new ConnectionsCSVParser(this.connectionsFilePath);
         [this.stations, this.connections] = await connectionsCSVParser.parse(this.stations);
     }
 

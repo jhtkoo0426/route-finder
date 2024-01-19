@@ -63,7 +63,30 @@ I applied sesveral design patterns in this project to offer solutions for common
     ```
     
     </details>
+    <br>
 
+2. **Factory**: Extending the above use case, I created a common interface (`CSVParserFactory`) to create different CSV parseres based on the type of data to be parsed (railways, stations or connections CSV files). Each specific parser can then handle the details of parsing that particular type of data. This allows me to encapsulate the object creation logic in the factory, and the application code doesn't need to worry about which parser to instantiate.
+   <br>
+   <details>
+    <summary>CSVParserFactory.js</summary>
+    
+    ```
+    class CSVParserFactory {
+        createParser(type, filePath) {
+            switch (type) {
+                case 'stations':
+                    return new StationsCSVParser(filePath);
+                case 'connections':
+                    return new ConnectionsCSVParser(filePath);
+                // Add more cases for other types if needed
+                default:
+                    throw new Error('Invalid parser type');
+            }
+        }
+    }
+    ```
+
+   </details>
 
 ## Challenges
 1. While translating latitude/longitude coordinates of stations into Cartesian coordinates may provide an approximation of their true positions, the final outcome will deviate from official metro maps. This discrepancy arises because official maps prioritize clarity over accurately depicting the precise positions of stations in reality.
