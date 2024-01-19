@@ -10,7 +10,6 @@ import SelectDropdown from "./utilities/components/SelectDropdown";
 // Constants
 import {
     SVG_CONNECTION_OPACITY_VISITED,
-    SVG_CONNECTION_OPACITY_UNVISITED,
     SVG_CONNECTION_OPACITY_SELECTED,
     VISUALISE_PATH_NODE_DELAY,
 } from "./utilities/Constants";
@@ -108,7 +107,9 @@ class App extends Component {
             debugger: null,
             isVisualisingConnectionOrder: false,
             isVisualizingSelectedPath: false,
+            isVisualized: false,
         })
+        this.metroMapAssetsManager.resetConnectionsOpacities();
     }
 
     // Updates the state of algorithm state variables. Used whenever the search form is sent.
@@ -132,32 +133,14 @@ class App extends Component {
         this.setState({
             debugger: "The following fields are not selected: " + missingFields.filter(Boolean).join(', '),
         });
-    }    
-
-    // Resets the opacity of Connection object SVG representations in the MapCanvas.
-    resetVisualisedConnections() {     
-        const connections = { ...this.metroMapAssetsManager.connections };
-        Object.keys(connections).forEach((key) => {
-            // Revert opacity to default (UNVISITED)
-            connections[key].state.opacity = SVG_CONNECTION_OPACITY_UNVISITED;
-        });
-    }
-
-    // Auxiliary methods
-    isSearchFormValid() {
-        return this.state.selectedStartStation !== null &&
-            this.state.selectedEndStation !== null &&
-            this.state.selectedAlgorithm !== null;
     }
 
     // Core app methods
     // Performs path-finding based on user-selected origin & destination stations and path-finding algorithm.
     handleSearchClick = async () => {
         const { selectedStartStation, selectedEndStation, selectedAlgorithm } = this.state;
-        if (this.isSearchFormValid()) {
+        if (this.state.selectedStartStation !== null && this.state.selectedEndStation !== null && this.state.selectedAlgorithm !== null) {
             this.resetStates();
-            this.resetVisualisedConnections();
-            this.setState({ isVisualized: false });       
             
             // Run all available algorithms and fetch the results and metrics (to be used for comparison).
             const algorithmResults = this.executeAlgorithms(selectedStartStation, selectedEndStation);

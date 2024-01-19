@@ -1,5 +1,5 @@
 import CSVParserFactory from "./parsers/CSVParserFactory";
-
+import { SVG_CONNECTION_OPACITY_UNVISITED } from "./Constants";
 
 
 class MetroMapAssetsManager {
@@ -31,6 +31,13 @@ class MetroMapAssetsManager {
 
     getStationObjects() {
         return this.stations;
+    }
+
+    // Resets the opacity of Connection objects
+    resetConnectionsOpacities() {
+        Object.keys(this.connections).forEach((key) => {
+            this.connections[key].state.opacity = SVG_CONNECTION_OPACITY_UNVISITED
+        })
     }
 }
 
