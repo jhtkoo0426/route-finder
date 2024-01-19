@@ -11,6 +11,12 @@ import {
     SVG_GRID_LINE_GAP_INTERVAL,
     SVG_VIEWER_INITIAL_PAN_X,
     SVG_VIEWER_INITIAL_PAN_Y,
+    SVG_STATION_RADIUS,
+    SVG_STATION_NAME_FONT_SIZE,
+    SVG_STATION_NAME_FONT_COLOR,
+    SVG_STATION_INNER_CIRCLE_STROKE,
+    SVG_STATION_OUTER_CIRCLE_STROKE,
+    SVG_CONNECTION_STROKE_WIDTH,
 } from '../Constants';
 
 
@@ -119,6 +125,49 @@ class MapCanvas extends PureComponent {
                     </div>
                 ))}
             </div>
+        );
+    }
+
+    
+    renderTravelPathLine(x, startY, lineColor) {
+        return (
+            <line
+                x1={x}
+                x2={x}
+                y1={startY}
+                y2={startY + 45}
+                stroke={lineColor}
+                strokeWidth={SVG_CONNECTION_STROKE_WIDTH}
+            />
+        );
+    }
+
+    renderTravelPathStationText(x, startY, text, fontSize, fill, textAnchor) {
+        if (!text) { return null; }
+        return (
+            <text x={x + 10} y={startY + SVG_STATION_RADIUS - 2} fontSize={fontSize} fill={fill} textAnchor={textAnchor}>
+                <tspan>{text}</tspan>
+            </text>
+        );
+    }
+
+    renderTravelPathStationCircles(x, startY) {
+        return (
+            <g>
+                <circle cx={x} cy={startY} r={SVG_STATION_RADIUS} fill={SVG_STATION_OUTER_CIRCLE_STROKE} />
+                <circle cx={x} cy={startY} r={SVG_STATION_RADIUS - 2} fill={SVG_STATION_INNER_CIRCLE_STROKE} />
+            </g>
+        );
+    }
+
+    renderTravelPathSegment(segment, index, startX, updatedStartY) {
+        return (
+            <g key={index}>
+                {segment.line !== null && this.renderTravelPathLine(startX, updatedStartY, this.state.railwayLines[segment.line])}
+                {this.renderTravelPathStationText(startX, updatedStartY, segment.start, SVG_STATION_NAME_FONT_SIZE, SVG_STATION_NAME_FONT_COLOR, "start")}
+                {this.renderTravelPathStationText(startX, updatedStartY + SVG_STATION_RADIUS * 3.5, segment.stops !== 0 ? `${segment.line} (${segment.stops} stop${segment.stops > 1 ? 's' : ''})` : null, SVG_STATION_NAME_FONT_SIZE, SVG_STATION_NAME_FONT_COLOR, "start")}
+                {this.renderTravelPathStationCircles(startX, updatedStartY)}
+            </g>
         );
     }
     

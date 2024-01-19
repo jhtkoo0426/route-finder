@@ -1,18 +1,12 @@
 import React, { Component } from "react";
 import Select from "react-select";
 import MetroMapBackend from "./utilities/MetroMapBackend";
-import MapCanvas from "./utilities/map/MapCanvas";
+import MapCanvas from "./utilities/map_assets/MapCanvas";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import "./css/app.css";
 
 import {
-    SVG_STATION_RADIUS,
-    SVG_STATION_NAME_FONT_SIZE,
-    SVG_STATION_NAME_FONT_COLOR,
-    SVG_STATION_INNER_CIRCLE_STROKE,
-    SVG_STATION_OUTER_CIRCLE_STROKE,
-    SVG_CONNECTION_STROKE_WIDTH,
     SVG_CONNECTION_OPACITY_VISITED,
     SVG_CONNECTION_OPACITY_UNVISITED,
     SVG_CONNECTION_OPACITY_SELECTED,
@@ -42,17 +36,17 @@ class App extends Component {
         super(props);
 
         this.state = {
-            startStation: null,                     // Input variable for start station
-            endStation: null,                       // Input variable for input end station
-            stationNames: [],                       // A collection of metro station names
-            stations: [],                           // Array of Station objects
-            path: [],                               // Array of station names to show minimum distance path
-            pathDistance: null,                     // Variable for mimimum distance
-            duration:  null,                        // Variable for measuring time elapsed for algorithm
+            selectedStartStation: null,             // Input variable for start station
+            selectedEndStation: null,               // Input variable for input end station
             selectedAlgorithm: null,                // Variable for algorithm selection
+            stationNames: [],                       // A collection of metro station names
+            stationObjects: [],                           // Array of Station.js objects
+            railwayLinesColourMap: null,            // Variable for metro line colour mappings
+            selectedAlgoPath: [],                   // Array of station names to show minimum distance path
+            selectedAlgoPathDistance: null,         // Variable for mimimum distance
+            selectedAlgoDuration:  null,            // Variable for measuring time elapsed for algorithm
             debugger: null,                         // Logs error in the search panel
-            railwayLines: null,                     // Variable for metro line colour mappings
-            isVisualisingConnectionOrder: false,
+            isVisualisingExploredPath: false,
             isVisualisingSelectedPath: false,
             isVisualised: false,
         };
@@ -64,233 +58,137 @@ class App extends Component {
         );
     }
 
+    // Initialize all metro map assets once the application has started.
     async componentDidMount() {
         await this.metroMap.parseCSVFiles();
         const names = this.metroMap.getStationNames();
         const stationObjects = this.metroMap.getStationObjects();
-        const railwayLinesColourMap = this.metroMap.getMetroLineColours();
+        const railwayLinesColourMap = this.metroMap.getRailwayLineColourMap();
 
         this.setState({
             stationNames: names,
-            stations: stationObjects,
-            railwayLines: railwayLinesColourMap,
+            stationObjects: stationObjects,
+            railwayLinesColourMap: railwayLinesColourMap,
         });
         this.metroMap.visualizeMetroMap(this.metroMapCanvas);
     }
 
+    // State-setting methods
+    // Resets states of visualization state variables. Used whenever a new search query is made.
     resetStates() {
         this.setState({
-            path: [],
-            pathDistance: null,
-            duration: null,
+            selectedAlgoPath: [],
+            selectedAlgoPathDistance: null,
+            selectedAlgoDuration: null,
             debugger: null,
             isVisualisingConnectionOrder: false,
             isVisualisingSelectedPath: false,
         })
     }
 
-    resetVisualisedConnections() {        
-        // Reset connection opacities in MapCanvas
-        const connections = { ...this.metroMapCanvas.state.connections };
-        Object.keys(connections).forEach((key) => {
-            connections[key].state.opacity = SVG_CONNECTION_OPACITY_UNVISITED;  // Set opacity back to default (1)
+    // Updates the state of algorithm state variables. Used whenever the search form is sent.
+    setAlgorithmResultState(path, distance, duration) {
+        this.setState({
+            selectedAlgoPath: path,
+            selectedAlgoPathDistance: distance,
+            selectedAlgoDuration: duration,
+            isVisualised: true,
         });
     }
 
+    // Updates the debugger state to inform users of any missing fields in the search form.
+    setDebuggerState() {
+        const { selectedStartStation, selectedEndStation, selectedAlgorithm } = this.state;
+        const missingFields = [
+            selectedStartStation === null ? "Start station" : "",
+            selectedEndStation === null ? "End station" : "",
+            selectedAlgorithm === null ? "Algorithm" : "",
+        ];
+        this.setState({
+            debugger: "The following fields are not selected: " + missingFields.filter(Boolean).join(', '),
+        });
+    }    
+
+    // Resets the opacity of Connection object SVG representations in the MapCanvas.
+    resetVisualisedConnections() {     
+        const connections = { ...this.metroMapCanvas.state.connections };
+        Object.keys(connections).forEach((key) => {
+            // Revert opacity to default (UNVISITED)
+            connections[key].state.opacity = SVG_CONNECTION_OPACITY_UNVISITED;
+        });
+    }
+
+    // Auxiliary methods
+    isSearchFormValid() {
+        return this.state.selectedStartStation !== null &&
+            this.state.selectedEndStation !== null &&
+            this.state.selectedAlgorithm !== null;
+    }
+
+    // Core app methods
+    // Performs path-finding based on user-selected origin & destination stations and path-finding algorithm.
     handleSearchClick = async () => {
-        const { startStation, endStation, selectedAlgorithm } = this.state;
-
-        // Only execute algorithm if all form fields are filled with valid values.
-        if (startStation !== null && endStation !== null && selectedAlgorithm !== null) {
+        const { selectedStartStation, selectedEndStation, selectedAlgorithm } = this.state;
+        if (this.isSearchFormValid()) {
             this.resetStates();
-            if (this.state.isVisualised) {
-                this.resetVisualisedConnections();
-                this.setState({ isVisualised: false })
-            }            
+            this.resetVisualisedConnections();
+            this.setState({ isVisualised: false });       
             
-            // Results of executing the algorithm is a nested hashmap: consists results of
-            // running each available path-finding algorithm
-            const algorithmResults = this.metroMap.executeAlgorithms(startStation, endStation);
+            // Run all available algorithms and fetch the results and metrics (to be used for comparison).
+            const algorithmResults = this.metroMap.executeAlgorithms(selectedStartStation, selectedEndStation);
 
-            // Update the path, distance and duration states to that of the selected algorithm's
-            const selectedAlgorithmResults = algorithmResults[selectedAlgorithm];
-            const { distance, path, visitedConnectionsOrder, duration } = selectedAlgorithmResults;
-            this.setState({
-                path: path,
-                pathDistance: distance,
-                duration: duration,
-                isVisualised: true,
-            });
+            // Only update the path, distance and duration states to that of the selected algorithm.
+            const { distance, path, visitedConnectionsOrder, duration } = algorithmResults[selectedAlgorithm];
+            this.setAlgorithmResultState(path, distance, duration);
 
             // Move viewer to start station position on map
-            const startStationObj = this.state.stations[startStation];
+            const startStationObj = this.state.stationObjects[selectedStartStation];
             this.metroMapCanvas.panToLocation(startStationObj.x, startStationObj.y);
-            await this.animateConnections("connectionsOrder", visitedConnectionsOrder, SVG_CONNECTION_OPACITY_VISITED);
+            await this.animateConnections("exploredPath", visitedConnectionsOrder, SVG_CONNECTION_OPACITY_VISITED);
             await this.animateConnections("selectedPath", path, SVG_CONNECTION_OPACITY_SELECTED);
         } else {
             this.setDebuggerState();
         }
     };
 
-    setDebuggerState() {
-        const { startStation, endStation, selectedAlgorithm } = this.state;
-    
-        const missingFields = [
-            startStation === null ? "Start station" : "",
-            endStation === null ? "End station" : "",
-            selectedAlgorithm === null ? "Algorithm" : "",
-        ];
-    
-        this.setState({
-            debugger: "The following fields are not selected: " + missingFields.filter(Boolean).join(', '),
-        });
-    }    
-
+    // Animate Connection objects in the MapCanvas. There are 2 possible ways to animate connections:
+    // 1) exploredPath - connectionsOrder is a hashmap of objects; 2) selectedPath - connectionsOrder
+    // is an array of objects.
     animateConnections = async (type, connectionsOrder, opacity) => {
         const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-        if (type === "connectionsOrder") {
-            this.setState({
-                isVisualisingConnectionOrder: true,
-                isVisualisingSelectedPath: false,
-            })
-        } else {
-            this.setState({
-                isVisualisingConnectionOrder: false,
-                isVisualisingSelectedPath: true,
-            })
-        }
-
-        for (let i = 0; i < connectionsOrder.length; i++) {
-            const connection = connectionsOrder[i];
-            let start, end;
+        const isVisualisingExploredPath = type === "exploredPath";
+        const isVisualisingSelectedPath = !isVisualisingExploredPath;
+        this.setState({
+            isVisualisingExploredPath,
+            isVisualisingSelectedPath,
+        });
     
-            // connectionsOrder can have two possible data types:
-            // 1. hashmap (with keys=["start", "end"]); 2.array
-            if (type === "connectionsOrder") {  // Hashmap
-                [start, end] = [connectionsOrder[i].start, connectionsOrder[i].end]
-            } else {    // Array
-                start = connection;
-                end = connectionsOrder[i + 1];
-            }
-
+        for (let i = 0; i < connectionsOrder.length; i++) {
+            let [start, end] = isVisualisingExploredPath
+                ? [connectionsOrder[i].start, connectionsOrder[i].end]
+                : [connectionsOrder[i], connectionsOrder[i + 1]];
             const connections = { ...this.metroMapCanvas.state.connections };
-            let connectionKey = connections[`${start}-${end}`] ? `${start}-${end}` : `${end}-${start}`;
+            const connectionKey = connections[`${start}-${end}`] ? `${start}-${end}` : `${end}-${start}`;
             if (connections[connectionKey]) {
                 connections[connectionKey].state.opacity = opacity;
                 this.metroMapCanvas.setState({ connections });
             }
             await delay(VISUALISE_PATH_NODE_DELAY);
         }
-    };
-    
-    generateTravelSegments() {
-        const { path } = this.state;
-        const travelSegments = [];
-        let [prevStart, prevMetroLine, prevStops] = [null, null, 1];
-        if (!path) { return null; }
+    };  
 
-        const processTransit = (prevStops) => {
-            travelSegments.push({
-                start: prevStart,
-                line: prevMetroLine,
-                stops: prevStops,
-            });
-        };
-
-        for (let i = 1; i < path.length; i++) {
-            const [start, end] = [path[i - 1], path[i]];
-            const connections = { ...this.metroMapCanvas.state.connections };
-            const connectionKey = connections[`${start}-${end}`] ? `${start}-${end}` : `${end}-${start}`;
-            const metroLines = Array.from(connections[connectionKey].metroLines);
-
-            if (i === 1) {
-                prevMetroLine = metroLines[0];
-                prevStart = start;
-            } else if (metroLines.includes(prevMetroLine)) {
-                prevStops += 1;
-            } else if (!metroLines.includes(prevMetroLine)) {
-                processTransit(prevStops);
-                prevMetroLine = metroLines[0];
-                prevStart = start;
-                prevStops = 1;
-            }
-        }
-
-        // Call processTransit after the loop to handle the last segment
-        processTransit(prevStops);
-        travelSegments.push({
-            start: path[path.length-1],
-            line: null,
-            stops: 0,
-        });
-
-        return travelSegments;
-    }
-
-    renderTravelPlan() {
-        const travelSegments = this.generateTravelSegments();
+    renderTravelPlan(travelPath) {
+        const travelSegments = this.metroMap.generateTravelSegments(travelPath);
         let [startX, startY] = [10, 10];
 
         return (
             <svg className="travel-path" height={600}>
-                {travelSegments.length !== 0 ? (
-                    travelSegments.map((segment, index) => {
-                        const updatedStartY = startY + index * 45;
-                        return (
-                            <g key={index}>
-                                {segment.line !== null ? (
-                                    <>
-                                        <line
-                                            key={"a"}
-                                            x1={startX}
-                                            x2={startX}
-                                            y1={updatedStartY}
-                                            y2={updatedStartY + 45}
-                                            stroke={this.state.railwayLines[segment.line]}
-                                            strokeWidth={SVG_CONNECTION_STROKE_WIDTH}
-                                        />
-                                    </>
-                                ) : null}
-
-                                {/* Text for transiting station name */}
-                                <text
-                                    x={startX + 10}
-                                    y={updatedStartY + SVG_STATION_RADIUS - 2}
-                                    fontSize={SVG_STATION_NAME_FONT_SIZE}
-                                    fill={SVG_STATION_NAME_FONT_COLOR}
-                                    textAnchor="start"
-                                >
-                                    <tspan>{segment.start}</tspan>
-                                </text>
-
-                                {/* Text for line and stops */}
-                                <text
-                                    x={startX + 10}
-                                    y={updatedStartY + SVG_STATION_RADIUS * 3.5}
-                                    fontSize={SVG_STATION_NAME_FONT_SIZE}
-                                    fill={SVG_STATION_NAME_FONT_COLOR}
-                                    textAnchor="start"
-                                >
-                                    <tspan>{segment.line}</tspan>
-                                    {segment.stops !== 0 ? (
-                                        <tspan>
-                                            {" (" + segment.stops + " stop" + (segment.stops > 1 ? "s" : "") + ")"}
-                                        </tspan>
-                                    ) : null}
-                                </text>
-
-                                {/* Circles for station */}
-                                <circle cx={startX} cy={updatedStartY} r={SVG_STATION_RADIUS} fill={SVG_STATION_OUTER_CIRCLE_STROKE} />
-                                <circle cx={startX} cy={updatedStartY} r={SVG_STATION_RADIUS - 2} fill={SVG_STATION_INNER_CIRCLE_STROKE} />
-                            </g>
-
-                        );
-                    })
-                ) : null}
+                {travelSegments.length !== 0 && travelSegments.map((segment, index) => {
+                    const updatedStartY = startY + index * 45;
+                    return this.metroMapCanvas.renderTravelPathSegment(segment, index, startX, updatedStartY);
+                })}
             </svg>
-         );
-               
+        );
     }
     
     render() {
@@ -313,7 +211,7 @@ class App extends Component {
                         <div className="search-box-start-station">
                             <Select
                                 options={this.state.stationNames.map((station) => ({ value: station, label: station }))}
-                                onChange={(selectedOption) => this.setState({ startStation: selectedOption ? selectedOption.value : "" })}
+                                onChange={(selectedOption) => this.setState({ selectedStartStation: selectedOption ? selectedOption.value : "" })}
                                 placeholder="Select Start Station"
                                 isSearchable
                                 styles={customStyles}
@@ -322,7 +220,7 @@ class App extends Component {
                         <div className="search-box-end-station">
                             <Select
                                 options={this.state.stationNames.map((station) => ({ value: station, label: station }))}
-                                onChange={(selectedOption) => this.setState({ endStation: selectedOption ? selectedOption.value : "" })}
+                                onChange={(selectedOption) => this.setState({ selectedEndStation: selectedOption ? selectedOption.value : "" })}
                                 placeholder="Select End Station"
                                 isSearchable
                                 styles={customStyles}
@@ -343,24 +241,24 @@ class App extends Component {
                     </div>
                     <br></br>
                     <details>
-                        <summary>Upon entering all fields, the planner will perform the following:</summary>
+                        <summary>After completing all required fields, the planner will execute the following actions:</summary>
                         <ol>
-                            <li>Visualize the order of exploring station connections, starting from stations
-                            around the starting station. <b>Connections will have increased opacity</b>.</li>
-                            <li>Visualize the selected path, <b>with 100% opacity</b>.</li>
+                            <li>Illustrate the sequence of exploring station connections, beginning from stations in proximity to the starting station. <b>Connections will be displayed with enhanced opacity</b>.</li>
+                            <li>Present a visual representation of the chosen path, <b>with full opacity</b>.</li>
+                            <li>Show the elapsed time for the execution of the selected algorithm.</li>
                         </ol>
                     </details>
                     <br></br>
                     <details>
-                        <summary>Notes:</summary>
+                        <summary>Important Points:</summary>
                         <ol>
-                            <li>The aim of this planner is to find and visualize the <b>shortest distance path</b>
-                            , not the shortest duration path.</li>
-                            <li>The planner assumes that:</li>
+                            <li>The primary objective of this planner is to identify and display the <b>shortest distance path</b>, not necessarily the path with the shortest duration.</li>
+                            <li>The planner operates under the assumptions that:</li>
                             <ul>
-                                <li>Waiting times between station transits are neglible.</li>
-                                <li>All metro lines are always available (i.e. not real-time).</li>
+                                <li>Waiting times between station transits are considered negligible.</li>
+                                <li>All metro lines are consistently available, and real-time updates are not taken into consideration.</li>
                             </ul>
+                            <li>The time measured by a path-finding algorithm represents solely the total duration of exploring stations and determining the shortest-distance path. This duration does not account for the time spent on visualization.</li>
                         </ol>
                     </details>
                     <br></br>
@@ -374,7 +272,7 @@ class App extends Component {
                         :null
                     }
                     <div className="exploration-status">
-                        { this.state.isVisualisingConnectionOrder ? <p>Exploring connections...</p> : null }
+                        { this.state.isVisualisingExploredPath ? <p>Exploring connections...</p> : null }
                     </div>
                     <div className="visualisation-status">
                         { this.state.isVisualisingSelectedPath ? <p>Visualised optimal path.</p> : null }
@@ -382,19 +280,19 @@ class App extends Component {
                     <br></br>
                     <div className="search-results">
                         {
-                            this.state.duration !== null &&
+                            this.state.selectedAlgoDuration !== null &&
                             <div className="time-analysis">
                                 <h2>Time analysis</h2>
-                                <p>Time elapsed: {this.state.duration.toFixed(3)}s</p>
+                                <p>Time elapsed: {this.state.selectedAlgoDuration.toFixed(3)}s</p>
                             </div>
                         }
                         {
-                            this.state.pathDistance !== null &&
-                            <p>Distance: {this.state.pathDistance.toFixed(3)}km</p>
+                            this.state.selectedAlgoPathDistance !== null &&
+                            <p>Distance: {this.state.selectedAlgoPathDistance.toFixed(3)}km</p>
                         }
                         {
-                            this.state.path.length !== 0 &&
-                            this.renderTravelPlan()
+                            this.state.selectedAlgoPath.length !== 0 &&
+                            this.renderTravelPlan(this.state.selectedAlgoPath)
                         }
                     </div>
                 </div>
