@@ -51,7 +51,7 @@ class App extends Component {
             process.env.PUBLIC_URL + '/data/railways.csv',
         )
 
-        this.userSearchService = new AlgorithmSearchService();
+        this.algorithmSearchService = new AlgorithmSearchService();
     }
 
     // Initialize all metro map assets once the application has started.
@@ -59,8 +59,8 @@ class App extends Component {
         await this.metroMapAssetsManager.parseCSVFiles();
 
         // Mount MetroMapAssetsManager to the required classes.
-        this.metroMapBackendCanvas.loadAssets(this.metroMapAssetsManager);
-        this.userSearchService.loadAssetsManager(this.metroMapAssetsManager);
+        this.metroMapBackendCanvas.loadAssetsManager(this.metroMapAssetsManager);
+        this.algorithmSearchService.loadAssetsManager(this.metroMapAssetsManager);
         this.setState({
             stationNames: this.metroMapAssetsManager.getStationNames(),
         })
@@ -109,24 +109,19 @@ class App extends Component {
         const { selectedStartStation, selectedEndStation, selectedAlgorithm } = this.state;
         if (selectedStartStation !== null && selectedEndStation !== null && selectedAlgorithm !== null) {
             this.resetStates()
-            const searchResults = await this.userSearchService.search(selectedStartStation, selectedEndStation, selectedAlgorithm);
+            const searchResults = await this.algorithmSearchService.search(selectedStartStation, selectedEndStation, selectedAlgorithm);
             
             // Only update the path, distance and duration states to that of the selected algorithm.
             const { distance, path, visitedConnectionsOrder, duration } = searchResults[selectedAlgorithm];
             this.setAlgorithmResultState(path, distance, duration);
 
-            // Move viewer to start station position on map
-            const startStationObj = this.metroMapAssetsManager.stations[selectedStartStation];
-            this.metroMapBackendCanvas.panToLocation(startStationObj.x, startStationObj.y);
+            this.metroMapBackendCanvas.moveViewerToStation(selectedStartStation);
             await this.animateConnections("exploredPath", visitedConnectionsOrder, SVG_CONNECTION_OPACITY_VISITED);
             await this.animateConnections("selectedPath", path, SVG_CONNECTION_OPACITY_SELECTED);
         } else {
             this.setDebuggerState();
         }
     };
-
-    // Path-finding methods
-    
     
     // Returns an optimised path with minimum transits.
     generateTravelSegments(path) {

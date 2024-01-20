@@ -40,20 +40,7 @@ class MapCanvas extends PureComponent {
         };
     }
 
-    handleResize = () => {
-        this.setState({
-            screenWidth: window.innerWidth,
-            screenHeight: window.innerHeight,
-            mapWidth: window.innerWidth * 0.8,
-        });
-        this.Viewer.current.fitToViewer();
-    };
-
-    panToLocation(mapX, mapY) {
-        // this.Viewer.current.pan(mapX, mapY);
-        this.Viewer.current.setPointOnViewerCenter(mapX, mapY, 1);
-    }
-
+    // Mounting methods
     componentDidMount() {
         this.Viewer.current.fitToViewer();
         window.addEventListener('resize', this.handleResize);
@@ -66,7 +53,7 @@ class MapCanvas extends PureComponent {
         window.removeEventListener('resize', this.handleResize);
     }
 
-    loadAssets(assetManager) {
+    loadAssetsManager(assetManager) {
         this.setState({
             stations: assetManager.stations,
             connections: assetManager.connections,
@@ -74,6 +61,22 @@ class MapCanvas extends PureComponent {
         })
     }
 
+    // Event handlers
+    handleResize = () => {
+        this.setState({
+            screenWidth: window.innerWidth,
+            screenHeight: window.innerHeight,
+            mapWidth: window.innerWidth * 0.8,
+        });
+        this.Viewer.current.fitToViewer();
+    };
+
+    moveViewerToStation(stationName) {
+        const stationObj = this.state.stations[stationName];
+        this.Viewer.current.setPointOnViewerCenter(stationObj.x, stationObj.y, 1);
+    }
+
+    // Rendering methods
     renderStations() {
         return Object.entries(this.state.stations).map(([stationName, stationObj]) => (
             stationObj.renderStation()
