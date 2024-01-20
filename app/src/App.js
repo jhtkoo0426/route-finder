@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import SearchHandler from "./utilities/services/SearchHandler";
 import DebuggerHandler from "./utilities/services/DebuggerHandler";
+import TravelPathParser from "./utilities/parsers/TravelPathParser";
 
 
 
@@ -44,6 +45,7 @@ class App extends Component {
         this.algorithmSearchService = new AlgorithmSearchService();
         this.debuggerHandler = new DebuggerHandler(this);
         this.searchHandler = new SearchHandler(this);
+        this.travelPathParser = new TravelPathParser();
     }
 
     // Initialize all metro map assets once the application has started.
@@ -53,6 +55,7 @@ class App extends Component {
         // Mount MetroMapAssetsManager to the required classes.
         this.mapCanvas.loadAssets(this.metroMapAssetsManager);
         this.algorithmSearchService.loadAssets(this.metroMapAssetsManager);
+        this.travelPathParser.loadAssets(this.metroMapAssetsManager);
         this.setState({
             stationNames: this.metroMapAssetsManager.getStationNames(),
         })
@@ -102,26 +105,7 @@ class App extends Component {
     // Returns an optimised path with minimum transits.
     generateTravelSegments() {
         const path = this.state.selectedAlgoPath;
-        if (!path || path.length === 0) return null;
-    
-        const segments = [];
-        let [start, line, stops] = [null, null, 0];    
-        for (let i = 0; i < path.length - 1; i++) {
-            const current = path[i];
-            const next = path[i + 1];
-            const connection = this.metroMapAssetsManager.connections[`${current}-${next}`] || this.metroMapAssetsManager.connections[`${next}-${current}`];
-            const lines = Array.from(connection.metroLines);
-    
-            if (!start) [start, line] = [current, lines[0]];
-            if (!lines.includes(line)) {
-                segments.push({ start, line, stops });
-                [start, line, stops] = [current, lines[0], 1];
-            } else {
-                stops++;
-            }
-        }
-        segments.push({ start, line, stops });
-        segments.push({ start: path[path.length-1], line: null, stops: 0 });
+        const segments = this.travelPathParser.parseTravelPathIntoSegments(path);
         return this.mapCanvas.renderTravelPath(segments);
     }
 
