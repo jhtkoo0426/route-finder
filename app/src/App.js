@@ -4,7 +4,6 @@ import React, { Component } from "react";
 // Components
 import MapCanvas from "./utilities/map_assets/MapCanvas";
 import MetroMapAssetsManager from "./utilities/MetroMapAssetsManager";
-import Dijkstra from "./utilities/algorithms/Dijkstra"
 import SelectDropdown from "./utilities/components/SelectDropdown";
 
 // Constants
@@ -18,6 +17,7 @@ import {
 import "./css/app.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
+import AlgorithmSearchService from "./utilities/services/AlgorithmSearchService";
 
 
 
@@ -50,6 +50,8 @@ class App extends Component {
             process.env.PUBLIC_URL + '/data/stations.csv',
             process.env.PUBLIC_URL + '/data/railways.csv',
         )
+
+        this.userSearchService = new AlgorithmSearchService();
     }
 
     // Initialize all metro map assets once the application has started.
@@ -58,44 +60,11 @@ class App extends Component {
 
         // Mount MetroMapAssetsManager to the required classes.
         this.metroMapBackendCanvas.loadAssets(this.metroMapAssetsManager);
+        this.userSearchService.loadAssetsManager(this.metroMapAssetsManager);
         this.setState({
             stationNames: this.metroMapAssetsManager.getStationNames(),
         })
     }
-
-    // Path-finding methods
-    executeAlgorithms(startStationName, endStationName) {
-        const dijkstra = new Dijkstra(this.metroMapAssetsManager.stations);
-        const algorithmResults = {
-            "Dijkstra": dijkstra.runAlgorithm(startStationName, endStationName)
-        }
-        return algorithmResults;
-    }
-    
-    // Returns an optimised path with minimum transits.
-    generateTravelSegments(path) {
-        if (!path || path.length === 0) return null;
-    
-        const segments = [];
-        let [start, line, stops] = [null, null, 0];    
-        for (let i = 0; i < path.length - 1; i++) {
-            const current = path[i];
-            const next = path[i + 1];
-            const connection = this.metroMapAssetsManager.connections[`${current}-${next}`] || this.metroMapAssetsManager.connections[`${next}-${current}`];
-            const lines = Array.from(connection.metroLines);
-    
-            if (!start) [start, line] = [current, lines[0]];
-            if (!lines.includes(line)) {
-                segments.push({ start, line, stops });
-                [start, line, stops] = [current, lines[0], 1];
-            } else {
-                stops++;
-            }
-        }
-        segments.push({ start, line, stops });
-        segments.push({ start: path[path.length-1], line: null, stops: 0 });
-        return segments;
-    }  
 
     // State-setting methods
     // Resets states of visualization state variables. Used whenever a new search query is made.
@@ -135,18 +104,15 @@ class App extends Component {
         });
     }
 
-    // Core app methods
     // Performs path-finding based on user-selected origin & destination stations and path-finding algorithm.
     handleSearchClick = async () => {
         const { selectedStartStation, selectedEndStation, selectedAlgorithm } = this.state;
-        if (this.state.selectedStartStation !== null && this.state.selectedEndStation !== null && this.state.selectedAlgorithm !== null) {
-            this.resetStates();
+        if (selectedStartStation !== null && selectedEndStation !== null && selectedAlgorithm !== null) {
+            this.resetStates()
+            const searchResults = await this.userSearchService.search(selectedStartStation, selectedEndStation, selectedAlgorithm);
             
-            // Run all available algorithms and fetch the results and metrics (to be used for comparison).
-            const algorithmResults = this.executeAlgorithms(selectedStartStation, selectedEndStation);
-
             // Only update the path, distance and duration states to that of the selected algorithm.
-            const { distance, path, visitedConnectionsOrder, duration } = algorithmResults[selectedAlgorithm];
+            const { distance, path, visitedConnectionsOrder, duration } = searchResults[selectedAlgorithm];
             this.setAlgorithmResultState(path, distance, duration);
 
             // Move viewer to start station position on map
@@ -158,6 +124,36 @@ class App extends Component {
             this.setDebuggerState();
         }
     };
+
+    // Path-finding methods
+    
+    
+    // Returns an optimised path with minimum transits.
+    generateTravelSegments(path) {
+        if (!path || path.length === 0) return null;
+    
+        const segments = [];
+        let [start, line, stops] = [null, null, 0];    
+        for (let i = 0; i < path.length - 1; i++) {
+            const current = path[i];
+            const next = path[i + 1];
+            const connection = this.metroMapAssetsManager.connections[`${current}-${next}`] || this.metroMapAssetsManager.connections[`${next}-${current}`];
+            const lines = Array.from(connection.metroLines);
+    
+            if (!start) [start, line] = [current, lines[0]];
+            if (!lines.includes(line)) {
+                segments.push({ start, line, stops });
+                [start, line, stops] = [current, lines[0], 1];
+            } else {
+                stops++;
+            }
+        }
+        segments.push({ start, line, stops });
+        segments.push({ start: path[path.length-1], line: null, stops: 0 });
+        return segments;
+    }
+
+    // Core app methods
 
     // Animate Connection objects in the MapCanvas. There are 2 possible ways to animate connections:
     // 1) exploredPath - connectionsOrder is a hashmap of objects; 2) selectedPath - connectionsOrder
