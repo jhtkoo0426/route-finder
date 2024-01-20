@@ -1,5 +1,5 @@
 import Connection from "../../map_assets/Connection";
-import CSVParser from "../BaseCSVParser";
+import CSVParser from "./BaseCSVParser";
 
 
 

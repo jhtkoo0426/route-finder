@@ -13,7 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import SearchHandler from "./utilities/services/SearchHandler";
 import DebuggerHandler from "./utilities/services/DebuggerHandler";
-import TravelPathParser from "./utilities/parsers/TravelPathParser";
+import TravelPathParser from "./utilities/parsers/path_parsers/TravelPathParser";
 
 
 

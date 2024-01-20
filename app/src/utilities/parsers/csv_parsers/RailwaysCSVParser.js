@@ -1,4 +1,4 @@
-import CSVParser from "../BaseCSVParser";
+import CSVParser from "./BaseCSVParser";
 
 
 // A CSV parser for railways.csv. This parser expects the CSV file to consist of

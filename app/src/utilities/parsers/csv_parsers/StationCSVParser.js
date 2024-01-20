@@ -1,4 +1,4 @@
-import CSVParser from "../BaseCSVParser";
+import CSVParser from "./BaseCSVParser";
 import Station from "../../map_assets/Station";
 
 

@@ -1,6 +1,6 @@
-import StationsCSVParser from "./csv_parsers/StationCSVParser";
-import ConnectionsCSVParser from "./csv_parsers/ConnectionCSVParser";
-import RailwaysCSVParser from "./csv_parsers/RailwaysCSVParser";
+import StationsCSVParser from "./StationCSVParser";
+import ConnectionsCSVParser from "./ConnectionCSVParser";
+import RailwaysCSVParser from "./RailwaysCSVParser";
 
 
 
