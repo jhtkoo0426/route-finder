@@ -2,6 +2,7 @@
 import React, { Component } from "react";
 
 // Components
+import AlgorithmSearchService from "./utilities/services/AlgorithmSearchService";
 import MapCanvas from "./utilities/map_assets/MapCanvas";
 import MetroMapAssetsManager from "./utilities/MetroMapAssetsManager";
 import SelectDropdown from "./utilities/components/SelectDropdown";
@@ -10,14 +11,12 @@ import SelectDropdown from "./utilities/components/SelectDropdown";
 import {
     SVG_CONNECTION_OPACITY_VISITED,
     SVG_CONNECTION_OPACITY_SELECTED,
-    VISUALISE_PATH_NODE_DELAY,
 } from "./utilities/Constants";
 
 // Styling
 import "./css/app.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
-import AlgorithmSearchService from "./utilities/services/AlgorithmSearchService";
 
 
 
@@ -25,24 +24,19 @@ import AlgorithmSearchService from "./utilities/services/AlgorithmSearchService"
 class App extends Component {
     constructor(props) {
         super(props);
-
-        this.algorithmOptions = ["Dijkstra"];
-
         this.state = {
             debugger: null,                         // Logs error in the search panel
 
             // Visualization variables
-            // isVisualizingExploredPath: false,
-            // isVisualizingSelectedPath: false,
             isVisualized: false,
+            selectedAlgoPath: [],                   // Array of station names to show minimum distance path
+            selectedAlgoPathDistance: null,         // Variable for mimimum distance
+            selectedAlgoDuration:  null,            // Variable for measuring time elapsed for algorithm
 
             // User-dependent variables
             selectedStartStation: null,             // Input variable for start station
             selectedEndStation: null,               // Input variable for input end station
             selectedAlgorithm: null,                // Variable for algorithm selection
-            selectedAlgoPath: [],                   // Array of station names to show minimum distance path
-            selectedAlgoPathDistance: null,         // Variable for mimimum distance
-            selectedAlgoDuration:  null,            // Variable for measuring time elapsed for algorithm
         };
 
         this.metroMapAssetsManager = new MetroMapAssetsManager(
@@ -59,34 +53,17 @@ class App extends Component {
         await this.metroMapAssetsManager.parseCSVFiles();
 
         // Mount MetroMapAssetsManager to the required classes.
-        this.mapCanvas.loadAssetsManager(this.metroMapAssetsManager);
-        this.algorithmSearchService.loadAssetsManager(this.metroMapAssetsManager);
+        this.mapCanvas.loadAssets(this.metroMapAssetsManager);
+        this.algorithmSearchService.loadAssets(this.metroMapAssetsManager);
         this.setState({
             stationNames: this.metroMapAssetsManager.getStationNames(),
         })
     }
 
     // State-setting methods
-    // Resets states of visualization state variables. Used whenever a new search query is made.
     resetStates() {
-        this.setState({
-            selectedAlgoPath: [],
-            selectedAlgoPathDistance: null,
-            selectedAlgoDuration: null,
-            debugger: null,
-            isVisualized: false,
-        })
+        this.setState({ debugger: null });
         this.metroMapAssetsManager.resetConnectionsOpacities();
-    }
-
-    // Updates the state of algorithm state variables. Used whenever the search form is sent.
-    setAlgorithmResultState(path, distance, duration) {
-        this.setState({
-            selectedAlgoPath: path,
-            selectedAlgoPathDistance: distance,
-            selectedAlgoDuration: duration,
-            isVisualized: true,
-        });
     }
 
     // Updates the debugger state to inform users of any missing fields in the search form.
@@ -101,6 +78,26 @@ class App extends Component {
             debugger: "The following fields are not selected: " + missingFields.filter(Boolean).join(', '),
         });
     }
+    
+    // Resets states of visualization state variables. Used whenever a new search query is made.
+    resetAlgorithmResultState() {
+        this.setState({
+            selectedAlgoPath: [],
+            selectedAlgoPathDistance: null,
+            selectedAlgoDuration: null,
+            isVisualized: false,
+        })
+    }
+    
+    // Updates the state of algorithm state variables. Used whenever the search form is sent.
+    setAlgorithmResultState(path, distance, duration) {
+        this.setState({
+            selectedAlgoPath: path,
+            selectedAlgoPathDistance: distance,
+            selectedAlgoDuration: duration,
+            isVisualized: true,
+        });
+    }
 
     // Performs path-finding based on user-selected origin & destination stations and path-finding algorithm.
     handleSearchClick = async () => {
@@ -109,13 +106,15 @@ class App extends Component {
             this.resetStates()
             const searchResults = await this.algorithmSearchService.search(selectedStartStation, selectedEndStation, selectedAlgorithm);
             
+            this.mapCanvas.renderAlgorithmSearchResults(searchResults[selectedAlgorithm]);
+
             // Only update the path, distance and duration states to that of the selected algorithm.
             const { distance, path, visitedConnectionsOrder, duration } = searchResults[selectedAlgorithm];
             this.setAlgorithmResultState(path, distance, duration);
 
             this.mapCanvas.moveViewerToStation(selectedStartStation);
-            await this.mapCanvas.animateConnections("exploredPath", visitedConnectionsOrder, SVG_CONNECTION_OPACITY_VISITED);
-            await this.mapCanvas.animateConnections("selectedPath", path, SVG_CONNECTION_OPACITY_SELECTED);
+            // await this.mapCanvas.animateConnections("exploredPath", visitedConnectionsOrder, SVG_CONNECTION_OPACITY_VISITED);
+            // await this.mapCanvas.animateConnections("selectedPath", path, SVG_CONNECTION_OPACITY_SELECTED);
         } else {
             this.setDebuggerState();
         }
@@ -196,7 +195,7 @@ class App extends Component {
                         </div>
                         <div className="search-box-algorithm">
                             <SelectDropdown
-                                options={this.algorithmOptions}
+                                options={this.algorithmSearchService.algorithmOptions}
                                 onChange={(algorithmOption) => this.setState({ selectedAlgorithm: algorithmOption.value })}
                                 placeholder="Select algorithm"
                             />

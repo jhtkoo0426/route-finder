@@ -6,9 +6,10 @@ import Dijkstra from "../algorithms/Dijkstra"
 class AlgorithmSearchService {
     constructor() {
         this.metroMapAssetsManager = null;
+        this.algorithmOptions = ["Dijkstra"];
     }
 
-    loadAssetsManager(assetManager) {
+    loadAssets(assetManager) {
         this.metroMapAssetsManager =  assetManager;
     }
 

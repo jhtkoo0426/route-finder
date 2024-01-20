@@ -17,7 +17,9 @@ import {
     SVG_STATION_INNER_CIRCLE_STROKE,
     SVG_STATION_OUTER_CIRCLE_STROKE,
     SVG_CONNECTION_STROKE_WIDTH,
-    VISUALISE_PATH_NODE_DELAY
+    VISUALISE_PATH_NODE_DELAY,
+    SVG_CONNECTION_OPACITY_VISITED,
+    SVG_CONNECTION_OPACITY_SELECTED
 } from '../Constants';
 
 
@@ -40,6 +42,7 @@ class MapCanvas extends PureComponent {
             mapWidth: window.innerWidth * 0.8,      // Scale factor adjusts to grid width
             isVisualizingExploredPath: false,
             isVisualizingSelectedPath: false,
+            
         };
     }
 
@@ -56,7 +59,7 @@ class MapCanvas extends PureComponent {
         window.removeEventListener('resize', this.handleResize);
     }
 
-    loadAssetsManager(assetManager) {
+    loadAssets(assetManager) {
         this.setState({
             stations: assetManager.stations,
             connections: assetManager.connections,
@@ -172,6 +175,16 @@ class MapCanvas extends PureComponent {
                 {this.renderTravelPathStationCircles(startX, updatedStartY)}
             </g>
         );
+    }
+
+    // 3. Render algorithm search results
+
+    async renderAlgorithmSearchResults(searchResults) {
+        const { distance, path, visitedConnectionsOrder, duration } = searchResults;
+        
+        // Only update the path, distance and duration states to that of the selected algorithm.
+        await this.animateConnections("exploredPath", visitedConnectionsOrder, SVG_CONNECTION_OPACITY_VISITED);
+        await this.animateConnections("selectedPath", path, SVG_CONNECTION_OPACITY_SELECTED);
     }
 
     // Animation methods
