@@ -17,6 +17,7 @@ import {
     SVG_STATION_INNER_CIRCLE_STROKE,
     SVG_STATION_OUTER_CIRCLE_STROKE,
     SVG_CONNECTION_STROKE_WIDTH,
+    VISUALISE_PATH_NODE_DELAY
 } from '../Constants';
 
 
@@ -37,6 +38,8 @@ class MapCanvas extends PureComponent {
             screenWidth: window.innerWidth,
             screenHeight: window.innerHeight,
             mapWidth: window.innerWidth * 0.8,      // Scale factor adjusts to grid width
+            isVisualizingExploredPath: false,
+            isVisualizingSelectedPath: false,
         };
     }
 
@@ -77,6 +80,7 @@ class MapCanvas extends PureComponent {
     }
 
     // Rendering methods
+    // 1. Rendering assets (stations, connections, grids & legend)
     renderStations() {
         return Object.entries(this.state.stations).map(([stationName, stationObj]) => (
             stationObj.renderStation()
@@ -127,7 +131,7 @@ class MapCanvas extends PureComponent {
         );
     }
 
-    
+    // 2. Rendering travel plan assets
     renderTravelPathLine(x, startY, lineColor) {
         return (
             <line
@@ -169,37 +173,58 @@ class MapCanvas extends PureComponent {
             </g>
         );
     }
+
+    // Animation methods
+    // Animate Connection objects in the MapCanvas. There are 2 possible ways to animate connections:
+    // 1) exploredPath - connectionsOrder is a hashmap of objects; 2) selectedPath - connectionsOrder
+    // is an array of objects.
+    animateConnections = async (type, connectionsOrder, opacity) => {
+        const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+        const isVisualizingExploredPath = type === "exploredPath";
+        const isVisualizingSelectedPath = !isVisualizingExploredPath;
+        this.setState({
+            isVisualizingExploredPath,
+            isVisualizingSelectedPath,
+        });
     
-    renderMap() {
-        return (
-            <ReactSVGPanZoom
-                ref={this.Viewer}
-                width={this.state.mapWidth}
-                height={this.state.screenHeight}
-                tool={this.state.tool}
-                onChangeTool={(tool) => this.setState({ tool })}
-                onChangeValue={(value) => this.setState({ value })}
-                value={this.state.value}
-                detectAutoPan={false}
-                scaleFactorMax={SVG_MAP_SCALE_MAX}
-                scaleFactorMin={SVG_MAP_SCALE_MIN}
-                scaleFactorOnWheel={SVG_MAP_SCALE_SPEED}
-                preventPanOutside={true}
-                disableDoubleClickZoomWithToolAuto={true}>
-                <svg key={this.state.forceRerender} width={SVG_MAP_WIDTH} height={SVG_MAP_HEIGHT}>
-                    {this.renderGridLines()}
-                    {this.renderConnections()}
-                    {this.renderStations()}
-                    {this.renderRailwayLinesLegend()}
-                </svg>
-            </ReactSVGPanZoom>
-        );
-    }
+        for (let i = 0; i < connectionsOrder.length; i++) {
+            let [start, end] = isVisualizingExploredPath
+                ? [connectionsOrder[i].start, connectionsOrder[i].end]
+                : [connectionsOrder[i], connectionsOrder[i + 1]];
+            const connections = { ...this.state.connections };
+            const connectionKey = connections[`${start}-${end}`] ? `${start}-${end}` : `${end}-${start}`;
+            if (connections[connectionKey]) {
+                connections[connectionKey].state.opacity = opacity;
+                this.setState({ connections });
+            }
+            await delay(VISUALISE_PATH_NODE_DELAY);
+        }
+    };
 
     render() {
         return (
             <div className="svg-container" ref={this.svgContainerRef}>
-                {this.renderMap()}
+                <ReactSVGPanZoom
+                    ref={this.Viewer}
+                    width={this.state.mapWidth}
+                    height={this.state.screenHeight}
+                    tool={this.state.tool}
+                    onChangeTool={(tool) => this.setState({ tool })}
+                    onChangeValue={(value) => this.setState({ value })}
+                    value={this.state.value}
+                    detectAutoPan={false}
+                    scaleFactorMax={SVG_MAP_SCALE_MAX}
+                    scaleFactorMin={SVG_MAP_SCALE_MIN}
+                    scaleFactorOnWheel={SVG_MAP_SCALE_SPEED}
+                    preventPanOutside={true}
+                    disableDoubleClickZoomWithToolAuto={true}>
+                    <svg key={this.state.forceRerender} width={SVG_MAP_WIDTH} height={SVG_MAP_HEIGHT}>
+                        {this.renderGridLines()}
+                        {this.renderConnections()}
+                        {this.renderStations()}
+                        {this.renderRailwayLinesLegend()}
+                    </svg>
+                </ReactSVGPanZoom>
                 {this.renderRailwayLinesLegend()}
             </div>
         );

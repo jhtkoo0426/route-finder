@@ -32,8 +32,8 @@ class App extends Component {
             debugger: null,                         // Logs error in the search panel
 
             // Visualization variables
-            isVisualizingExploredPath: false,
-            isVisualizingSelectedPath: false,
+            // isVisualizingExploredPath: false,
+            // isVisualizingSelectedPath: false,
             isVisualized: false,
 
             // User-dependent variables
@@ -59,7 +59,7 @@ class App extends Component {
         await this.metroMapAssetsManager.parseCSVFiles();
 
         // Mount MetroMapAssetsManager to the required classes.
-        this.metroMapBackendCanvas.loadAssetsManager(this.metroMapAssetsManager);
+        this.mapCanvas.loadAssetsManager(this.metroMapAssetsManager);
         this.algorithmSearchService.loadAssetsManager(this.metroMapAssetsManager);
         this.setState({
             stationNames: this.metroMapAssetsManager.getStationNames(),
@@ -74,8 +74,6 @@ class App extends Component {
             selectedAlgoPathDistance: null,
             selectedAlgoDuration: null,
             debugger: null,
-            isVisualisingConnectionOrder: false,
-            isVisualizingSelectedPath: false,
             isVisualized: false,
         })
         this.metroMapAssetsManager.resetConnectionsOpacities();
@@ -115,9 +113,9 @@ class App extends Component {
             const { distance, path, visitedConnectionsOrder, duration } = searchResults[selectedAlgorithm];
             this.setAlgorithmResultState(path, distance, duration);
 
-            this.metroMapBackendCanvas.moveViewerToStation(selectedStartStation);
-            await this.animateConnections("exploredPath", visitedConnectionsOrder, SVG_CONNECTION_OPACITY_VISITED);
-            await this.animateConnections("selectedPath", path, SVG_CONNECTION_OPACITY_SELECTED);
+            this.mapCanvas.moveViewerToStation(selectedStartStation);
+            await this.mapCanvas.animateConnections("exploredPath", visitedConnectionsOrder, SVG_CONNECTION_OPACITY_VISITED);
+            await this.mapCanvas.animateConnections("selectedPath", path, SVG_CONNECTION_OPACITY_SELECTED);
         } else {
             this.setDebuggerState();
         }
@@ -149,33 +147,6 @@ class App extends Component {
     }
 
     // Core app methods
-
-    // Animate Connection objects in the MapCanvas. There are 2 possible ways to animate connections:
-    // 1) exploredPath - connectionsOrder is a hashmap of objects; 2) selectedPath - connectionsOrder
-    // is an array of objects.
-    animateConnections = async (type, connectionsOrder, opacity) => {
-        const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-        const isVisualizingExploredPath = type === "exploredPath";
-        const isVisualizingSelectedPath = !isVisualizingExploredPath;
-        this.setState({
-            isVisualizingExploredPath,
-            isVisualizingSelectedPath,
-        });
-    
-        for (let i = 0; i < connectionsOrder.length; i++) {
-            let [start, end] = isVisualizingExploredPath
-                ? [connectionsOrder[i].start, connectionsOrder[i].end]
-                : [connectionsOrder[i], connectionsOrder[i + 1]];
-            const connections = { ...this.metroMapAssetsManager.connections };
-            const connectionKey = connections[`${start}-${end}`] ? `${start}-${end}` : `${end}-${start}`;
-            if (connections[connectionKey]) {
-                connections[connectionKey].state.opacity = opacity;
-                this.metroMapBackendCanvas.setState({ connections });
-            }
-            await delay(VISUALISE_PATH_NODE_DELAY);
-        }
-    };  
-
     renderTravelPlan(travelPath) {
         const travelSegments = this.generateTravelSegments(travelPath);
         let [startX, startY] = [10, 10];
@@ -184,7 +155,7 @@ class App extends Component {
             <svg className="travel-path" height={600}>
                 {travelSegments.length !== 0 && travelSegments.map((segment, index) => {
                     const updatedStartY = startY + index * 45;
-                    return this.metroMapBackendCanvas.renderTravelPathSegment(segment, index, startX, updatedStartY);
+                    return this.mapCanvas.renderTravelPathSegment(segment, index, startX, updatedStartY);
                 })}
             </svg>
         );
@@ -266,12 +237,6 @@ class App extends Component {
                         </div>
                         :null
                     }
-                    <div className="exploration-status">
-                        { this.state.isVisualizingExploredPath ? <p>Exploring connections...</p> : null }
-                    </div>
-                    <div className="visualisation-status">
-                        { this.state.isVisualizingSelectedPath ? <p>Visualised optimal path.</p> : null }
-                    </div>
                     <br></br>
                     <div className="search-results">
                         {
@@ -292,7 +257,7 @@ class App extends Component {
                     </div>
                 </div>
                 <div className="metro-map-container" style={{  height: '100vh', overflow: 'hidden', position: 'relative' }}>
-                    <MapCanvas ref={(mapCanvas) => (this.metroMapBackendCanvas = mapCanvas)}/>
+                    <MapCanvas ref={(mapCanvas) => (this.mapCanvas = mapCanvas)}/>
                 </div>
             </div>
         );
