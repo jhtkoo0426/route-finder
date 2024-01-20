@@ -191,7 +191,7 @@ class MapCanvas extends PureComponent {
     // 3. Render algorithm search results
 
     async renderAlgorithmSearchResults(searchResults) {
-        const { distance, path, visitedConnectionsOrder, duration } = searchResults;
+        const { path, visitedConnectionsOrder } = searchResults;
         
         // Only update the path, distance and duration states to that of the selected algorithm.
         await this.animateConnections("exploredPath", visitedConnectionsOrder, SVG_CONNECTION_OPACITY_VISITED);

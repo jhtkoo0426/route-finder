@@ -12,6 +12,7 @@ import "./css/app.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import SearchHandler from "./utilities/services/SearchHandler";
+import DebuggerHandler from "./utilities/services/DebuggerHandler";
 
 
 
@@ -21,6 +22,7 @@ class App extends Component {
         super(props);
         this.state = {
             debugger: null,                         // Logs error in the search panel
+            stationNames: [],
 
             // Visualization variables
             selectedAlgoPath: [],                   // Array of station names to show minimum distance path
@@ -40,6 +42,7 @@ class App extends Component {
         )
 
         this.algorithmSearchService = new AlgorithmSearchService();
+        this.debuggerHandler = new DebuggerHandler(this);
         this.searchHandler = new SearchHandler(this);
     }
 
@@ -57,21 +60,8 @@ class App extends Component {
 
     // State-setting methods
     resetStates() {
-        this.setState({ debugger: null });
+        this.debuggerHandler.resetDebuggerState();
         this.metroMapAssetsManager.resetConnectionsOpacities();
-    }
-
-    // Updates the debugger state to inform users of any missing fields in the search form.
-    setDebuggerState() {
-        const { selectedStartStation, selectedEndStation, selectedAlgorithm } = this.state;
-        const missingFields = [
-            selectedStartStation === null ? "Start station" : "",
-            selectedEndStation === null ? "End station" : "",
-            selectedAlgorithm === null ? "Algorithm" : "",
-        ];
-        this.setState({
-            debugger: "The following fields are not selected: " + missingFields.filter(Boolean).join(', '),
-        });
     }
     
     // Resets states of visualization state variables. Used whenever a new search query is made.
@@ -82,6 +72,16 @@ class App extends Component {
             selectedAlgoDuration: null,
             isVisualized: false,
         })
+    }
+
+    // Reset debugger state
+    resetDebuggerState() {
+        this.debuggerHandler.resetDebuggerState();
+    }
+
+    // Set debugger state using the DebuggerHandler class
+    setDebuggerState() {
+        this.debuggerHandler.setDebuggerState();
     }
     
     // Updates the state of algorithm state variables. Used whenever the search form is sent.
@@ -144,7 +144,7 @@ class App extends Component {
                     <div className="search-menu">
                         <div className="search-box-start-station">
                             <SelectDropdown
-                                options={this.metroMapAssetsManager.getStationNames()}
+                                options={this.state.stationNames}
                                 onChange={(selectedOption) =>
                                     this.setState({ selectedStartStation: selectedOption ? selectedOption.value : "" })
                                 }
@@ -153,7 +153,7 @@ class App extends Component {
                         </div>
                         <div className="search-box-end-station">
                             <SelectDropdown
-                                options={this.metroMapAssetsManager.getStationNames()}
+                                options={this.state.stationNames}
                                 onChange={(selectedOption) => this.setState({ selectedEndStation: selectedOption ? selectedOption.value : "" })}
                                 placeholder="Select End Station"
                             />
