@@ -28,7 +28,6 @@ class App extends Component {
             debugger: null,                         // Logs error in the search panel
 
             // Visualization variables
-            isVisualized: false,
             selectedAlgoPath: [],                   // Array of station names to show minimum distance path
             selectedAlgoPathDistance: null,         // Variable for mimimum distance
             selectedAlgoDuration:  null,            // Variable for measuring time elapsed for algorithm
@@ -105,23 +104,20 @@ class App extends Component {
         if (selectedStartStation !== null && selectedEndStation !== null && selectedAlgorithm !== null) {
             this.resetStates()
             const searchResults = await this.algorithmSearchService.search(selectedStartStation, selectedEndStation, selectedAlgorithm);
-            
-            this.mapCanvas.renderAlgorithmSearchResults(searchResults[selectedAlgorithm]);
 
             // Only update the path, distance and duration states to that of the selected algorithm.
             const { distance, path, visitedConnectionsOrder, duration } = searchResults[selectedAlgorithm];
             this.setAlgorithmResultState(path, distance, duration);
-
+            this.mapCanvas.renderAlgorithmSearchResults(searchResults[selectedAlgorithm]);
             this.mapCanvas.moveViewerToStation(selectedStartStation);
-            // await this.mapCanvas.animateConnections("exploredPath", visitedConnectionsOrder, SVG_CONNECTION_OPACITY_VISITED);
-            // await this.mapCanvas.animateConnections("selectedPath", path, SVG_CONNECTION_OPACITY_SELECTED);
         } else {
             this.setDebuggerState();
         }
     };
     
     // Returns an optimised path with minimum transits.
-    generateTravelSegments(path) {
+    generateTravelSegments() {
+        const path = this.state.selectedAlgoPath;
         if (!path || path.length === 0) return null;
     
         const segments = [];
@@ -142,24 +138,9 @@ class App extends Component {
         }
         segments.push({ start, line, stops });
         segments.push({ start: path[path.length-1], line: null, stops: 0 });
-        return segments;
+        return this.mapCanvas.renderTravelPath(segments);
     }
 
-    // Core app methods
-    renderTravelPlan(travelPath) {
-        const travelSegments = this.generateTravelSegments(travelPath);
-        let [startX, startY] = [10, 10];
-
-        return (
-            <svg className="travel-path" height={600}>
-                {travelSegments.length !== 0 && travelSegments.map((segment, index) => {
-                    const updatedStartY = startY + index * 45;
-                    return this.mapCanvas.renderTravelPathSegment(segment, index, startX, updatedStartY);
-                })}
-            </svg>
-        );
-    }
-    
     render() {
         return (
             <div className="App">
@@ -251,7 +232,7 @@ class App extends Component {
                         }
                         {
                             this.state.selectedAlgoPath.length !== 0 &&
-                            this.renderTravelPlan(this.state.selectedAlgoPath)
+                            this.generateTravelSegments()
                         }
                     </div>
                 </div>

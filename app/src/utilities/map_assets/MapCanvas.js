@@ -177,6 +177,18 @@ class MapCanvas extends PureComponent {
         );
     }
 
+    renderTravelPath(travelSegments) {
+        let [startX, startY] = [10, 10];
+        return (
+            <svg className="travel-path" height={600}>
+                {travelSegments.length !== 0 && travelSegments.map((segment, index) => {
+                    const updatedStartY = startY + index * 45;
+                    return this.renderTravelPathSegment(segment, index, startX, updatedStartY);
+                })}
+            </svg>
+        );
+    }
+
     // 3. Render algorithm search results
 
     async renderAlgorithmSearchResults(searchResults) {
@@ -235,7 +247,6 @@ class MapCanvas extends PureComponent {
                         {this.renderGridLines()}
                         {this.renderConnections()}
                         {this.renderStations()}
-                        {this.renderRailwayLinesLegend()}
                     </svg>
                 </ReactSVGPanZoom>
                 {this.renderRailwayLinesLegend()}
