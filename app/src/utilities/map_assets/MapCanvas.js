@@ -42,7 +42,6 @@ class MapCanvas extends PureComponent {
             mapWidth: window.innerWidth * 0.8,      // Scale factor adjusts to grid width
             isVisualizingExploredPath: false,
             isVisualizingSelectedPath: false,
-            
         };
     }
 

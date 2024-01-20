@@ -7,16 +7,11 @@ import MapCanvas from "./utilities/map_assets/MapCanvas";
 import MetroMapAssetsManager from "./utilities/MetroMapAssetsManager";
 import SelectDropdown from "./utilities/components/SelectDropdown";
 
-// Constants
-import {
-    SVG_CONNECTION_OPACITY_VISITED,
-    SVG_CONNECTION_OPACITY_SELECTED,
-} from "./utilities/Constants";
-
 // Styling
 import "./css/app.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
+import SearchHandler from "./utilities/services/SearchHandler";
 
 
 
@@ -45,6 +40,7 @@ class App extends Component {
         )
 
         this.algorithmSearchService = new AlgorithmSearchService();
+        this.searchHandler = new SearchHandler(this);
     }
 
     // Initialize all metro map assets once the application has started.
@@ -100,19 +96,7 @@ class App extends Component {
 
     // Performs path-finding based on user-selected origin & destination stations and path-finding algorithm.
     handleSearchClick = async () => {
-        const { selectedStartStation, selectedEndStation, selectedAlgorithm } = this.state;
-        if (selectedStartStation !== null && selectedEndStation !== null && selectedAlgorithm !== null) {
-            this.resetStates()
-            const searchResults = await this.algorithmSearchService.search(selectedStartStation, selectedEndStation, selectedAlgorithm);
-
-            // Only update the path, distance and duration states to that of the selected algorithm.
-            const { distance, path, visitedConnectionsOrder, duration } = searchResults[selectedAlgorithm];
-            this.setAlgorithmResultState(path, distance, duration);
-            this.mapCanvas.renderAlgorithmSearchResults(searchResults[selectedAlgorithm]);
-            this.mapCanvas.moveViewerToStation(selectedStartStation);
-        } else {
-            this.setDebuggerState();
-        }
+        this.searchHandler.handleSearchClick();
     };
     
     // Returns an optimised path with minimum transits.
