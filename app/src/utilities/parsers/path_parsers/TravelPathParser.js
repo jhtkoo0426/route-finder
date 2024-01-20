@@ -1,4 +1,4 @@
-// This class converts a given travel path and returns a well-formatted structure
+// Converts a given travel path and returns a well-formatted structure
 // consisting of all requried transits.
 class TravelPathParser {
     constructor() {

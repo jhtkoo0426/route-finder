@@ -2,18 +2,20 @@
 import React, { Component } from "react";
 
 // Components
-import AlgorithmSearchService from "./utilities/services/AlgorithmSearchService";
 import MapCanvas from "./utilities/map_assets/MapCanvas";
-import MetroMapAssetsManager from "./utilities/MetroMapAssetsManager";
 import SelectDropdown from "./utilities/components/SelectDropdown";
+
+// Utilities, services & parsers
+import AlgorithmSearchService from "./utilities/services/AlgorithmSearchService";
+import DebuggerHandler from "./utilities/services/DebuggerHandler";
+import MetroMapAssetsManager from "./utilities/MetroMapAssetsManager";
+import SearchHandler from "./utilities/services/SearchHandler";
+import TravelPathParser from "./utilities/parsers/path_parsers/TravelPathParser";
 
 // Styling
 import "./css/app.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
-import SearchHandler from "./utilities/services/SearchHandler";
-import DebuggerHandler from "./utilities/services/DebuggerHandler";
-import TravelPathParser from "./utilities/parsers/path_parsers/TravelPathParser";
 
 
 
@@ -22,18 +24,18 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            debugger: null,                         // Logs error in the search panel
-            stationNames: [],
+            debugger: null,                 // Logs error in the search panel
+            stationNames: [],               // Variable for array of all station names  
 
             // Visualization variables
-            selectedAlgoPath: [],                   // Array of station names to show minimum distance path
-            selectedAlgoPathDistance: null,         // Variable for mimimum distance
-            selectedAlgoDuration:  null,            // Variable for measuring time elapsed for algorithm
+            selectedAlgoPath: [],           // Array of station names to show minimum distance path
+            selectedAlgoPathDistance: null, // Variable for mimimum distance
+            selectedAlgoDuration:  null,    // Variable for measuring time elapsed for algorithm
 
-            // User-dependent variables
-            selectedStartStation: null,             // Input variable for start station
-            selectedEndStation: null,               // Input variable for input end station
-            selectedAlgorithm: null,                // Variable for algorithm selection
+            // User interaction variables
+            selectedStartStation: null,     // Input variable for start station
+            selectedEndStation: null,       // Input variable for input end station
+            selectedAlgorithm: null,        // Variable for algorithm selection
         };
 
         this.metroMapAssetsManager = new MetroMapAssetsManager(
@@ -61,28 +63,22 @@ class App extends Component {
         })
     }
 
-    // State-setting methods
+    // USER INTERACTION METHODS
+    // Performs path-finding based on user-selected origin & destination stations and path-finding algorithm.
+    handleSearchClick = async () => {
+        this.searchHandler.handleSearchClick();
+    };
+
+    // STATE MANAGEMENT METHODS
     resetStates() {
-        this.debuggerHandler.resetDebuggerState();
+        this.resetDebuggerState();
         this.metroMapAssetsManager.resetConnectionsOpacities();
     }
-    
-    // Resets states of visualization state variables. Used whenever a new search query is made.
-    resetAlgorithmResultState() {
-        this.setState({
-            selectedAlgoPath: [],
-            selectedAlgoPathDistance: null,
-            selectedAlgoDuration: null,
-            isVisualized: false,
-        })
-    }
 
-    // Reset debugger state
     resetDebuggerState() {
         this.debuggerHandler.resetDebuggerState();
     }
 
-    // Set debugger state using the DebuggerHandler class
     setDebuggerState() {
         this.debuggerHandler.setDebuggerState();
     }
@@ -96,12 +92,8 @@ class App extends Component {
             isVisualized: true,
         });
     }
-
-    // Performs path-finding based on user-selected origin & destination stations and path-finding algorithm.
-    handleSearchClick = async () => {
-        this.searchHandler.handleSearchClick();
-    };
     
+    // PATH-FINDING ALGORITHM METHODS
     // Returns an optimised path with minimum transits.
     generateTravelSegments() {
         const path = this.state.selectedAlgoPath;

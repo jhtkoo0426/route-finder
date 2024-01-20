@@ -17,15 +17,15 @@ import {
     SVG_STATION_INNER_CIRCLE_STROKE,
     SVG_STATION_OUTER_CIRCLE_STROKE,
     SVG_CONNECTION_STROKE_WIDTH,
-    VISUALISE_PATH_NODE_DELAY,
     SVG_CONNECTION_OPACITY_VISITED,
-    SVG_CONNECTION_OPACITY_SELECTED
+    SVG_CONNECTION_OPACITY_SELECTED,
+    VISUALISE_PATH_NODE_DELAY,
 } from '../Constants';
 
 
 
-// This class implements the SVG representation of a metro map. It should be
-// initialized in the render() method in App.js
+// This class implements the SVG representation of a metro map, including rendering and
+// animating all map assets.
 class MapCanvas extends PureComponent {
     constructor(props) {
         super(props);
@@ -36,7 +36,7 @@ class MapCanvas extends PureComponent {
             value: INITIAL_VALUE,                   // ReactSVGPanZoom component config
             stations: [],                           // Collection of all metro stations
             connections: [],                        // Collection of all connections between metro stations
-            railwayLinesColourMap: new Set(),                // Colour map for metro lines
+            railwayLinesColourMap: new Set(),       // Colour map for metro lines
             screenWidth: window.innerWidth,
             screenHeight: window.innerHeight,
             mapWidth: window.innerWidth * 0.8,      // Scale factor adjusts to grid width
@@ -81,7 +81,7 @@ class MapCanvas extends PureComponent {
         this.Viewer.current.setPointOnViewerCenter(stationObj.x, stationObj.y, 1);
     }
 
-    // Rendering methods
+    // RENDERING METHODS
     // 1. Rendering assets (stations, connections, grids & legend)
     renderStations() {
         return Object.entries(this.state.stations).map(([stationName, stationObj]) => (
@@ -189,7 +189,6 @@ class MapCanvas extends PureComponent {
     }
 
     // 3. Render algorithm search results
-
     async renderAlgorithmSearchResults(searchResults) {
         const { path, visitedConnectionsOrder } = searchResults;
         
@@ -198,7 +197,7 @@ class MapCanvas extends PureComponent {
         await this.animateConnections("selectedPath", path, SVG_CONNECTION_OPACITY_SELECTED);
     }
 
-    // Animation methods
+    // ANIMATION METHODS
     // Animate Connection objects in the MapCanvas. There are 2 possible ways to animate connections:
     // 1) exploredPath - connectionsOrder is a hashmap of objects; 2) selectedPath - connectionsOrder
     // is an array of objects.

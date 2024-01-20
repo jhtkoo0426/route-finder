@@ -2,6 +2,8 @@ import CSVParserFactory from "./parsers/csv_parsers/CSVParserFactory";
 import { SVG_CONNECTION_OPACITY_UNVISITED } from "./Constants";
 
 
+
+// Manages instances of all metro map assets (stations, connections & railway lines).
 class MetroMapAssetsManager {
     constructor(connectionsFilePath, stationsFilePath, railwaysFilePath) {
         this.connectionsFilePath = connectionsFilePath;
@@ -36,7 +38,7 @@ class MetroMapAssetsManager {
     // Resets the opacity of Connection objects
     resetConnectionsOpacities() {
         Object.keys(this.connections).forEach((key) => {
-            this.connections[key].state.opacity = SVG_CONNECTION_OPACITY_UNVISITED
+            this.connections[key].state.opacity = SVG_CONNECTION_OPACITY_UNVISITED;
         })
     }
 }

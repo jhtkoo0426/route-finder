@@ -16,6 +16,7 @@ import {
 
 
 
+// An instance represents a physical metro station.
 class Station {
     constructor(name, lat, lon) {
         this.name = name;

@@ -1,3 +1,4 @@
+// Handles the application debugger and validates the search form.
 class DebuggerHandler {
     constructor(appInstance) {
         this.appInstance = appInstance;

@@ -1,9 +1,5 @@
-// The CSVParser defines an interface for creating CSV parser
-// objects, where the type of CSV file to parse is determined by its
-// subclasses.
-
-
-
+// Defines an interface for creating CSV parser objects, where the type of CSV 
+// file to parse is determined by its subclasses.
 class CSVParser {
     constructor(filePath) {
         this.filePath = filePath;

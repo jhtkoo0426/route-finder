@@ -4,7 +4,7 @@ import MinPriorityQueue from "../MinPriorityQueue";
 
 
 // This Dijkstra's algorithm implementation will explore all possible connections
-// of a metro map. It is NOT OPTIMISED in any manner.
+// of a metro map. It is NOT OPTIMISED.
 class Dijkstra extends BaseAlgorithm {
     constructor(stations) {
         super(stations);

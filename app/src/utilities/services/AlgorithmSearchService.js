@@ -2,7 +2,7 @@ import Dijkstra from "../algorithms/Dijkstra"
 
 
 
-// Handles user queries via the search button
+// Handles user queries via the search button.
 class AlgorithmSearchService {
     constructor() {
         this.metroMapAssetsManager = null;

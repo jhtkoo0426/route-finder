@@ -6,6 +6,7 @@ import {
 
 
 
+// An instance represents a physical connection between two metro stations.
 class Connection {
     constructor(startStation, endStation) {
         this.startStation = startStation;

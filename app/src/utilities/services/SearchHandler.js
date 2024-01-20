@@ -1,4 +1,4 @@
-// Create a new class for handling search logic
+// Handles application searching logic.
 class SearchHandler {
     constructor(appInstance) {
         this.appInstance = appInstance;
