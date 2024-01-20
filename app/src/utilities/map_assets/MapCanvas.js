@@ -40,8 +40,6 @@ class MapCanvas extends PureComponent {
             screenWidth: window.innerWidth,
             screenHeight: window.innerHeight,
             mapWidth: window.innerWidth * 0.8,      // Scale factor adjusts to grid width
-            isVisualizingExploredPath: false,
-            isVisualizingSelectedPath: false,
         };
     }
 
@@ -203,15 +201,19 @@ class MapCanvas extends PureComponent {
     // is an array of objects.
     animateConnections = async (type, connectionsOrder, opacity) => {
         const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-        const isVisualizingExploredPath = type === "exploredPath";
-        const isVisualizingSelectedPath = !isVisualizingExploredPath;
-        this.setState({
-            isVisualizingExploredPath,
-            isVisualizingSelectedPath,
-        });
     
-        for (let i = 0; i < connectionsOrder.length; i++) {
-            let [start, end] = isVisualizingExploredPath
+        const {
+            updateVisualizationStates,
+        } = this.props;
+    
+        // Use the callback function to update the state in App.js
+        updateVisualizationStates(
+            type === "exploredPath",
+            type === "selectedPath",
+        );
+
+        for (let i = 0; i < connectionsOrder.length - 1; i++) {
+            let [start, end] = type === "exploredPath"
                 ? [connectionsOrder[i].start, connectionsOrder[i].end]
                 : [connectionsOrder[i], connectionsOrder[i + 1]];
             const connections = { ...this.state.connections };
@@ -223,6 +225,8 @@ class MapCanvas extends PureComponent {
             await delay(VISUALISE_PATH_NODE_DELAY);
         }
     };
+    
+    
 
     render() {
         return (

@@ -31,6 +31,8 @@ class App extends Component {
             selectedAlgoPath: [],           // Array of station names to show minimum distance path
             selectedAlgoPathDistance: null, // Variable for mimimum distance
             selectedAlgoDuration:  null,    // Variable for measuring time elapsed for algorithm
+            isVisualizingExploredPath: false,
+            isVisualizingSelectedPath: false,
 
             // User interaction variables
             selectedStartStation: null,     // Input variable for start station
@@ -100,6 +102,13 @@ class App extends Component {
         const segments = this.travelPathParser.parseTravelPathIntoSegments(path);
         return this.mapCanvas.renderTravelPath(segments);
     }
+
+    updateVisualizationStates = (isVisualizingExploredPath, isVisualizingSelectedPath) => {
+        this.setState({
+            isVisualizingExploredPath: isVisualizingExploredPath,
+            isVisualizingSelectedPath: isVisualizingSelectedPath,
+        });
+    };
 
     render() {
         return (
@@ -177,7 +186,13 @@ class App extends Component {
                         </div>
                         :null
                     }
+                    <div className="exploration-status">
+                        { this.state.isVisualizingExploredPath === true && <p>Exploring connections...</p> }
+                    </div>
                     <br></br>
+                    <div className="visualisation-status">
+                        { this.state.isVisualizingSelectedPath === true && <p>Visualized the shortest-distance path.</p> }
+                    </div>
                     <div className="search-results">
                         {
                             this.state.selectedAlgoDuration !== null &&
@@ -197,7 +212,10 @@ class App extends Component {
                     </div>
                 </div>
                 <div className="metro-map-container" style={{  height: '100vh', overflow: 'hidden', position: 'relative' }}>
-                    <MapCanvas ref={(mapCanvas) => (this.mapCanvas = mapCanvas)}/>
+                    <MapCanvas
+                        ref={(mapCanvas) => (this.mapCanvas = mapCanvas)}
+                        updateVisualizationStates={this.updateVisualizationStates}
+                    />
                 </div>
             </div>
         );
