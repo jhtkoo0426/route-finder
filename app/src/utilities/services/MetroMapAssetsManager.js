@@ -1,5 +1,5 @@
-import CSVParserFactory from "./parsers/csv_parsers/CSVParserFactory";
-import { SVG_CONNECTION_OPACITY_UNVISITED } from "./Constants";
+import CSVParserFactory from "../parsers/csv_parsers/CSVParserFactory";
+import { SVG_CONNECTION_OPACITY_UNVISITED } from "../Constants";
 
 
 

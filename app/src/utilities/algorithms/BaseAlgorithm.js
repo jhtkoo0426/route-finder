@@ -1,3 +1,4 @@
+// A base class for implementing pathfinding algorithms.
 class BaseAlgorithm {
     constructor(stations) {
         this.stations = stations;

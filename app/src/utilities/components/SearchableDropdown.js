@@ -22,7 +22,7 @@ const CUSTOM_STYLES = {
 
 // Custom select dropdown component using the React-select library:
 // https://github.com/jedwatson/react-select
-class SelectDropdown extends React.Component {
+class SearchableDropdown extends React.Component {
     render() {
         const { options, onChange, placeholder } = this.props;
 
@@ -41,4 +41,4 @@ class SelectDropdown extends React.Component {
     }
 }
 
-export default SelectDropdown;
+export default SearchableDropdown;

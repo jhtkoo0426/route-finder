@@ -3,12 +3,12 @@ import React, { Component } from "react";
 
 // Components
 import MapCanvas from "./utilities/map_assets/MapCanvas";
-import SelectDropdown from "./utilities/components/SelectDropdown";
+import SearchableDropdown from "./utilities/components/SearchableDropdown";
 
 // Utilities, services & parsers
 import AlgorithmSearchService from "./utilities/services/AlgorithmSearchService";
 import DebuggerHandler from "./utilities/services/DebuggerHandler";
-import MetroMapAssetsManager from "./utilities/MetroMapAssetsManager";
+import MetroMapAssetsManager from "./utilities/services/MetroMapAssetsManager";
 import SearchHandler from "./utilities/services/SearchHandler";
 import TravelPathParser from "./utilities/parsers/path_parsers/TravelPathParser";
 
@@ -128,7 +128,7 @@ class App extends Component {
                     <br></br>
                     <div className="search-menu">
                         <div className="search-box-start-station">
-                            <SelectDropdown
+                            <SearchableDropdown
                                 options={this.state.stationNames}
                                 onChange={(selectedOption) =>
                                     this.setState({ selectedStartStation: selectedOption ? selectedOption.value : "" })
@@ -137,14 +137,14 @@ class App extends Component {
                             />
                         </div>
                         <div className="search-box-end-station">
-                            <SelectDropdown
+                            <SearchableDropdown
                                 options={this.state.stationNames}
                                 onChange={(selectedOption) => this.setState({ selectedEndStation: selectedOption ? selectedOption.value : "" })}
                                 placeholder="Select End Station"
                             />
                         </div>
                         <div className="search-box-algorithm">
-                            <SelectDropdown
+                            <SearchableDropdown
                                 options={this.algorithmSearchService.algorithmOptions}
                                 onChange={(algorithmOption) => this.setState({ selectedAlgorithm: algorithmOption.value })}
                                 placeholder="Select algorithm"
@@ -193,6 +193,7 @@ class App extends Component {
                     <div className="visualisation-status">
                         { this.state.isVisualizingSelectedPath === true && <p>Visualized the shortest-distance path.</p> }
                     </div>
+                    <br></br>
                     <div className="search-results">
                         {
                             this.state.selectedAlgoDuration !== null &&

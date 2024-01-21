@@ -16,6 +16,8 @@ import {
     SVG_STATION_NAME_FONT_COLOR,
     SVG_STATION_INNER_CIRCLE_STROKE,
     SVG_STATION_OUTER_CIRCLE_STROKE,
+    SVG_STATION_NAME_SHIFT_X,
+    SVG_STATION_NAME_SHIFT_Y,
     SVG_CONNECTION_STROKE_WIDTH,
     SVG_CONNECTION_OPACITY_VISITED,
     SVG_CONNECTION_OPACITY_SELECTED,
@@ -81,15 +83,58 @@ class MapCanvas extends PureComponent {
 
     // RENDERING METHODS
     // 1. Rendering assets (stations, connections, grids & legend)
+    // Renders the Station object on the MapCanvas
+    renderStation(stationObj) {
+        return (
+            <g key={stationObj.name}>
+                <circle cx={stationObj.x} cy={stationObj.y} r={SVG_STATION_RADIUS} fill={SVG_STATION_OUTER_CIRCLE_STROKE} />
+                <circle cx={stationObj.x} cy={stationObj.y} r={SVG_STATION_RADIUS - 2} fill={SVG_STATION_INNER_CIRCLE_STROKE} />
+                <text
+                    x={stationObj.x + SVG_STATION_NAME_SHIFT_X}
+                    y={stationObj.y + SVG_STATION_NAME_SHIFT_Y}
+                    fontSize={SVG_STATION_NAME_FONT_SIZE}
+                    fill={SVG_STATION_NAME_FONT_COLOR}
+                    textAnchor="bottom">
+                    {stationObj.trunicatedName.split('\n').map((line, i) => (
+                        <tspan key={i} x={stationObj.x + 10} dy="1.2em">
+                            {line}
+                        </tspan>
+                    ))}
+                </text>
+            </g>
+        )
+    }
+
     renderStations() {
         return Object.entries(this.state.stations).map(([stationName, stationObj]) => (
-            stationObj.renderStation()
+            this.renderStation(stationObj)
         ));
     }
 
+    renderConnection(connectionObj) {
+        const totalLines = Array.from(connectionObj.metroLines).length;
+        const [startStation, endStation] = [connectionObj.startStation, connectionObj.endStation];
+        
+        return Array.from(connectionObj.metroLines).map((metroLineName, index) => {
+            const shiftAmount = (SVG_CONNECTION_STROKE_WIDTH * 0.5) * (0.5 - 0.5 * totalLines + index);
+            return (
+                <line
+                    key={`${startStation.name}-${endStation.name}-${metroLineName}`}
+                    x1={startStation.x + shiftAmount}
+                    y1={startStation.y + shiftAmount}
+                    x2={endStation.x + shiftAmount}
+                    y2={endStation.y + shiftAmount}
+                    stroke={this.state.railwayLinesColourMap[metroLineName]}
+                    strokeWidth={SVG_CONNECTION_STROKE_WIDTH}
+                    opacity={connectionObj.state.opacity}
+                />
+            );
+        });
+    }
+
     renderConnections() {
-        return Object.entries(this.state.connections).map(([connectionKey, connection]) => (
-            connection.renderConnection(this.state.railwayLinesColourMap)
+        return Object.entries(this.state.connections).map(([connectionKey, connectionObj]) => (
+            this.renderConnection(connectionObj)
         ));
     }
 
@@ -225,8 +270,6 @@ class MapCanvas extends PureComponent {
             await delay(VISUALISE_PATH_NODE_DELAY);
         }
     };
-    
-    
 
     render() {
         return (

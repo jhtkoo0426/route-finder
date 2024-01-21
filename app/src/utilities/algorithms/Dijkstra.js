@@ -1,5 +1,5 @@
 import BaseAlgorithm from "./BaseAlgorithm";
-import MinPriorityQueue from "../MinPriorityQueue";
+import MinPriorityQueue from "./MinPriorityQueue";
 
 
 
