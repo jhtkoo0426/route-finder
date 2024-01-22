@@ -1,13 +1,8 @@
-import {
-    SVG_MAP_SCALE_X,
-    SVG_MAP_SCALE_Y,
-    SVG_MAP_SHIFT_X,
-    SVG_MAP_SHIFT_Y,
-    SVG_STATION_NAME_LINE_MAX_CHARS,
-    EARTH_RADIUS
-} from "../Constants";
+// Constants
+import { SVG_STATION_NAME_LINE_MAX_CHARS } from "../Constants";
 
-import GeoUtils from "../services/GeoUtils";
+// Utilities
+import GeoUtilities from "../services/GeoUtils";
 
 
 
@@ -18,7 +13,7 @@ class Station {
         this.trunicatedName = this.transformStationName();
         this.lat = lat;
         this.lon = lon;
-        [this.x, this.y] = this.calculateXY(this.lat, this.lon);
+        [this.x, this.y] = this.geographicToCartesianCoordinates(this.lat, this.lon);
 
         // neighbours is an adjacency list of neighbouring stations relative to this
         // station. The keys are station names of the neighbouring stations, and the
@@ -41,12 +36,12 @@ class Station {
         }
     }
 
-    calculateXY(lat, lon) {
-        return GeoUtils.calculateXY(lat, lon);
+    geographicToCartesianCoordinates(lat, lon) {
+        return GeoUtilities.geographicToCartesianCoordinates(lat, lon);
     }
 
     calculateDistance(lat1, lon1, lat2, lon2) {
-        return GeoUtils.calculateDistance(lat1, lon1, lat2, lon2);
+        return GeoUtilities.calculateDistance(lat1, lon1, lat2, lon2);
     }
 
     transformStationName() {

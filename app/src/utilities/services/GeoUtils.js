@@ -8,10 +8,10 @@ import {
 
 
 
-// Oerforms geographic calculations such as translating geographic to Cartesian
+// Performs geographic calculations such as translating geographic to Cartesian
 // coordinates, finding distances between points, etc.
-class GeoUtils {
-    static calculateXY(lat, lon) {
+class GeoUtilities {
+    static geographicToCartesianCoordinates(lat, lon) {
         var a = EARTH_RADIUS * Math.cos(lat);
         var x = Math.round(a * Math.sin(lon) + SVG_MAP_SHIFT_X) * SVG_MAP_SCALE_X;
         var y = Math.round(a * Math.cos(lon) + SVG_MAP_SHIFT_Y) * SVG_MAP_SCALE_Y;
@@ -23,18 +23,18 @@ class GeoUtils {
     }
 
     static calculateDistance(lat1, lon1, lat2, lon2) {
-        var dLat = this.toRadians(lat2-lat1);
-        var dLon = this.toRadians(lon2-lon1);
+        var deltaLat = this.toRadians(lat2-lat1);
+        var deltaLon = this.toRadians(lon2-lon1);
         lat1 = this.toRadians(lat1);
         lat2 = this.toRadians(lat2);
 
-        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-            Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+        var a = Math.sin(deltaLat/2) * Math.sin(deltaLat/2) +
+            Math.sin(deltaLon/2) * Math.sin(deltaLon/2) * Math.cos(lat1) * Math.cos(lat2); 
         var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-        var d = EARTH_RADIUS * c;
-        return d;
+        var distance = EARTH_RADIUS * c;
+        return distance;
     }
 }
 
 
-export default GeoUtils;
+export default GeoUtilities;
