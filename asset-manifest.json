@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/route-finder/static/css/main.e9a31a71.css",
+    "main.js": "/route-finder/static/js/main.165786b3.js",
+    "static/media/averta-bold.otf": "/route-finder/static/media/averta-bold.ab424798bac0c7bedeea.otf",
+    "static/media/Inter-Black.ttf": "/route-finder/static/media/Inter-Black.24d6be6c502d39fb3ce1.ttf",
+    "static/media/Inter-Regular.ttf": "/route-finder/static/media/Inter-Regular.2391725004ae05a27e8e.ttf",
+    "static/media/averta-regular.otf": "/route-finder/static/media/averta-regular.a298a0ac59f09aeb64eb.otf",
+    "index.html": "/route-finder/index.html",
+    "main.e9a31a71.css.map": "/route-finder/static/css/main.e9a31a71.css.map",
+    "main.165786b3.js.map": "/route-finder/static/js/main.165786b3.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e9a31a71.css",
+    "static/js/main.165786b3.js"
+  ]
+}
