@@ -22,15 +22,14 @@ class ConnectionsCSVParser extends CSVParser {
 
             if (startStationObj && endStationObj) {
                 const [firstStation, secondStation] = [startStationObj, endStationObj].sort((a, b) => a.name.localeCompare(b.name));
-
                 const connectionKey = `${firstStation.name}-${secondStation.name}`;
 
                 connections[connectionKey] = connections[connectionKey] || this.createConnection(firstStation, secondStation);
                 connections[connectionKey].addMetroLine(metroLineName);
 
                 // Update the neighbors for both stations.
-                firstStation.addNeighbour(secondStation, metroLineName);
-                secondStation.addNeighbour(firstStation, metroLineName);
+                firstStation.addAdjacentNeighbour(secondStation, metroLineName);
+                secondStation.addAdjacentNeighbour(firstStation, metroLineName);
             }
         });
 

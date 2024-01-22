@@ -28,16 +28,17 @@ class Dijkstra extends BaseAlgorithm {
         this.enqueue(startStationName, 0);
 
         while (!this.isEmpty()) {
-            const currentStation = this.dequeue();
+            const currentStationName = this.dequeue();
+            const currentStation = this.stations[currentStationName];
 
-            if (this.visited[currentStation]) continue;
+            if (this.visited[currentStationName]) continue;
+            this.markStationAsVisited(currentStationName);
 
-            this.markStationAsVisited(currentStation);
-
-            const neighbors = this.stations[currentStation].neighbours;
-            Object.keys(neighbors).forEach(neighborName => {
-                this.updateDistances(currentStation, neighborName, neighbors[neighborName].distance);
-                this.markConnectionAsVisited(currentStation, neighborName);
+            const neighboursNames = currentStation.getAdjacentNeighboursNames();
+            neighboursNames.forEach((neighbourName) => {
+                const distance = currentStation.getNeighbourDistance(neighbourName);
+                this.updateDistances(currentStationName, neighbourName, distance);
+                this.markConnectionAsVisited(currentStationName, neighbourName);
             });
         }
 
