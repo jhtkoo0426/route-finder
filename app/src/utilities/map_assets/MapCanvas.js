@@ -95,7 +95,7 @@ class MapCanvas extends PureComponent {
                     fontSize={SVG_STATION_NAME_FONT_SIZE}
                     fill={SVG_STATION_NAME_FONT_COLOR}
                     textAnchor="bottom">
-                    {stationObj.transformedName.split('\n').map((line, i) => (
+                    {stationObj.trunicatedName.split('\n').map((line, i) => (
                         <tspan key={i} x={stationObj.x + 10} dy="1.2em">
                             {line}
                         </tspan>

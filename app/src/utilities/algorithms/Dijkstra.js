@@ -34,9 +34,9 @@ class Dijkstra extends BaseAlgorithm {
 
             this.markStationAsVisited(currentStation);
 
-            const adjacentNeighbors = this.stations[currentStation].adjacentNeighbours;
-            Object.keys(adjacentNeighbors).forEach(neighborName => {
-                this.updateDistances(currentStation, neighborName, adjacentNeighbors[neighborName]);
+            const neighbors = this.stations[currentStation].neighbours;
+            Object.keys(neighbors).forEach(neighborName => {
+                this.updateDistances(currentStation, neighborName, neighbors[neighborName].distance);
                 this.markConnectionAsVisited(currentStation, neighborName);
             });
         }

@@ -1,4 +1,7 @@
+// Constants
 import { SVG_STATION_NAME_LINE_MAX_CHARS } from "../Constants";
+
+// Utilities
 import GeoUtilities from "../services/GeoUtils";
 
 
@@ -7,37 +10,33 @@ import GeoUtilities from "../services/GeoUtils";
 class Station {
     constructor(name, lat, lon) {
         this.name = name;
-        this.transformedName = this.transformStationName();
+        this.trunicatedName = this.transformStationName();
         this.lat = lat;
         this.lon = lon;
-        [this.x, this.y] = this.calculateXYCoordinates(lat, lon);
+        [this.x, this.y] = this.geographicToCartesianCoordinates(this.lat, this.lon);
 
-        // Adjacency list with station names as keys and distances as values.
-        this.adjacentNeighbours = new Map();
+        // neighbours is an adjacency list of neighbouring stations relative to this
+        // station. The keys are station names of the neighbouring stations, and the
+        // values are hashmaps which contain 2 values: distance between this station
+        // and the neighbour station, as well as a list of all metro lines that
+        // connect bewteen these stations.
+        this.neighbours = new Map();
     }
 
-    addAdjacentNeighbour(neighbourStation) {
-        const neighbourStationName = neighbourStation.name;
+    addNeighbour(station, metroLineName) {
+        const { name, lat, lon } = station;
 
-        if (!this.isNeighbour(neighbourStationName)) {
-            const neighbourLat = neighbourStation.lat;
-            const neighbourLon = neighbourStation.lon;
-            this.adjacentNeighbours.set(
-                neighbourStationName,
-                this.calculateDistance(this.lat, this.lon, neighbourLat, neighbourLon)
-            );
+        if (name in this.neighbours) {
+            this.neighbours[name].lines.add(metroLineName);
+        } else {
+            this.neighbours[name] = {
+                distance: this.calculateDistance(this.lat, this.lon, lat, lon),
+                lines: new Set([metroLineName]),
+            };
         }
     }
 
-    isNeighbour(neighbourStationName) {
-        return this.adjacentNeighbours.has(neighbourStationName);
-    }
-
-    getAdjacentNeighboursNames() {
-        return Array.from(this.adjacentNeighbours.keys());
-    }
-
-    calculateXYCoordinates(lat, lon) {
+    geographicToCartesianCoordinates(lat, lon) {
         return GeoUtilities.geographicToCartesianCoordinates(lat, lon);
     }
 
@@ -47,16 +46,18 @@ class Station {
 
     transformStationName() {
         const words = this.name.split(' ');
-        return words.reduce((lines, word) => {
-        const lastLine = lines[lines.length - 1];
-        if (!lastLine || lastLine.length + word.length > SVG_STATION_NAME_LINE_MAX_CHARS) {
-            lines.push(word);
-        } else {
-            lines[lines.length - 1] += ` ${word}`;
-        }
-        return lines;
-        }, []).join('\n');
+        let result = words.reduce((acc, word) => {
+            if (acc.length === 0 || acc[acc.length - 1].length + word.length > SVG_STATION_NAME_LINE_MAX_CHARS) {
+                acc.push(word);
+            } else {
+                acc[acc.length - 1] += ` ${word}`;
+            }
+            return acc;
+        }, []);
+
+        return result.join('\n');
     }
 }
+
 
 export default Station;
