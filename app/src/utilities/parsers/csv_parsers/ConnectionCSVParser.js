@@ -28,9 +28,8 @@ class ConnectionsCSVParser extends CSVParser {
                 connections[connectionKey] = connections[connectionKey] || this.createConnection(firstStation, secondStation);
                 connections[connectionKey].addMetroLine(metroLineName);
 
-                // Update the neighbors for both stations.
-                firstStation.addNeighbour(secondStation, metroLineName);
-                secondStation.addNeighbour(firstStation, metroLineName);
+                firstStation.addAdjacentNeighbour(secondStation);
+                secondStation.addAdjacentNeighbour(firstStation);
             }
         });
 
