@@ -7,9 +7,11 @@ import {
     EARTH_RADIUS
 } from "../Constants";
 
+import GeoUtils from "../services/GeoUtils";
 
 
-// An instance represents a physical metro station.
+
+// Represents a physical metro station.
 class Station {
     constructor(name, lat, lon) {
         this.name = name;
@@ -40,27 +42,11 @@ class Station {
     }
 
     calculateXY(lat, lon) {
-        var a = EARTH_RADIUS * Math.cos(lat);
-        var x = Math.round(a * Math.sin(lon) + SVG_MAP_SHIFT_X) * SVG_MAP_SCALE_X;
-        var y = Math.round(a * Math.cos(lon) + SVG_MAP_SHIFT_Y) * SVG_MAP_SCALE_Y;
-        return [x, y];
-    }
-
-    toRad(x) {
-        return Math.PI * x / 180;
+        return GeoUtils.calculateXY(lat, lon);
     }
 
     calculateDistance(lat1, lon1, lat2, lon2) {
-        var dLat = this.toRad(lat2-lat1);
-        var dLon = this.toRad(lon2-lon1);
-        lat1 = this.toRad(lat1);
-        lat2 = this.toRad(lat2);
-
-        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-            Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-        var d = EARTH_RADIUS * c;
-        return d;
+        return GeoUtils.calculateDistance(lat1, lon1, lat2, lon2);
     }
 
     transformStationName() {
