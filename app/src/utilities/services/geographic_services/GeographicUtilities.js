@@ -4,7 +4,7 @@ import {
     SVG_MAP_SCALE_X,
     SVG_MAP_SCALE_Y,
     EARTH_RADIUS
-} from "../Constants";
+} from "../../Constants";
 
 
 

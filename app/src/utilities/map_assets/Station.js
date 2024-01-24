@@ -2,7 +2,7 @@
 import { SVG_STATION_NAME_LINE_MAX_CHARS } from "../Constants";
 
 // Utilities
-import GeoUtilities from "../services/GeoUtils";
+import GeoUtilities from "../services/geographic_services/GeographicUtilities";
 
 
 

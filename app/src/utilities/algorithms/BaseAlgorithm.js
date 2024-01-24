@@ -1,7 +1,7 @@
 // A base class for implementing pathfinding algorithms.
 class BaseAlgorithm {
-    constructor(stations) {
-        this.stations = stations;
+    constructor(mapGraph) {
+        this.mapGraph = mapGraph;
         this.distances = new Map();
         this.visited = new Map();
         this.previousStation = new Map();
@@ -9,7 +9,7 @@ class BaseAlgorithm {
     }
 
     initializeDistances(startStationName) {
-        Object.keys(this.stations).forEach(stationName => {
+        this.mapGraph.getStationNames().forEach(stationName => {
             this.distances[stationName] = Infinity;
             this.visited[stationName] = false;
             this.previousStation[stationName] = null;
