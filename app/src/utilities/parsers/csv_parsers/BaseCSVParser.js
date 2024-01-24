@@ -6,13 +6,29 @@ class CSVParser {
     }
 
     async parse() {
-        // All CSV parsers split their CSV files into rows by the \n symbol.
-        const response = await fetch(this.filePath);
-        const csvText = await response.text();
-        const csvData = csvText.split(/\r\n|\n/).filter(Boolean);
+        try {
+            const response = await fetch(this.filePath);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch CSV file: ${response.statusText}`);
+            }
+
+            const csvText = await response.text();
+            const csvRows = this.splitCSVIntoRows(csvText);
+            return csvRows;
+        } catch (error) {
+            this.handleParseError(error);
+            throw error;
+        }
+    }
+
+    splitCSVIntoRows(csvText) {
+        const csvData = csvText.split(/\r\n|\n/).map(line => line.trim()).filter(Boolean);
         return csvData;
     }
-}
 
+    handleParseError(error) {
+        console.error(`Error parsing CSV: ${error.message}`);
+    }
+}
 
 export default CSVParser;

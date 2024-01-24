@@ -2,7 +2,7 @@ import { SVG_CONNECTION_OPACITY_UNVISITED } from "../Constants";
 
 
 
-// An instance represents a physical connection between two metro stations.
+// Represents a physical connection between two Station instances.
 class Connection {
     constructor(startStation, endStation) {
         this.startStation = startStation;

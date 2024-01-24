@@ -6,8 +6,8 @@ import MinPriorityQueue from "./MinPriorityQueue";
 // This Dijkstra's algorithm implementation will explore all possible connections
 // of a metro map. It is NOT OPTIMISED.
 class Dijkstra extends BaseAlgorithm {
-    constructor(stations) {
-        super(stations);
+    constructor(mapGraph) {
+        super(mapGraph);
         this.priorityQueue = new MinPriorityQueue();
     }
 
@@ -26,21 +26,23 @@ class Dijkstra extends BaseAlgorithm {
     searchPath(startStationName, endStationName) {
         this.initializeDistances(startStationName);
         this.enqueue(startStationName, 0);
-
+        
         while (!this.isEmpty()) {
-            const currentStation = this.dequeue();
-
-            if (this.visited[currentStation]) continue;
-
-            this.markStationAsVisited(currentStation);
-
-            const neighbors = this.stations[currentStation].neighbours;
-            Object.keys(neighbors).forEach(neighborName => {
-                this.updateDistances(currentStation, neighborName, neighbors[neighborName].distance);
-                this.markConnectionAsVisited(currentStation, neighborName);
+            const currentStationName = this.dequeue();
+    
+            if (this.visited[currentStationName]) continue;
+            this.markStationAsVisited(currentStationName);
+    
+            const neighboursNames = this.mapGraph.getStationNeighbourNames(currentStationName);
+            neighboursNames.forEach((neighbourName) => {
+                const distance = this.mapGraph.getNeighbourDistance(currentStationName, neighbourName);
+                if (distance !== Infinity) { // Ensure you handle infinite distances properly
+                    this.updateDistances(currentStationName, neighbourName, distance);
+                    this.markConnectionAsVisited(currentStationName, neighbourName);
+                }
             });
         }
-
+    
         const path = this.constructPath(this.previousStation, startStationName, endStationName);
         return {
             distance: this.distances[endStationName],
@@ -48,6 +50,7 @@ class Dijkstra extends BaseAlgorithm {
             visitedConnectionsOrder: this.visitedConnections,
         };
     }
+    
 
     constructPath(previousStation, startStation, endStation) {
         const path = [];

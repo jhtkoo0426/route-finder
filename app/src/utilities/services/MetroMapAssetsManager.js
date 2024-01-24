@@ -13,6 +13,7 @@ class MetroMapAssetsManager {
         this.connections = new Map();
         this.stations = new Map();
         this.railwayLinesColourMap = new Map();
+        this.mapGraph = null;
     }
 
     // Parse all resource files to load assets for visualization.
@@ -24,7 +25,7 @@ class MetroMapAssetsManager {
         
         this.railwayLinesColourMap = await railwaysCSVParser.parse();
         this.stations = await stationsCSVParser.parse();
-        [this.stations, this.connections] = await connectionsCSVParser.parse(this.stations);
+        [this.stations, this.connections, this.mapGraph] = await connectionsCSVParser.parse(this.stations);
     }
 
     getStationNames() {
@@ -34,7 +35,7 @@ class MetroMapAssetsManager {
     getStationObjects() {
         return this.stations;
     }
-
+    
     // Resets the opacity of Connection objects
     resetConnectionsOpacities() {
         Object.keys(this.connections).forEach((key) => {
