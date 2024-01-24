@@ -30,10 +30,6 @@ class ConnectionsCSVParser extends CSVParser {
                 connections[connectionKey] = connections[connectionKey] || new Connection(firstStation, secondStation);
                 connections[connectionKey].addMetroLine(metroLineName);
 
-                // Update the neighbors for both stations.
-                firstStation.addAdjacentNeighbour(secondStation, metroLineName);
-                secondStation.addAdjacentNeighbour(firstStation, metroLineName);
-
                 const distance = StationGeoUtils.calculateDistance(startStationObj, endStationObj);
                 mapGraph.addNeighbourToStation(startStationName, endStationName, distance);
             }

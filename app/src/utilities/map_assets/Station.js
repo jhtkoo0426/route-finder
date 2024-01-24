@@ -14,34 +14,6 @@ class Station {
         this.lat = lat;
         this.lon = lon;
         [this.x, this.y] = this.calculateXYCoordinates(lat, lon);
-
-        // Adjacency list with station names as keys and distances as values.
-        this.adjacentNeighbours = new Map();
-    }
-
-    addAdjacentNeighbour(neighbourStation) {
-        const neighbourStationName = neighbourStation.name;
-
-        if (!this.isNeighbour(neighbourStationName)) {
-            const neighbourLat = neighbourStation.lat;
-            const neighbourLon = neighbourStation.lon;
-            this.adjacentNeighbours.set(
-                neighbourStationName,
-                this.getDistance(this.lat, this.lon, neighbourLat, neighbourLon)
-            );
-        }
-    }
-
-    isNeighbour(neighbourStationName) {
-        return this.adjacentNeighbours.has(neighbourStationName);
-    }
-
-    getNeighbourDistance(neighbourName) {
-        return this.adjacentNeighbours.get(neighbourName);
-    }
-
-    getAdjacentNeighboursNames() {
-        return Array.from(this.adjacentNeighbours.keys());
     }
 
     calculateXYCoordinates(lat, lon) {
