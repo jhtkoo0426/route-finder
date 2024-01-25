@@ -17,8 +17,8 @@ class TravelPathParser {
         for (let i = 0; i < path.length - 1; i++) {
             const current = path[i];
             const next = path[i + 1];
-            const connection = this.metroMapAssetsManager.connections[`${current}-${next}`] || this.metroMapAssetsManager.connections[`${next}-${current}`];
-            const lines = Array.from(connection.metroLines);
+            const connectionObj = this.metroMapAssetsManager.connections[`${current}-${next}`] || this.metroMapAssetsManager.connections[`${next}-${current}`];
+            const lines = connectionObj.getMetroLinesArray();
     
             if (!start) [start, line] = [current, lines[0]];
             if (!lines.includes(line)) {

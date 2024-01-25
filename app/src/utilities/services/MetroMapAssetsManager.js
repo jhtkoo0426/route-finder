@@ -28,10 +28,12 @@ class MetroMapAssetsManager {
         [this.stations, this.connections, this.mapGraph] = await connectionsCSVParser.parse(this.stations);
     }
 
+    // @returns {Array}
     getStationNames() {
         return Object.keys(this.stations);
     }
 
+    // @returns {Map}
     getStationObjects() {
         return this.stations;
     }

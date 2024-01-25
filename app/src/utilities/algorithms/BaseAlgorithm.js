@@ -2,37 +2,62 @@
 class BaseAlgorithm {
     constructor(mapGraph) {
         this.mapGraph = mapGraph;
-        this.distances = new Map();
-        this.visited = new Map();
-        this.previousStation = new Map();
-        this.visitedConnections = [];
+        this.distances = new Map();         // Stores the minimum distance between two stations discovered so far.
+        this.visitedStations = new Map();   // Keeps track of visited stations during exploration.
+        this.previousStation = new Map();   // Stores stations in the optimal path from the starting station to each station.
+        this.visitedEdges = [];             // Keeps track of the order of visiting edges between stations.
     }
 
+    // @params {String} startStationName
     initializeDistances(startStationName) {
         this.mapGraph.getStationNames().forEach(stationName => {
             this.distances[stationName] = Infinity;
-            this.visited[stationName] = false;
+            this.visitedStations[stationName] = false;
             this.previousStation[stationName] = null;
         });
         this.distances[startStationName] = 0;
     }
 
+    // @params {String} stationName
+    // @returns {Boolean}
+    stationIsVisited(stationName) {
+        return this.visitedStations[stationName] === true;
+    }
+
+    // @params {String} stationName
     markStationAsVisited(stationName) {
-        this.visited[stationName] = true;
+        this.visitedStations[stationName] = true;
     }
     
-    markConnectionAsVisited(startStation, endStation) {
-        this.visitedConnections.push({ start: startStation, end: endStation });
+    // @params {String} startStationName
+    // @params {String} endStationName
+    addEdgeToVisitedEdges(startStationName, endStationName) {
+        this.visitedEdges.push({ start: startStationName, end: endStationName });
     }
 
-    updateDistances(currentStation, neighborName, neighborDistance) {
-        const newDistance = this.distances[currentStation] + neighborDistance;
+    // @params {String} currentStationName
+    // @params {String} neighbourName
+    // @params {float} neighbourDistance
+    updateDistances(currentStationName, neighbourName, neighbourDistance) {
+        const newDistance = this.distances[currentStationName] + neighbourDistance;
 
-        if (newDistance < this.distances[neighborName]) {
-            this.distances[neighborName] = newDistance;
-            this.previousStation[neighborName] = currentStation;
-            this.enqueue(neighborName, newDistance);
+        if (newDistance < this.distances[neighbourName]) {
+            this.distances[neighbourName] = newDistance;
+            this.previousStation[neighbourName] = currentStationName;
+            this.enqueue(neighbourName, newDistance);
         }
+    }
+
+    // Executes the algorithm from the starting to ending station.
+    // @params {String} startStationName
+    // @params {String} endStationName
+    // @returns {Map} result
+    runAlgorithm(startStationName, endStationName) {
+        const startTime = performance.now();
+        const result = this.searchOptimalPath(startStationName, endStationName);
+        const endTime = performance.now();
+        result['duration'] = endTime - startTime;
+        return result;
     }
 
     // Abstract methods to be implemented by subclasses
@@ -48,20 +73,12 @@ class BaseAlgorithm {
         throw new Error("isEmpty method must be implemented by subclasses, returning a boolean value");
     }
     
-    searchPath(startStationName, endStationName) {
-        throw new Error("searchPath method must be implemented by subclasses, returning a boolean value");
+    searchOptimalPath(startStationName, endStationName) {
+        throw new Error("searchOptimalPath method must be implemented by subclasses, returning a boolean value");
     }
     
-    constructPath(previousStation, startStation, endStation) {
-        throw new Error("constructPath method must be implemented by subclasses, returning a boolean value");
-    }
-
-    runAlgorithm(startStationName, endStationName) {
-        const startTime = performance.now();
-        const result = this.searchPath(startStationName, endStationName);
-        const endTime = performance.now();
-        result['duration'] = endTime - startTime;
-        return result;
+    constructOptimalPath(previousStation, startStation, endStation) {
+        throw new Error("constructOptimalPath method must be implemented by subclasses, returning a boolean value");
     }
 }
 

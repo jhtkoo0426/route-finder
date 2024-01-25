@@ -9,6 +9,9 @@ import RailwaysCSVParser from "./RailwaysCSVParser";
 // type of data. This encapsulates the object creation logic into the factory, so
 // the application code doesn't need to worry about which parser to instantiate.
 class CSVParserFactory {
+    // @params {string} type
+    // @params {string} filePath
+    // @returns {CSVParser}
     createParser(type, filePath) {
         switch (type) {
             case 'stations':

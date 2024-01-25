@@ -95,7 +95,7 @@ class MapCanvas extends PureComponent {
                     fontSize={SVG_STATION_NAME_FONT_SIZE}
                     fill={SVG_STATION_NAME_FONT_COLOR}
                     textAnchor="bottom">
-                    {stationObj.transformedName.split('\n').map((line, i) => (
+                    {stationObj.fittedName.split('\n').map((line, i) => (
                         <tspan key={i} x={stationObj.x + 10} dy="1.2em">
                             {line}
                         </tspan>
@@ -112,11 +112,12 @@ class MapCanvas extends PureComponent {
     }
 
     renderConnection(connectionObj) {
-        const totalLines = Array.from(connectionObj.metroLines).length;
+        const metroLineCount = connectionObj.getMetroLinesCount();
+        const metroLinesArray = connectionObj.getMetroLinesArray();
         const [startStation, endStation] = [connectionObj.startStation, connectionObj.endStation];
         
-        return Array.from(connectionObj.metroLines).map((metroLineName, index) => {
-            const shiftAmount = (SVG_CONNECTION_STROKE_WIDTH * 0.5) * (0.5 - 0.5 * totalLines + index);
+        return metroLinesArray.map((metroLineName, index) => {
+            const shiftAmount = (SVG_CONNECTION_STROKE_WIDTH * 0.5) * (0.5 - 0.5 * metroLineCount + index);
             return (
                 <line
                     key={`${startStation.name}-${endStation.name}-${metroLineName}`}

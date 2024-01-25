@@ -9,16 +9,16 @@ class AlgorithmSearchService {
         this.algorithmOptions = ["Dijkstra"];
     }
 
+    // @params {MetroMapAssetsManager} assetManager
     loadAssets(assetManager) {
         this.metroMapAssetsManager =  assetManager;
     }
 
-    async search(selectedStartStation, selectedEndStation) {
-        // Run all available algorithms and fetch the results and metrics (to be used for comparison).
-        return this.executeAlgorithms(selectedStartStation, selectedEndStation);
-    }
-
-    executeAlgorithms(startStationName, endStationName) {
+    // Runs all available algorithms and fetch the results and metrics (to be used for comparison).
+    // @params {string} startStationName
+    // @params {string} endStationName
+    // @returns {Map}
+    async search(startStationName, endStationName) {
         const dijkstra = new Dijkstra(this.metroMapAssetsManager.mapGraph);
         const algorithmResults = {
             "Dijkstra": dijkstra.runAlgorithm(startStationName, endStationName)

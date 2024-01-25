@@ -5,6 +5,8 @@ class CSVParser {
         this.filePath = filePath;
     }
 
+    // Extracts all rows from a .csv file into an array.
+    // @returns {Array}
     async parse() {
         try {
             const response = await fetch(this.filePath);
@@ -21,9 +23,13 @@ class CSVParser {
         }
     }
 
+    // @params {string} csvText
+    // @returns {Array}
     splitCSVIntoRows(csvText) {
-        const csvData = csvText.split(/\r\n|\n/).map(line => line.trim()).filter(Boolean);
-        return csvData;
+        let lines = csvText.split(/\r\n|\n/);           // Split the CSV text into lines
+        lines = lines.map(line => line.trim());         // Trim leading and trailing whitespaces from each line
+        const nonEmptyLines = lines.filter(Boolean);    // Remove empty lines
+        return nonEmptyLines;
     }
 
     handleParseError(error) {

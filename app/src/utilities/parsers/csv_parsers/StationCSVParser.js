@@ -10,6 +10,7 @@ import Station from "../../map_assets/Station";
 // Column 2: Latitude coordinates
 // Column 3: Longitude coordinates
 class StationsCSVParser extends CSVParser {
+    // @returns {Map}
     async parse() {
         let stations = new Map();
         const csvData = await super.parse();    // The base parse method splits rows by the \n symbol.

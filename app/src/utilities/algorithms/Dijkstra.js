@@ -23,36 +23,35 @@ class Dijkstra extends BaseAlgorithm {
         return this.priorityQueue.isEmpty();
     }
 
-    searchPath(startStationName, endStationName) {
+    searchOptimalPath(startStationName, endStationName) {
         this.initializeDistances(startStationName);
         this.enqueue(startStationName, 0);
         
         while (!this.isEmpty()) {
-            const currentStationName = this.dequeue();
+            const stationName = this.dequeue();
     
-            if (this.visited[currentStationName]) continue;
-            this.markStationAsVisited(currentStationName);
+            if (this.stationIsVisited(stationName)) continue;
+            this.markStationAsVisited(stationName);
     
-            const neighboursNames = this.mapGraph.getStationNeighbourNames(currentStationName);
+            const neighboursNames = this.mapGraph.getStationNeighbourNames(stationName);
             neighboursNames.forEach((neighbourName) => {
-                const distance = this.mapGraph.getNeighbourDistance(currentStationName, neighbourName);
-                if (distance !== Infinity) { // Ensure you handle infinite distances properly
-                    this.updateDistances(currentStationName, neighbourName, distance);
-                    this.markConnectionAsVisited(currentStationName, neighbourName);
+                const distance = this.mapGraph.getNeighbourDistance(stationName, neighbourName);
+                if (distance !== Infinity) {
+                    this.updateDistances(stationName, neighbourName, distance);
+                    this.addEdgeToVisitedEdges(stationName, neighbourName);
                 }
             });
         }
     
-        const path = this.constructPath(this.previousStation, startStationName, endStationName);
+        const path = this.constructOptimalPath(this.previousStation, startStationName, endStationName);
         return {
             distance: this.distances[endStationName],
             path: path,
-            visitedConnectionsOrder: this.visitedConnections,
+            visitedConnectionsOrder: this.visitedEdges,
         };
     }
     
-
-    constructPath(previousStation, startStation, endStation) {
+    constructOptimalPath(previousStation, startStation, endStation) {
         const path = [];
         let currentStation = endStation;
 
@@ -64,7 +63,7 @@ class Dijkstra extends BaseAlgorithm {
         if (currentStation === startStation) {
             path.unshift(startStation);
         }
-
+        
         return path;
     }
 }

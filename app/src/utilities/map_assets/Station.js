@@ -10,22 +10,32 @@ import GeoUtilities from "../services/geographic_services/GeographicUtilities";
 class Station {
     constructor(name, lat, lon) {
         this.name = name;
-        this.transformedName = this.transformStationName();
+        this.fittedName = this.transformStationName(name);
         this.lat = lat;
         this.lon = lon;
         [this.x, this.y] = this.calculateXYCoordinates(lat, lon);
     }
 
+    // @params {float} lat
+    // @params {float} lon
+    // @returns {Array}
     calculateXYCoordinates(lat, lon) {
         return GeoUtilities.geographicToCartesianCoordinates(lat, lon);
     }
 
+    // @params {float} lat1
+    // @params {float} lon1
+    // @params {float} lat2
+    // @params {float} lon2
+    // @returns {float}
     getDistance(lat1, lon1, lat2, lon2) {
         return GeoUtilities.calculateDistance(lat1, lon1, lat2, lon2);
     }
 
-    transformStationName() {
-        const words = this.name.split(' ');
+    // @params {string} stationName
+    // @returns {string}
+    transformStationName(stationName) {
+        const words = stationName.split(' ');
         return words.reduce((lines, word) => {
             const lastLine = lines[lines.length - 1];
             if (!lastLine || lastLine.length + word.length > SVG_STATION_NAME_LINE_MAX_CHARS) {

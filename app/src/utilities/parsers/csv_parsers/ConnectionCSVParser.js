@@ -12,6 +12,8 @@ import CSVParser from "./BaseCSVParser";
 // Column 2: Start station name
 // Column 3: End station name
 class ConnectionsCSVParser extends CSVParser {
+    // @params {Array} stations
+    // @returns {Array} parseResult
     async parse(stations) {
         const csvData = await super.parse();
 
@@ -19,24 +21,65 @@ class ConnectionsCSVParser extends CSVParser {
         let mapGraph = new MapGraph();
 
         csvData.forEach(row => {
-            const [metroLineName, startStationName, endStationName] = row.split(",");
-            const startStationObj = stations[startStationName];
-            const endStationObj = stations[endStationName];
-
-            if (startStationObj && endStationObj) {
-                const [firstStation, secondStation] = [startStationObj, endStationObj].sort((a, b) => a.name.localeCompare(b.name));
-                const connectionKey = `${firstStation.name}-${secondStation.name}`;
-
-                connections[connectionKey] = connections[connectionKey] || new Connection(firstStation, secondStation);
-                connections[connectionKey].addMetroLine(metroLineName);
-
-                const distance = StationGeoUtils.calculateDistance(startStationObj, endStationObj);
-                mapGraph.addNeighbourToStation(startStationName, endStationName, distance);
-            }
+            this.parseConnection(row, stations, connections, mapGraph);
         });
 
         console.log("All connections parsed.");
-        return [stations, connections, mapGraph];
+        const parseResult = [stations, connections, mapGraph];
+        return parseResult;
+    }
+
+    // @params {string} row
+    // @params {Map} stations
+    // @params {Map} connections
+    // @params {MapGraph} mapGraph
+    parseConnection(row, stations, connections, mapGraph) {
+        const [metroLineName, startStationName, endStationName] = row.split(",");
+        const startStationObj = stations[startStationName];
+        const endStationObj = stations[endStationName];
+
+        if (startStationObj && endStationObj) {
+            const [firstStation, secondStation] = this.sortStationsByName(startStationObj, endStationObj);
+            const connectionKey = this.getConnectionKey(firstStation, secondStation);
+
+            this.createOrUpdateConnection(connections, connectionKey, metroLineName, firstStation, secondStation);
+            this.calculateAndAddDistance(mapGraph, startStationName, endStationName, startStationObj, endStationObj);
+        }
+    }
+
+    // Auxiliary methods
+    // @params {string} stationAName
+    // @params {string} stationBName
+    // @returns {Array}
+    sortStationsByName(stationAName, stationBName) {
+        return [stationAName, stationBName].sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    // @params {Station} stationAObj
+    // @params {Station} stationBObj
+    // @returns {string}
+    getConnectionKey(stationAObj, stationBObj) {
+        return `${stationAObj.name}-${stationBObj.name}`;
+    }
+
+    // @params {Map} connections
+    // @params {string} connectionKey
+    // @params {string} metroLineName
+    // @params {Station} firstStation
+    // @params {Station} secondStation
+    createOrUpdateConnection(connections, connectionKey, metroLineName, firstStation, secondStation) {
+        connections[connectionKey] = connections[connectionKey] || new Connection(firstStation, secondStation);
+        connections[connectionKey].addMetroLine(metroLineName);
+    }
+
+    // @params {MapGraph} mapGraph
+    // @params {string} startStationName
+    // @params {string} endStationName
+    // @params {Station} startStationObj
+    // @params {Station} endStationObj
+    calculateAndAddDistance(mapGraph, startStationName, endStationName, startStationObj, endStationObj) {
+        const distance = StationGeoUtils.calculateDistance(startStationObj, endStationObj);
+        mapGraph.addNeighbourToStation(startStationName, endStationName, distance);
     }
 }
 
