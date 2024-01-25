@@ -17,7 +17,8 @@
     "react-scripts": "5.0.1",
     "react-select": "^5.8.0",
     "react-svg-pan-zoom": "^3.12.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "jest": "^18.1.0"
   },
   "scripts": {
     "predeploy": "npm run build",

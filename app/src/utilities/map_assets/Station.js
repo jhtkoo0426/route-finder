@@ -10,7 +10,7 @@ import GeoUtilities from "../services/geographic_services/GeographicUtilities";
 class Station {
     constructor(name, lat, lon) {
         this.name = name;
-        this.fittedName = this.transformStationName(name);
+        this.fittedName = this.transformStationName();
         this.lat = lat;
         this.lon = lon;
         [this.x, this.y] = this.calculateXYCoordinates(lat, lon);
@@ -34,8 +34,8 @@ class Station {
 
     // @params {string} stationName
     // @returns {string}
-    transformStationName(stationName) {
-        const words = stationName.split(' ');
+    transformStationName() {
+        const words = this.name.split(' ');
         return words.reduce((lines, word) => {
             const lastLine = lines[lines.length - 1];
             if (!lastLine || lastLine.length + word.length > SVG_STATION_NAME_LINE_MAX_CHARS) {
