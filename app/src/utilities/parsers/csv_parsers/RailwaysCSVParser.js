@@ -15,9 +15,9 @@ class RailwaysCSVParser extends CSVParser {
         const csvData = await super.parse();    // The base parse method splits rows by the \n symbol.
 
         csvData.forEach(row => {
-            const [metroLineName, colour] = row.split(",");
-            railwayLines[metroLineName] = colour;
-        })
+            const [metroLineName, colour] = row.split(",").map(value => value.trim());
+            railwayLines.set(metroLineName, colour);
+        });
         console.log("All railways parsed.");
         return railwayLines;
     }
