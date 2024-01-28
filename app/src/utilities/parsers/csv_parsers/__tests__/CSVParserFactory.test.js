@@ -1,6 +1,6 @@
 import CSVParserFactory from "../CSVParserFactory";
 import ConnectionsCSVParser from "../ConnectionCSVParser";
-import RailwaysCSVParser from "../RailwaysCSVParser";
+import RailwayCSVParser from "../RailwayCSVParser";
 import StationsCSVParser from "../StationCSVParser";
 
 
@@ -25,7 +25,7 @@ describe('CSVParserFactory.js tests', () => {
 
     test('createParser() with type "railways" should return RailwaysCSVParser instance', () => {
         type = 'railways'
-        expect(csvParserFactory.createParser(type, filePath)).toBeInstanceOf(RailwaysCSVParser);
+        expect(csvParserFactory.createParser(type, filePath)).toBeInstanceOf(RailwayCSVParser);
     });
 
     test('createParser() should throw error for invalid parser type', () => {

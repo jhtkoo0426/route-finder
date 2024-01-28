@@ -1,6 +1,6 @@
 import StationsCSVParser from "./StationCSVParser";
-import ConnectionsCSVParser from "./ConnectionCSVParser";
-import RailwaysCSVParser from "./RailwaysCSVParser";
+import ConnectionCSVParser from "./ConnectionCSVParser";
+import RailwayCSVParser from "./RailwayCSVParser";
 
 
 
@@ -17,9 +17,9 @@ class CSVParserFactory {
             case 'stations':
                 return new StationsCSVParser(filePath);
             case 'connections':
-                return new ConnectionsCSVParser(filePath);
+                return new ConnectionCSVParser(filePath);
             case 'railways':
-                return new RailwaysCSVParser(filePath);
+                return new RailwayCSVParser(filePath);
             default:
                 throw new Error('Invalid parser type');
         }

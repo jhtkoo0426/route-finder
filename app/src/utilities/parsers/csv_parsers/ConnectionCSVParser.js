@@ -11,7 +11,7 @@ import CSVParser from "./BaseCSVParser";
 // Column 1: Metro line name
 // Column 2: Start station name
 // Column 3: End station name
-class ConnectionsCSVParser extends CSVParser {
+class ConnectionCSVParser extends CSVParser {
     // @params {Array} stations
     // @returns {Array} parseResult
     async parse(stations) {
@@ -41,18 +41,17 @@ class ConnectionsCSVParser extends CSVParser {
         if (startStationObj && endStationObj) {
             const [firstStation, secondStation] = this.sortStationsByName(startStationObj, endStationObj);
             const connectionKey = this.getConnectionKey(firstStation, secondStation);
-
             this.createOrUpdateConnection(connections, connectionKey, metroLineName, firstStation, secondStation);
             this.calculateAndAddDistance(mapGraph, startStationName, endStationName, startStationObj, endStationObj);
         }
     }
 
     // Auxiliary methods
-    // @params {string} stationAName
-    // @params {string} stationBName
+    // @params {Station} stationAObj
+    // @params {Station} stationBObj
     // @returns {Array}
-    sortStationsByName(stationAName, stationBName) {
-        return [stationAName, stationBName].sort((a, b) => a.name.localeCompare(b.name));
+    sortStationsByName(stationAObj, stationBObj) {
+        return [stationAObj, stationBObj].sort((a, b) => a.name.localeCompare(b.name));
     }
 
     // @params {Station} stationAObj
@@ -84,4 +83,4 @@ class ConnectionsCSVParser extends CSVParser {
 }
 
 
-export default ConnectionsCSVParser;
+export default ConnectionCSVParser;

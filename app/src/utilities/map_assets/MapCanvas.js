@@ -38,7 +38,7 @@ class MapCanvas extends PureComponent {
             value: INITIAL_VALUE,                   // ReactSVGPanZoom component config
             stations: [],                           // Collection of all metro stations
             connections: [],                        // Collection of all connections between metro stations
-            railwayLinesColourMap: new Set(),       // Colour map for metro lines
+            railwayLinesColourMap: new Map(),       // Colour map for metro lines
             screenWidth: window.innerWidth,
             screenHeight: window.innerHeight,
             mapWidth: window.innerWidth * 0.8,      // Scale factor adjusts to grid width
@@ -125,7 +125,7 @@ class MapCanvas extends PureComponent {
                     y1={startStation.y + shiftAmount}
                     x2={endStation.x + shiftAmount}
                     y2={endStation.y + shiftAmount}
-                    stroke={this.state.railwayLinesColourMap[metroLineName]}
+                    stroke={this.state.railwayLinesColourMap.get(metroLineName)}
                     strokeWidth={SVG_CONNECTION_STROKE_WIDTH}
                     opacity={connectionObj.state.opacity}
                 />
@@ -167,9 +167,9 @@ class MapCanvas extends PureComponent {
     renderRailwayLinesLegend() {
         return (
             <div className='map-legend'>
-                {Object.keys(this.state.railwayLinesColourMap).map((metroLineName, index) => (
+                {Array.from(this.state.railwayLinesColourMap.keys()).map((metroLineName, index) => (
                     <div key={metroLineName}>
-                        <div style={{ backgroundColor: this.state.railwayLinesColourMap[metroLineName] }}></div>
+                        <div style={{ backgroundColor: this.state.railwayLinesColourMap.get(metroLineName) }}></div>
                         <p>{metroLineName}</p>
                     </div>
                 ))}

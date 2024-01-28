@@ -18,7 +18,6 @@ class CSVParser {
             const csvRows = this.splitCSVIntoRows(csvText);
             return csvRows;
         } catch (error) {
-            this.handleParseError(error);
             throw error;
         }
     }
@@ -30,10 +29,6 @@ class CSVParser {
         lines = lines.map(line => line.trim());         // Trim leading and trailing whitespaces from each line
         const nonEmptyLines = lines.filter(Boolean);    // Remove empty lines
         return nonEmptyLines;
-    }
-
-    handleParseError(error) {
-        console.error(`Error parsing CSV: ${error.message}`);
     }
 }
 

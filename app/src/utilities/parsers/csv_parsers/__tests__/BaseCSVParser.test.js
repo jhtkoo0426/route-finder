@@ -2,7 +2,7 @@ import CSVParser from "../BaseCSVParser";
 
 
 describe('BaseCSVParser.js tests', () => {
-    const filePath = 'test.csv'; // Update the file path accordingly
+    const filePath = 'test.csv';
     let csvParser;
 
     beforeEach(() => {
@@ -42,14 +42,5 @@ describe('BaseCSVParser.js tests', () => {
         const result = csvParser.splitCSVIntoRows(csvText);
 
         expect(result).toEqual(['Header1,Header2', 'Value1,Value2', 'Value3,Value4']);
-    });
-
-    test('should handle parse error and log to console', () => {
-        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-        const error = new Error('Test parse error');
-        csvParser.handleParseError(error);
-
-        expect(consoleErrorSpy).toHaveBeenCalledWith(`Error parsing CSV: ${error.message}`);
-        consoleErrorSpy.mockRestore();
     });
 });
