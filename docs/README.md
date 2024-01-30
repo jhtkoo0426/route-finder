@@ -1,4 +1,5 @@
-# route-finder
+<h1>route-finder</h1>
+
 A dynamic visualization tool designed to identify the most efficient metro routes in major cities. This documentation showcases the essential features of the application and outlines how it adheres to SOLID principles while strategically employing design patterns, offering a comprehensive and insightful overview.
 
 <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB"> <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"> <img src="https://img.shields.io/badge/HTML-239120?style=for-the-badge&logo=html5&logoColor=white">
@@ -7,13 +8,21 @@ A dynamic visualization tool designed to identify the most efficient metro route
 
 <img src="route-finder-ui.png" alt="">
 
+<h2>Table of Contents</h2>
+
+- [Main Features](#main-features)
+- [SOLID Principles](#solid-principles)
+- [Design Patterns](#design-patterns)
+- [Challenges](#challenges)
+- [Tests](#tests)
+
 ## Main Features
 - **Automatic parsing** of metro map assets such as stations, interchanges, connections and railway lines.
 - **Real-time visualization** of the exploration of various path-finding algorithms on metro maps.
 
 
 ## SOLID Principles
-### 1. Single Responsibility Principle
+<h4>Single Responsibility Principle</h4>
 This application follows the single responsibility principle by organizing its components into distinct responsibilities:
 
 1. **Client Code**
@@ -119,3 +128,15 @@ I applied sesveral design patterns in this project to offer solutions for common
 
 ## Challenges
 1. While translating latitude/longitude coordinates of stations into Cartesian coordinates may provide an approximation of their true positions, the final outcome will deviate from official metro maps. This discrepancy arises because official maps prioritize clarity over accurately depicting the precise positions of stations in reality.
+
+
+## Tests
+Run all tests using:
+```
+npm run test
+```
+
+Run all tests with coverage using:
+```
+npm run test -- --coverage --watchAll=false
+```
