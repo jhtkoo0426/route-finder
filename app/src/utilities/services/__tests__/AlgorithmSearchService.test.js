@@ -2,7 +2,8 @@ import MapGraph from '../../map_assets/MapGraph';
 import AlgorithmSearchService from '../AlgorithmSearchService';
 import MetroMapAssetsManager from '../MetroMapAssetsManager';
 
-describe('AlgorithmSearchService', () => {
+
+describe('AlgorithmSearchService.js tests', () => {
     let algorithmSearchService;
     let metroMapAssetsManager;
     let mapGraph;
