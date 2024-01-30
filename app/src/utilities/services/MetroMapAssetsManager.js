@@ -1,5 +1,6 @@
 import CSVParserFactory from "../parsers/csv_parsers/CSVParserFactory";
 import { SVG_CONNECTION_OPACITY_UNVISITED } from "../Constants";
+import MapGraph from "../map_assets/MapGraph";
 
 
 
@@ -13,7 +14,7 @@ class MetroMapAssetsManager {
         this.connections = new Map();
         this.stations = new Map();
         this.railwayLinesColourMap = new Map();
-        this.mapGraph = null;
+        this.mapGraph = new MapGraph();
     }
 
     // Parse all resource files to load assets for visualization.

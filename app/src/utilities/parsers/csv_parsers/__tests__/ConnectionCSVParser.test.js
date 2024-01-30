@@ -10,12 +10,10 @@ describe('ConnectionCSVParser.js tests', () => {
     let stations;
     let stationA;
     let stationB;
-    let mapGraph;
 
     beforeEach(() => {
         stationA = new Station('stationA', 51.01942, 0.23587);
         stationB = new Station('stationB', 50.98252, -0.59123);
-        mapGraph = new MapGraph();
     })
 
     test('should parse dummy CSV file correctly', async () => {

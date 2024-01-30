@@ -210,9 +210,10 @@ class MapCanvas extends PureComponent {
     }
 
     renderTravelPathSegment(segment, index, startX, updatedStartY) {
+        const lineColour = this.state.railwayLinesColourMap.get(segment.line);
         return (
             <g key={index}>
-                {segment.line !== null && this.renderTravelPathLine(startX, updatedStartY, this.state.railwayLinesColourMap[segment.line])}
+                {segment.line !== null && this.renderTravelPathLine(startX, updatedStartY, lineColour)}
                 {this.renderTravelPathStationText(startX, updatedStartY, segment.start, SVG_STATION_NAME_FONT_SIZE, SVG_STATION_NAME_FONT_COLOR, "start")}
                 {this.renderTravelPathStationText(startX, updatedStartY + SVG_STATION_RADIUS * 3.5, segment.stops !== 0 ? `${segment.line} (${segment.stops} stop${segment.stops > 1 ? 's' : ''})` : null, SVG_STATION_NAME_FONT_SIZE, SVG_STATION_NAME_FONT_COLOR, "start")}
                 {this.renderTravelPathStationCircles(startX, updatedStartY)}
