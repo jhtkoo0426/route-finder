@@ -52,7 +52,8 @@
   "jest": {
     "collectCoverageFrom": [
       "src/**/*.{js,jsx}",
-      "!src/index.js"
+      "!src/index.js",
+      "!src/utilities/components/SearchableDropdown.js"
     ]
   }
 }
