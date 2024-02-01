@@ -15,12 +15,12 @@ describe('StationGeographicUtilities.js tests', () => {
         stationB = new Station("B", lat2, lon2);
     });
 
-    test('geographicToCartesianCoordinates() should return array', () => {
+    it('geographicToCartesianCoordinates() should return array', () => {
         const result = StationGeoUtils.geographicToCartesianCoordinates(stationA);
         expect(Array.isArray(result)).toBe(true);
     });
 
-    test('calculateDistance() should return float', () => {
+    it('calculateDistance() should return float', () => {
         const result = StationGeoUtils.calculateDistance(stationA, stationB);
         expect(typeof result).toEqual('number');
     });

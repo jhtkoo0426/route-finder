@@ -7,17 +7,17 @@ describe('TravelPathParser', () => {
         parser = new TravelPathParser();
     });
 
-    test('parseTravelPathIntoSegments() returns null for empty path', () => {
+    it('parseTravelPathIntoSegments() returns null for empty path', () => {
         const result = parser.parseTravelPathIntoSegments([]);
         expect(result).toBeNull();
     });
 
-    test('parseTravelPathIntoSegments() returns null for null path', () => {
+    it('parseTravelPathIntoSegments() returns null for null path', () => {
         const result = parser.parseTravelPathIntoSegments(null);
         expect(result).toBeNull();
     });
 
-    test('parseTravelPathIntoSegments() returns correct segments for a simple path', () => {
+    it('parseTravelPathIntoSegments() returns correct segments for a simple path', () => {
         parser.loadAssets({
             connections: {
                 'A-B': { getMetroLinesArray: () => ['MetroLine1'] },
@@ -34,7 +34,7 @@ describe('TravelPathParser', () => {
         ]);
     });
     
-    test('parseTravelPathIntoSegments() returns correct result for a single stop path', () => {
+    it('parseTravelPathIntoSegments() returns correct result for a single stop path', () => {
         parser.loadAssets({
             connections: {
                 'A-B': { getMetroLinesArray: () => ['MetroLine1'] },
@@ -50,7 +50,7 @@ describe('TravelPathParser', () => {
         ]);
     });
 
-    test('parseTravelPathIntoSegments() handles multiple lines correctly', () => {
+    it('parseTravelPathIntoSegments() handles multiple lines correctly', () => {
         parser.loadAssets({
             connections: {
                 'A-B': { getMetroLinesArray: () => ['MetroLine1'] },
@@ -68,7 +68,7 @@ describe('TravelPathParser', () => {
         ]);
     });
 
-    test('parseTravelPathIntoSegments() handles connections in both directions', () => {
+    it('parseTravelPathIntoSegments() handles connections in both directions', () => {
         const mockConnectionAB = { getMetroLinesArray: () => ['MetroLine1'] };
         const mockConnectionBA = { getMetroLinesArray: () => ['MetroLine2'] };
       
@@ -89,7 +89,7 @@ describe('TravelPathParser', () => {
         ]);
     });
     
-    test('parseTravelPathIntoSegments() handles reversed path connections', () => {
+    it('parseTravelPathIntoSegments() handles reversed path connections', () => {
         parser.loadAssets({
             connections:  {
                 'A-B': { getMetroLinesArray: () => ['MetroLine1']}

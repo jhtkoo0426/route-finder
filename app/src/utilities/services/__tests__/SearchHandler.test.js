@@ -33,7 +33,7 @@ describe('SearchHandler.js tests', () => {
         };
     });
 
-    test('should call search and update states on handleSearchClick()', async () => {
+    it('should call search and update states on handleSearchClick()', async () => {
         const searchHandler = new SearchHandler(appInstanceMock);
         await searchHandler.handleSearchClick();
 
@@ -45,7 +45,7 @@ describe('SearchHandler.js tests', () => {
         expect(appInstanceMock.setDebuggerState).not.toHaveBeenCalled();
     });
 
-    test('should call setDebuggerState() if not all fields are selected', async () => {
+    it('should call setDebuggerState() if not all fields are selected', async () => {
         appInstanceMock.state.selectedAlgorithm = null;
         const searchHandler = new SearchHandler(appInstanceMock);
         await searchHandler.handleSearchClick();

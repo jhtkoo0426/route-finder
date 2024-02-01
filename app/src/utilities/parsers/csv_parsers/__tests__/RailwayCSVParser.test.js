@@ -9,7 +9,7 @@ describe('RailwayCSVParser.js tests', () => {
         csvParser = new RailwayCSVParser(filePath);
     })
 
-    test('should parse dummy CSV file correctly', async () => {
+    it('should parse dummy CSV file correctly', async () => {
         global.fetch = jest.fn(() =>
             Promise.resolve({
                 ok: true,

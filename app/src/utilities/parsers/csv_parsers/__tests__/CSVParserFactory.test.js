@@ -13,22 +13,22 @@ describe('CSVParserFactory.js tests', () => {
         csvParserFactory = new CSVParserFactory();
     })
 
-    test('createParser() with type "stations" should return StationsCSVParser instance', () => {
+    it('createParser() with type "stations" should return StationsCSVParser instance', () => {
         type = 'stations'
         expect(csvParserFactory.createParser(type, filePath)).toBeInstanceOf(StationsCSVParser);
     });
 
-    test('createParser() with type "connections" should return ConnectionsCSVParser instance', () => {
+    it('createParser() with type "connections" should return ConnectionsCSVParser instance', () => {
         type = 'connections'
         expect(csvParserFactory.createParser(type, filePath)).toBeInstanceOf(ConnectionsCSVParser);
     });
 
-    test('createParser() with type "railways" should return RailwaysCSVParser instance', () => {
+    it('createParser() with type "railways" should return RailwaysCSVParser instance', () => {
         type = 'railways'
         expect(csvParserFactory.createParser(type, filePath)).toBeInstanceOf(RailwayCSVParser);
     });
 
-    test('createParser() should throw error for invalid parser type', () => {
+    it('createParser() should throw error for invalid parser type', () => {
         type = 'randomType'
         expect(() => csvParserFactory.createParser(type, filePath)).toThrow('Invalid parser type');
     })

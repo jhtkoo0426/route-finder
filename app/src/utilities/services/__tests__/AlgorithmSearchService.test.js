@@ -30,11 +30,11 @@ describe('AlgorithmSearchService.js tests', () => {
         metroMapAssetsManager.mapGraph = mapGraph;
     });
 
-    test('should load assets manager correctly', () => {
+    it('should load assets manager correctly', () => {
         expect(algorithmSearchService.metroMapAssetsManager).toBeInstanceOf(MetroMapAssetsManager);
     });
 
-    test('search method should return results for Dijkstra algorithm', async () => {
+    it('search method should return results for Dijkstra algorithm', async () => {
         const startStation = 'stationA';
         const endStation = 'stationC';
 

@@ -16,7 +16,7 @@ describe('ConnectionCSVParser.js tests', () => {
         stationB = new Station('stationB', 50.98252, -0.59123);
     })
 
-    test('should parse dummy CSV file correctly', async () => {
+    it('should parse dummy CSV file correctly', async () => {
         global.fetch = jest.fn(() =>
             Promise.resolve({
                 ok: true,
@@ -36,7 +36,7 @@ describe('ConnectionCSVParser.js tests', () => {
         expect(result[2]).toBeInstanceOf(MapGraph);
     });
 
-    test('parseConnection() should add metro lines correctly', () => {
+    it('parseConnection() should add metro lines correctly', () => {
         const parser = new ConnectionCSVParser();
         const existingConnection = new Connection(stationA, stationB);
         const connections = { 'stationA-stationB': existingConnection };
@@ -51,7 +51,7 @@ describe('ConnectionCSVParser.js tests', () => {
         expect(connectedMetroLines[0]).toEqual('railway1');
     });
 
-    test('parseConnection() should add multiple metro lines correctly', () => {
+    it('parseConnection() should add multiple metro lines correctly', () => {
         const parser = new ConnectionCSVParser();
         const existingConnection = new Connection(stationA, stationB);
         const connections = { 'stationA-stationB': existingConnection };
@@ -72,7 +72,7 @@ describe('ConnectionCSVParser.js tests', () => {
         expect(connections[connectionKey]).toBe(existingConnection);
     });
 
-    test('should create connection and calculate distance when both start and end stations exist', () => {
+    it('should create connection and calculate distance when both start and end stations exist', () => {
         const parser = new ConnectionCSVParser();
         const stations = {
           'StationA': { name: 'StationA' },
@@ -87,14 +87,14 @@ describe('ConnectionCSVParser.js tests', () => {
         expect(connections[connectionKey]).toBeInstanceOf(Connection);
       });
 
-    test('sortStationsByName() should sort station names correctly', () => {
+    it('sortStationsByName() should sort station names correctly', () => {
         const result = csvParser.sortStationsByName(stationB, stationA);
         expect(result).toBeInstanceOf(Array);
         expect(result[0].name).toBe("stationA");
         expect(result[1].name).toBe("stationB");
     });
 
-    test('getConnectionKey() should return correct string representation of key', () => {
+    it('getConnectionKey() should return correct string representation of key', () => {
         const result = csvParser.getConnectionKey(stationA, stationB);
         expect(result).toBe("stationA-stationB");
     })

@@ -8,11 +8,11 @@ describe('MapGraph.js tests', () => {
       mapGraph = new MapGraph();
     });
 
-    test('should be initialized with an empty adjacency list', () => {
+    it('should be initialized with an empty adjacency list', () => {
         expect(mapGraph.adjacencyList.size).toBe(0);
     });
 
-    test('should maintain bidirectional connection between stations', () => {
+    it('should maintain bidirectional connection between stations', () => {
         mapGraph.addNeighbourToStation('stationA', 'stationB', 10.5);
 
         // Check if the source and neighbor connection is added correctly
@@ -25,7 +25,7 @@ describe('MapGraph.js tests', () => {
         expect(mapGraph.adjacencyList.get('stationB').get('stationA')).toBe(10.5);
     });
 
-    test('should handle multiple neighbors for a station', () => {
+    it('should handle multiple neighbors for a station', () => {
         mapGraph.addNeighbourToStation('stationA', 'stationB', 10.5);
         mapGraph.addNeighbourToStation('stationA', 'StationC', 15.0);
 
@@ -40,7 +40,7 @@ describe('MapGraph.js tests', () => {
         expect(mapGraph.adjacencyList.get('stationB').get('stationA')).toBe(10.5);
     });
 
-    test('should update edge distance', () => {
+    it('should update edge distance', () => {
         mapGraph.addNeighbourToStation('stationA', 'stationB', 10.5);
         mapGraph.addNeighbourToStation('stationA', 'stationB', 8);
 
@@ -48,13 +48,13 @@ describe('MapGraph.js tests', () => {
         expect(mapGraph.adjacencyList.get('stationA').get('stationB')).toBe(8);
     })
 
-    test('getNeighbourDistance() should return distance if source station in adjacency list', () => {
+    it('getNeighbourDistance() should return distance if source station in adjacency list', () => {
         mapGraph.addNeighbourToStation('stationA', 'stationB', 10.5);
         const result = mapGraph.getNeighbourDistance('stationA', 'stationB');
         expect(result).toBe(10.5);
     });    
 
-    test('getNeighbourDistance() should return undefined if source station not in adjacency list', () => {
+    it('getNeighbourDistance() should return undefined if source station not in adjacency list', () => {
         const result = mapGraph.getNeighbourDistance('nonExistentStation', 'stationB');
         expect(result).toBeUndefined();
     });    

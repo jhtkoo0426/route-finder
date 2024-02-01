@@ -17,7 +17,7 @@ describe('MetroMapAssetsManager.js tests', () => {
         manager = new MetroMapAssetsManager(connectionsFilePath, stationsFilePath, railwaysFilePath);
     });
 
-    test('should initialize all attributes correctly', () => {
+    it('should initialize all attributes correctly', () => {
         expect(manager).toBeInstanceOf(MetroMapAssetsManager);
         expect(manager.connectionsFilePath).toBe('test1.csv');
         expect(manager.stationsFilePath).toBe('test2.csv');
@@ -31,7 +31,7 @@ describe('MetroMapAssetsManager.js tests', () => {
         expect(manager.railwayLinesColourMap.size).toBe(0);
     });
 
-    test('parseCSVFiles() should invoke the correct methods on CSV parsers', async () => {
+    it('parseCSVFiles() should invoke the correct methods on CSV parsers', async () => {
         // We can assume the CSVParserFactory is correct
         const mockParserFactory = new CSVParserFactory();
         CSVParserFactory.mockImplementation(() => mockParserFactory);
@@ -63,19 +63,19 @@ describe('MetroMapAssetsManager.js tests', () => {
         expect(manager.mapGraph).toEqual(mockMapGraph);
     });
     
-    test('getStationNames() should return array of correct length', () => {
+    it('getStationNames() should return array of correct length', () => {
         const result = manager.getStationNames();
         expect(result).toBeInstanceOf(Array);
         expect(result.length).toBe(0);
     });
 
-    test('getStationObjects() should return map of Station objects', () => {
+    it('getStationObjects() should return map of Station objects', () => {
         const result = manager.getStationObjects();
         expect(result).toBeInstanceOf(Map);
         expect(result.size).toBe(0);
     });
 
-    test('resetConnectionsOpacities() should reset opacities for all connections', () => {
+    it('resetConnectionsOpacities() should reset opacities for all connections', () => {
         manager.connections = {
             connection1: { state: { opacity: 0.5 } },
             connection2: { state: { opacity: 0.7 } },

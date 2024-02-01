@@ -9,7 +9,7 @@ describe('Dijkstra Algorithm', () => {
         mapGraph = new MapGraph();
     });
 
-    test('should find optimal path and distance between two stations', () => {
+    it('should find optimal path and distance between two stations', () => {
         mapGraph.addNeighbourToStation('stationA', 'stationB', 0.51);
         mapGraph.addNeighbourToStation('stationB', 'stationC', 0.12);
         dijkstra = new Dijkstra(mapGraph);
@@ -25,7 +25,7 @@ describe('Dijkstra Algorithm', () => {
         ]);
     });
 
-    test('should construct optimal path even if currentStation is equal to startStation', () => {
+    it('should construct optimal path even if currentStation is equal to startStation', () => {
         mapGraph.addNeighbourToStation('stationA', 'stationB', 0.51);
         mapGraph.addNeighbourToStation('stationB', 'stationC', 0.12);
         dijkstra = new Dijkstra(mapGraph);
@@ -34,7 +34,7 @@ describe('Dijkstra Algorithm', () => {
         expect(result.path).toEqual(['stationA', 'stationB', 'stationC']);
     }); 
 
-    test('should visit station, mark as visited, and process neighbors', () => {
+    it('should visit station, mark as visited, and process neighbors', () => {
         mapGraph.addNeighbourToStation('stationA', 'stationB', 0.51);
         mapGraph.addNeighbourToStation('stationB', 'stationC', 0.12);
         const dijkstra = new Dijkstra(mapGraph);

@@ -9,7 +9,7 @@ describe('BaseCSVParser.js tests', () => {
         csvParser = new CSVParser(filePath);
     });
 
-    test('should parse the dummy CSV file correctly', async () => {
+    it('should parse the dummy CSV file correctly', async () => {
         global.fetch = jest.fn(() =>
             Promise.resolve({
                 ok: true,
@@ -23,7 +23,7 @@ describe('BaseCSVParser.js tests', () => {
         expect(parsedData).toEqual(['randomText,0.1,0.2']);
     });
 
-    test('should handle fetch error', async () => {
+    it('should handle fetch error', async () => {
         // Mock the fetch function to return an error response
         global.fetch = jest.fn(() =>
             Promise.resolve({
@@ -37,7 +37,7 @@ describe('BaseCSVParser.js tests', () => {
         expect(global.fetch).toHaveBeenCalledWith(filePath);
     });
 
-    test('should split CSV into rows correctly', () => {
+    it('should split CSV into rows correctly', () => {
         const csvText = 'Header1,Header2\nValue1,Value2\nValue3,Value4';
         const result = csvParser.splitCSVIntoRows(csvText);
 

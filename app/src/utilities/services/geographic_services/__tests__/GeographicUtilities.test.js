@@ -11,12 +11,12 @@ describe('GeographicUtilities.js tests', () => {
     let [lat, lon] = [51.0, 0.25];
     let [lat2, lon2] = [55.2, -0.86];
 
-    test('geographicToCartesianCoordinates() should return array', () => {
+    it('geographicToCartesianCoordinates() should return array', () => {
         const result = GeoUtilities.geographicToCartesianCoordinates(lat, lon);
         expect(Array.isArray(result)).toBe(true);
     });
 
-    test('geographicToCartesianCoordinates() should calculate x and y with correct formula', () => {
+    it('geographicToCartesianCoordinates() should calculate x and y with correct formula', () => {
         const result = GeoUtilities.geographicToCartesianCoordinates(lat, lon);
         var a = EARTH_RADIUS * Math.cos(lat);
         const expectedX = Math.round(a * Math.sin(lon) + SVG_MAP_SHIFT_X) * SVG_MAP_SCALE_X;
@@ -25,17 +25,17 @@ describe('GeographicUtilities.js tests', () => {
         expect(result[1]).toEqual(expectedY);
     });
 
-    test('toRadians() should return float', () => {
+    it('toRadians() should return float', () => {
         const result = GeoUtilities.toRadians(160);
         expect(typeof result).toEqual('number');
     });
 
-    test('calculateDistance() should return float', () => {
+    it('calculateDistance() should return float', () => {
         const result = GeoUtilities.calculateDistance(lat, lon, lat2, lon2);
         expect(typeof result).toEqual('number');
     });
 
-    test('calculateDistance() should return correct distance between two points', () => {
+    it('calculateDistance() should return correct distance between two points', () => {
         const result = GeoUtilities.calculateDistance(lat, lon, lat2, lon2);
 
         var deltaLat = GeoUtilities.toRadians(lat2-lat);

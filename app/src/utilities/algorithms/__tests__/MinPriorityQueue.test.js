@@ -1,7 +1,7 @@
 import MinPriorityQueue from '../MinPriorityQueue';
 
 describe('MinPriorityQueue', () => {
-    test('enqueues elements and maintains priority order', () => {
+    it('enqueues elements and maintains priority order', () => {
         const minPriorityQueue = new MinPriorityQueue();
         minPriorityQueue.enqueue('Task 1', 3);
         minPriorityQueue.enqueue('Task 2', 1);
@@ -14,7 +14,7 @@ describe('MinPriorityQueue', () => {
         ]);
     });
 
-    test('dequeues elements in the correct order', () => {
+    it('dequeues elements in the correct order', () => {
         const minPriorityQueue = new MinPriorityQueue();
         minPriorityQueue.enqueue('Task 1', 3);
         minPriorityQueue.enqueue('Task 2', 1);
@@ -25,7 +25,7 @@ describe('MinPriorityQueue', () => {
         expect(dequeuedElement).toEqual({ element: 'Task 2', priority: 1 });
     });
 
-    test('checks if the queue is empty after dequeueing all elements', () => {
+    it('checks if the queue is empty after dequeueing all elements', () => {
         const minPriorityQueue = new MinPriorityQueue();
         minPriorityQueue.enqueue('Task 1', 3);
         minPriorityQueue.enqueue('Task 2', 1);
@@ -41,7 +41,7 @@ describe('MinPriorityQueue', () => {
         expect(result).toBe(null);
     });
 
-    test('enqueues and dequeues elements with the same priority', () => {
+    it('enqueues and dequeues elements with the same priority', () => {
         const minPriorityQueue = new MinPriorityQueue();
         minPriorityQueue.enqueue('Task A', 2);
         minPriorityQueue.enqueue('Task B', 2);
@@ -52,7 +52,7 @@ describe('MinPriorityQueue', () => {
         expect(dequeuedElement).toEqual({ element: 'Task A', priority: 2 });
     });
 
-    test('checks if the queue is empty after dequeueing all elements with the same priority', () => {
+    it('checks if the queue is empty after dequeueing all elements with the same priority', () => {
         const minPriorityQueue = new MinPriorityQueue();
         minPriorityQueue.enqueue('Task A', 2);
         minPriorityQueue.enqueue('Task B', 2);

@@ -9,7 +9,7 @@ describe('StationCSVParser.js tests', () => {
         csvParser = new StationCSVParser(filePath);
     })
 
-    test('should parse dummy CSV file correctly', async () => {
+    it('should parse dummy CSV file correctly', async () => {
         global.fetch = jest.fn(() =>
             Promise.resolve({
                 ok: true,
