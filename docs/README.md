@@ -12,9 +12,13 @@ A dynamic visualization tool designed to identify the most efficient metro route
 
 - [Main Features](#main-features)
 - [SOLID Principles](#solid-principles)
+  - [Single Responsibility Principle](#single-responsibility-principle)
 - [Design Patterns](#design-patterns)
-- [Challenges](#challenges)
-- [Tests](#tests)
+- [Unit Testing](#unit-testing)
+  - [Overview](#overview)
+  - [Setup](#setup)
+  - [Running tests](#running-tests)
+  - [Types of tests available](#types-of-tests-available)
 
 ## Main Features
 - **Automatic parsing** of metro map assets such as stations, interchanges, connections and railway lines.
@@ -22,7 +26,7 @@ A dynamic visualization tool designed to identify the most efficient metro route
 
 
 ## SOLID Principles
-<h4>Single Responsibility Principle</h4>
+### Single Responsibility Principle
 This application follows the single responsibility principle by organizing its components into distinct responsibilities:
 
 1. **Client Code**
@@ -126,17 +130,37 @@ I applied sesveral design patterns in this project to offer solutions for common
 
    </details>
 
-## Challenges
-1. While translating latitude/longitude coordinates of stations into Cartesian coordinates may provide an approximation of their true positions, the final outcome will deviate from official metro maps. This discrepancy arises because official maps prioritize clarity over accurately depicting the precise positions of stations in reality.
 
+## Unit Testing
+This section provides information on setting up the testing environment, running tests, and writing different types of tests to ensure the reliability and stability of the application.
 
-## Tests
-Run all tests using:
-```
-npm run test
-```
+### Overview
+Unit tests are written with the `Jest` testing framework. The application currently contains 73 unit tests across 19 test suites with 84.61% code coverage.
 
-Run all tests with coverage using:
-```
-npm run test -- --coverage --watchAll=false
-```
+### Setup
+To set up the testing environment for this React.js project, follow these steps:
+- Install Node.js: Ensure that Node.js is installed on your machine. You can download it from https://nodejs.org/. 
+- Install project dependencies: Run the following command in the project root directory to install the required dependencies:
+    ```
+    npm install
+    ```
+
+### Running tests
+To run all unit tests for the application, follow these steps:
+1. Ensure that you are in the project directory:
+    ```
+    cd app
+    ```
+    At this level, you should see the `src` directory.
+
+2. i) Run tests for development:
+    ```
+    npm test
+    ```
+   ii) Run tests for code coverage:
+    ```
+    npm run test -- --coverage --watchAll=false
+    ```
+
+### Types of tests available
+Currently the application consists of only unit tests. These tests focus on testing individual functions, components, or modules in isolation. They help ensure that each part of the application works as expected.
