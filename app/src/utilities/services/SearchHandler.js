@@ -11,6 +11,7 @@ class SearchHandler {
     // Any state changes are observed and corresponding visualization takes place afterwards.
     async handleSearchClick() {
         const { selectedStartStation, selectedEndStation, selectedAlgorithm } = this.appInstance.state;
+        
         if (selectedStartStation !== null && selectedEndStation !== null && selectedAlgorithm !== null) {
             this.appInstance.resetStates();
 

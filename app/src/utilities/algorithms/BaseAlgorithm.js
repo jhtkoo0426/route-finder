@@ -1,7 +1,8 @@
 // A base class for implementing pathfinding algorithms.
 class BaseAlgorithm {
-    constructor(mapGraph) {
+    constructor(mapGraph, endStationName) {
         this.mapGraph = mapGraph;
+        this.endStationName = endStationName;
         this.distances = new Map();         // Stores the minimum distance between two stations discovered so far.
         this.visitedStations = new Map();   // Keeps track of visited stations during exploration.
         this.previousStation = new Map();   // Stores stations in the optimal path from the starting station to each station.
