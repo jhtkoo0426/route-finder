@@ -59,7 +59,10 @@ class AStar extends BaseAlgorithm {
 
     // Calculate the heuristic value (estimated cost) from a station to the goal station.
     calculateHeuristic(stationName, goalStationName) {
-        return this.mapGraph.getNeighbourDistance(stationName, goalStationName);
+        return Math.min(
+            this.mapGraph.getNeighbourDistance(stationName, goalStationName),
+            this.mapGraph.getNeighbourDistance(goalStationName, stationName)
+        );
     }
 
     // Override the constructOptimalPath method to build the path specific to A* algorithm.

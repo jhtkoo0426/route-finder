@@ -29,8 +29,6 @@ class App extends Component {
 
             // Visualization variables
             selectedAlgoPath: [],           // Array of station names to show minimum distance path
-            selectedAlgoPathDistance: null, // Variable for mimimum distance
-            selectedAlgoDuration:  null,    // Variable for measuring time elapsed for algorithm
             isVisualizingExploredPath: false,
             isVisualizingSelectedPath: false,
 
@@ -38,6 +36,7 @@ class App extends Component {
             selectedStartStation: null,     // Input variable for start station
             selectedEndStation: null,       // Input variable for input end station
             selectedAlgorithm: null,        // Variable for algorithm selection
+            algorithmResults: null,         // Stores all algorithm results
         };
 
         this.metroMapAssetsManager = new MetroMapAssetsManager(
@@ -89,10 +88,15 @@ class App extends Component {
     setAlgorithmResultState(path, distance, duration) {
         this.setState({
             selectedAlgoPath: path,
-            selectedAlgoPathDistance: distance,
-            selectedAlgoDuration: duration,
             isVisualized: true,
         });
+    }
+
+    // Updates the results of all algorithms
+    setAllAlgorithmsResultsState(results) {
+        this.setState({
+            algorithmResults: results
+        })
     }
     
     // PATH-FINDING ALGORITHM METHODS
@@ -196,16 +200,26 @@ class App extends Component {
                     <br></br>
                     <div className="search-results">
                         {
-                            this.state.selectedAlgoDuration !== null &&
-                            <div className="time-analysis">
-                                <h2>Time analysis</h2>
-                                <p>Time elapsed: {this.state.selectedAlgoDuration.toFixed(3)}s</p>
-                            </div>
+                            this.state.selectedAlgorithm !== null &&
+                            <>
+                                <div className="selected-algo-display">
+                                    <p>Visualising {this.state.selectedAlgorithm} exploration</p>
+                                </div>
+                                <br></br>
+                            </>
                         }
                         {
-                            this.state.selectedAlgoPathDistance !== null &&
-                            <p>Distance: {this.state.selectedAlgoPathDistance.toFixed(3)}km</p>
-                        }
+                            this.state.algorithmResults !== null &&
+                            Object.keys(this.state.algorithmResults).map(algorithmName => {
+                                const algorithmResults = this.state.algorithmResults[algorithmName];
+                                const distance = algorithmResults['distance'];
+                                const duration = algorithmResults['duration'];
+                                return (
+                                    <p key={algorithmName}>
+                                        {algorithmName}: {duration.toFixed(3)}s | {distance.toFixed(3)}km
+                                    </p>
+                                );
+                            })}
                         {
                             this.state.selectedAlgoPath.length !== 0 &&
                             this.generateTravelSegments()

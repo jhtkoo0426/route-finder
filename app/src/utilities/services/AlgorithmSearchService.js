@@ -26,7 +26,6 @@ class AlgorithmSearchService {
             "Dijkstra": dijkstra.runAlgorithm(startStationName, endStationName),
             "A*": a_star.runAlgorithm(startStationName, endStationName),
         }
-        console.log(algorithmResults);
         return algorithmResults;
     }
 }
