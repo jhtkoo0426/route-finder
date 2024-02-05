@@ -1,16 +1,13 @@
 import React, { PureComponent, createRef } from 'react';
-import { INITIAL_VALUE, ReactSVGPanZoom, TOOL_AUTO } from 'react-svg-pan-zoom';
+
+// Components and constants
+import ReactSVGPanZoomWrapper from './MapViewer';
 import {
     SVG_MAP_WIDTH,
     SVG_MAP_HEIGHT,
-    SVG_MAP_SCALE_MIN,
-    SVG_MAP_SCALE_MAX,
-    SVG_MAP_SCALE_SPEED,
     SVG_GRID_LINE_WIDTH,
     SVG_GRID_LINE_STROKE,
     SVG_GRID_LINE_GAP_INTERVAL,
-    SVG_VIEWER_INITIAL_PAN_X,
-    SVG_VIEWER_INITIAL_PAN_Y,
     SVG_STATION_RADIUS,
     SVG_STATION_NAME_FONT_SIZE,
     SVG_STATION_NAME_FONT_COLOR,
@@ -26,36 +23,19 @@ import {
 
 
 
+
 // This class implements the SVG representation of a metro map, including rendering and
 // animating all map assets.
 class MapCanvas extends PureComponent {
     constructor(props) {
         super(props);
 
-        this.Viewer = createRef();
+        this.viewer = createRef();
         this.state = {
-            tool: TOOL_AUTO,                        // ReactSVGPanZoom component config
-            value: INITIAL_VALUE,                   // ReactSVGPanZoom component config
             stations: [],                           // Collection of all metro stations
             connections: [],                        // Collection of all connections between metro stations
             railwayLinesColourMap: new Map(),       // Colour map for metro lines
-            screenWidth: window.innerWidth,
-            screenHeight: window.innerHeight,
-            mapWidth: window.innerWidth * 0.8,      // Scale factor adjusts to grid width
         };
-    }
-
-    // Mounting methods
-    componentDidMount() {
-        this.Viewer.current.fitToViewer();
-        window.addEventListener('resize', this.handleResize);
-
-        // Set initial viewer position
-        this.Viewer.current.pan(SVG_VIEWER_INITIAL_PAN_X, SVG_VIEWER_INITIAL_PAN_Y);
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.handleResize);
     }
 
     loadAssets(assetManager) {
@@ -66,19 +46,9 @@ class MapCanvas extends PureComponent {
         })
     }
 
-    // Event handlers
-    handleResize = () => {
-        this.setState({
-            screenWidth: window.innerWidth,
-            screenHeight: window.innerHeight,
-            mapWidth: window.innerWidth * 0.8,
-        });
-        this.Viewer.current.fitToViewer();
-    };
-
     moveViewerToStation(stationName) {
         const stationObj = this.state.stations[stationName];
-        this.Viewer.current.setPointOnViewerCenter(stationObj.x, stationObj.y, 1);
+        this.viewer.current.setViewerPosition(stationObj.x, stationObj.y);
     }
 
     // RENDERING METHODS
@@ -276,26 +246,13 @@ class MapCanvas extends PureComponent {
     render() {
         return (
             <div className="svg-container" ref={this.svgContainerRef}>
-                <ReactSVGPanZoom
-                    ref={this.Viewer}
-                    width={this.state.mapWidth}
-                    height={this.state.screenHeight}
-                    tool={this.state.tool}
-                    onChangeTool={(tool) => this.setState({ tool })}
-                    onChangeValue={(value) => this.setState({ value })}
-                    value={this.state.value}
-                    detectAutoPan={false}
-                    scaleFactorMax={SVG_MAP_SCALE_MAX}
-                    scaleFactorMin={SVG_MAP_SCALE_MIN}
-                    scaleFactorOnWheel={SVG_MAP_SCALE_SPEED}
-                    preventPanOutside={true}
-                    disableDoubleClickZoomWithToolAuto={true}>
-                    <svg key={this.state.forceRerender} width={SVG_MAP_WIDTH} height={SVG_MAP_HEIGHT}>
+                <ReactSVGPanZoomWrapper ref={this.viewer}>
+                    <svg width={SVG_MAP_WIDTH} height={SVG_MAP_HEIGHT}>
                         {this.renderGridLines()}
                         {this.renderConnections()}
                         {this.renderStations()}
                     </svg>
-                </ReactSVGPanZoom>
+                </ReactSVGPanZoomWrapper>
                 {this.renderRailwayLinesLegend()}
             </div>
         );

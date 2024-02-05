@@ -8,6 +8,7 @@ export const SVG_MAP_SCALE_MAX = 3;
 export const SVG_MAP_SCALE_SPEED = 1.2;
 export const SVG_MAP_SHIFT_X = 2000;
 export const SVG_MAP_SHIFT_Y = -500;
+export const SVG_MAP_DEFAULT_ZOOM_FACTOR = 1;
 
 export const SVG_VIEWER_INITIAL_PAN_X = -6500;
 export const SVG_VIEWER_INITIAL_PAN_Y = -5500;
