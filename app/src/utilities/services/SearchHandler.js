@@ -24,10 +24,10 @@ class SearchHandler {
 
             // Update the state for storing results of all algorithms
             this.appInstance.setAllAlgorithmsResultsState(searchResults);
-
-            // Only update the path, distance, and duration states to that of the selected algorithm.
-            const { distance, path, duration } = searchResults[selectedAlgorithm];
-            this.appInstance.setAlgorithmResultState(path, distance, duration);
+            
+            // Only update the path duration states to that of the selected algorithm.
+            const { path } = searchResults[selectedAlgorithm];
+            this.appInstance.setAlgorithmResultState(path);
             this.appInstance.mapCanvas.renderAlgorithmSearchResults(searchResults[selectedAlgorithm]);
             this.appInstance.mapCanvas.moveViewerToStation(selectedStartStation);
         } else {

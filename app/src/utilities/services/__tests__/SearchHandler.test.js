@@ -24,6 +24,7 @@ describe('SearchHandler.js tests', () => {
             },
             resetStates: jest.fn(),
             setAlgorithmResultState: jest.fn(),
+            setAllAlgorithmsResultsState: jest.fn(),
             mapCanvas: {
                 renderAlgorithmSearchResults: jest.fn(),
                 moveViewerToStation: jest.fn(),
@@ -38,8 +39,9 @@ describe('SearchHandler.js tests', () => {
         await searchHandler.handleSearchClick();
 
         expect(appInstanceMock.resetStates).toHaveBeenCalled();
+        expect(appInstanceMock.setAllAlgorithmsResultsState).toHaveBeenCalled();
         expect(algorithmSearchServiceMock.search).toHaveBeenCalledWith('StartStation', 'EndStation', 'Dijkstra');
-        expect(appInstanceMock.setAlgorithmResultState).toHaveBeenCalledWith(['Station1', 'Station2'], 10, 5);
+        expect(appInstanceMock.setAlgorithmResultState).toHaveBeenCalledWith(['Station1', 'Station2']);
         expect(appInstanceMock.mapCanvas.renderAlgorithmSearchResults).toHaveBeenCalled();
         expect(appInstanceMock.mapCanvas.moveViewerToStation).toHaveBeenCalled();
         expect(appInstanceMock.setDebuggerState).not.toHaveBeenCalled();

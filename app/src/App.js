@@ -85,7 +85,7 @@ class App extends Component {
     }
     
     // Updates the state of algorithm state variables. Used whenever the search form is sent.
-    setAlgorithmResultState(path, distance, duration) {
+    setAlgorithmResultState(path) {
         this.setState({
             selectedAlgoPath: path,
             isVisualized: true,
@@ -96,7 +96,7 @@ class App extends Component {
     setAllAlgorithmsResultsState(results) {
         this.setState({
             algorithmResults: results
-        })
+        });
     }
     
     // PATH-FINDING ALGORITHM METHODS
