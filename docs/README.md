@@ -13,12 +13,17 @@ A dynamic visualization tool designed to identify the most efficient metro route
 - [Main Features](#main-features)
 - [SOLID Principles](#solid-principles)
   - [Single Responsibility Principle](#single-responsibility-principle)
+  - [Open-closed Principle](#open-closed-principle)
+  - [Liskov Substitution Principle](#liskov-substitution-principle)
+  - [Interface Segregation Principle](#interface-segregation-principle)
+  - [Dependency Inversion Principle](#dependency-inversion-principle)
 - [Design Patterns](#design-patterns)
 - [Unit Testing](#unit-testing)
   - [Overview](#overview)
   - [Setup](#setup)
   - [Running tests](#running-tests)
   - [Types of tests available](#types-of-tests-available)
+
 
 ## Main Features
 - **Automatic parsing** of metro map assets such as stations, interchanges, connections and railway lines.
@@ -30,24 +35,36 @@ A dynamic visualization tool designed to identify the most efficient metro route
 This application follows the single responsibility principle by organizing its components into distinct responsibilities:
 
 1. **Client Code**
-    - `App.js`: Manages the states of all required map assets and renders the application UI.
+    - `App.js`: Initializes all required utilities and services, and renders the application UI.
 2. **Algorithms**
-    - `BaseAlgorithm.js`: An abstract base class for implementing various pathfinding algorithms. It provides a common structure and interface for subclasses to build upon when creating specific pathfinding algorithms (e.g., `Dijkstra.js`). All implementations of BaseAlgorithm are initialized with an array of Station objects representing nodes in the graph.
+    - `BaseAlgorithm.js`: An abstract base class for implementing various pathfinding algorithms, e.g., `Dijkstra.js` and `A_star.js`, which are all initialized with a `MapGraph` instance.
 3. **Components**
     - `SearchableDropdown.js`: A React component responsible for populating and rendering a searchable dropdown list.
 4. **Map Assets**
-    - `Station.js`: Represents a physical metro station on the metro map, including key attributes such as name and coordinates, and methods for calculating distance between stations
-    - `Connection.js`: Represents a physical connection bewteen two metro stations; maintains a recrod of all unique metro lines traversing the connection.
-    - `MapCanvas.js`: Renders a SVG representation of a metro map.
-      - Renders all map assets (stations and connections) as SVG objects.
-      - Utilises the <a href="https://github.com/chrvadala/react-svg-pan-zoom" target="_blank">react-svg-pan-zoom</a> library to enable dragging and zooming user interactions.
+    - `Station.js`: Stores key information of metro stations and related methods.
+    - `Connection.js`: Stores key information of metro connections and related methods.
+    - `MapCanvas.js`: Renders a SVG representation of the metro map, as well as all metro map assets.
+    - `MapGraph.js`: An adjacency list representing a graph of metro stations. Algorithms interact with this class to find shortest-distance paths.
 5. **Parsers**
     - `csv_parsers`: A family of CSV parsers that extract data from metro map asset files (see [here](#design-patterns) for details).
     - `TravelPathParser.js`: Transforms a series of `Stations` (representing a travel path between a starting and ending station) into segments to indicate potential transits between metro lines.
 6. **Services**
-    - `MetroMapAssetsManager.js`: This module is responsible for instantiating and managing instances of `Station`, `Connection`, and railway lines.
-      - Maintains the assets' dynamic states within the application (which is particularly significant as the states of certain assets may undergo changes during the visualization process).
-      - Organizes and stores these assets in suitable data structures for efficient retrieval and manipulation.
+    - `AlgorithmSearchService.js`: Executes path-finding algorithms and returns their results.
+    - `SearchHandler.js`: Runs `AlgorithmSearchServices` with user-provided parameters and returns corresponding results for visualization.
+    - `MetroMapAssetsManager.js`: A central location to initialise and manage the states of all metro map assets.
+
+
+### Open-closed Principle
+
+
+### Liskov Substitution Principle
+
+
+### Interface Segregation Principle
+
+
+### Dependency Inversion Principle
+
 
 ## Design Patterns
 I applied sesveral design patterns in this project to offer solutions for common design challenges, while improving code quality and scalability. Ultimately, this enables me to develop more efficient, modular, and adaptable software systems (if I wanted to extend them).
