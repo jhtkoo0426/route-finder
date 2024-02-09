@@ -69,6 +69,7 @@ The following are all classes that have a parent-child relationship via extensio
 
 
 #### Interface Segregation Principle
+1. The `BaseAlgorithm.js` class acts as an interface which provides all methods required to build a path-finding algorithm, *but an algorithm can be implemented without using all these methods*. For example, the `calculateHeuristic` method is declared in the `BaseAlgorithm.js` class, but is only used in the `A_star.js` algorithm, and not the `Dijkstra.js` algorithm. Therefore, this adheres to the ISP.
 
 
 #### Dependency Inversion Principle
