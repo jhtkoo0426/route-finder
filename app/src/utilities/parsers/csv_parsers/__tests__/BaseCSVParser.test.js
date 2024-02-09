@@ -1,4 +1,4 @@
-import CSVParser from "../BaseCSVParser";
+import BaseCSVParser from "../BaseCSVParser";
 
 
 describe('BaseCSVParser.js tests', () => {
@@ -6,7 +6,7 @@ describe('BaseCSVParser.js tests', () => {
     let csvParser;
 
     beforeEach(() => {
-        csvParser = new CSVParser(filePath);
+        csvParser = new BaseCSVParser(filePath);
     });
 
     it('should parse the dummy CSV file correctly', async () => {

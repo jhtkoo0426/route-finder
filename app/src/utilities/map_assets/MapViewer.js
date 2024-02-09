@@ -11,7 +11,7 @@ import {
 
 
 
-class ReactSVGPanZoomWrapper extends PureComponent {
+class MapViewer extends PureComponent {
     constructor(props) {
         super(props);
         this.Viewer = createRef();
@@ -71,4 +71,4 @@ class ReactSVGPanZoomWrapper extends PureComponent {
     }
 }
 
-export default ReactSVGPanZoomWrapper;
+export default MapViewer;

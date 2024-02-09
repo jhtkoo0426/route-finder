@@ -1,4 +1,4 @@
-import StationGeoUtils from "../StationGeographicUtilities";
+import StationGeographicUtilities from "../StationGeographicUtilities";
 import Station from "../../../map_assets/Station";
 
 
@@ -16,12 +16,12 @@ describe('StationGeographicUtilities.js tests', () => {
     });
 
     it('geographicToCartesianCoordinates() should return array', () => {
-        const result = StationGeoUtils.geographicToCartesianCoordinates(stationA);
+        const result = StationGeographicUtilities.geographicToCartesianCoordinates(stationA);
         expect(Array.isArray(result)).toBe(true);
     });
 
     it('calculateDistance() should return float', () => {
-        const result = StationGeoUtils.calculateDistance(stationA, stationB);
+        const result = StationGeographicUtilities.calculateDistance(stationA, stationB);
         expect(typeof result).toEqual('number');
     });
 });

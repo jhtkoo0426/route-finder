@@ -1,4 +1,4 @@
-import CSVParser from "./BaseCSVParser";
+import BaseCSVParser from "./BaseCSVParser";
 
 
 
@@ -8,7 +8,7 @@ import CSVParser from "./BaseCSVParser";
 // Column 1: Station name
 // Column 2: Latitude coordinates
 // Column 3: Longitude coordinates
-class RailwayCSVParser extends CSVParser {
+class RailwayCSVParser extends BaseCSVParser {
     // @returns {Map}
     async parse() {
         let railwayLines = new Map();

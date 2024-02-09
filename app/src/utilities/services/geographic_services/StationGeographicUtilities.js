@@ -1,10 +1,10 @@
 // Utilities
-import GeoUtilities from "./GeographicUtilities";
+import GeographicUtilities from "./GeographicUtilities";
 
 
 
 // Performs geographic calculations for Station objects.
-class StationGeoUtils extends GeoUtilities {
+class StationGeographicUtilities extends GeographicUtilities {
     // @params {Station} stationObject
     // @returns {Array}
     static geographicToCartesianCoordinates(stationObject) {
@@ -24,4 +24,4 @@ class StationGeoUtils extends GeoUtilities {
 }
 
 
-export default StationGeoUtils;
+export default StationGeographicUtilities;

@@ -1,6 +1,6 @@
 // Defines an interface for creating CSV parser objects, where the type of CSV 
 // file to parse is determined by its subclasses.
-class CSVParser {
+class BaseCSVParser {
     constructor(filePath) {
         this.filePath = filePath;
     }
@@ -32,4 +32,4 @@ class CSVParser {
     }
 }
 
-export default CSVParser;
+export default BaseCSVParser;

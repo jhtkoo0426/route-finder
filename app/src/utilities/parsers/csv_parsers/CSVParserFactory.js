@@ -11,7 +11,7 @@ import RailwayCSVParser from "./RailwayCSVParser";
 class CSVParserFactory {
     // @params {string} type
     // @params {string} filePath
-    // @returns {CSVParser}
+    // @returns {BaseCSVParser}
     createParser(type, filePath) {
         switch (type) {
             case 'stations':

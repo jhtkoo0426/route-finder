@@ -1,7 +1,7 @@
 import Connection from "../../map_assets/Connection";
 import MapGraph from "../../map_assets/MapGraph";
-import StationGeoUtils from "../../services/geographic_services/StationGeographicUtilities";
-import CSVParser from "./BaseCSVParser";
+import StationGeographicUtilities from "../../services/geographic_services/StationGeographicUtilities";
+import BaseCSVParser from "./BaseCSVParser";
 
 
 
@@ -11,7 +11,7 @@ import CSVParser from "./BaseCSVParser";
 // Column 1: Metro line name
 // Column 2: Start station name
 // Column 3: End station name
-class ConnectionCSVParser extends CSVParser {
+class ConnectionCSVParser extends BaseCSVParser {
     // @params {Array} stations
     // @returns {Array} parseResult
     async parse(stations) {
@@ -77,7 +77,7 @@ class ConnectionCSVParser extends CSVParser {
     // @params {Station} startStationObj
     // @params {Station} endStationObj
     calculateAndAddDistance(mapGraph, startStationName, endStationName, startStationObj, endStationObj) {
-        const distance = StationGeoUtils.calculateDistance(startStationObj, endStationObj);
+        const distance = StationGeographicUtilities.calculateDistance(startStationObj, endStationObj);
         mapGraph.addNeighbourToStation(startStationName, endStationName, distance);
     }
 }

@@ -1,4 +1,4 @@
-import GeoUtilities from "../GeographicUtilities";
+import GeographicUtilities from "../GeographicUtilities";
 import {
     SVG_MAP_SHIFT_X,
     SVG_MAP_SHIFT_Y,
@@ -12,12 +12,12 @@ describe('GeographicUtilities.js tests', () => {
     let [lat2, lon2] = [55.2, -0.86];
 
     it('geographicToCartesianCoordinates() should return array', () => {
-        const result = GeoUtilities.geographicToCartesianCoordinates(lat, lon);
+        const result = GeographicUtilities.geographicToCartesianCoordinates(lat, lon);
         expect(Array.isArray(result)).toBe(true);
     });
 
     it('geographicToCartesianCoordinates() should calculate x and y with correct formula', () => {
-        const result = GeoUtilities.geographicToCartesianCoordinates(lat, lon);
+        const result = GeographicUtilities.geographicToCartesianCoordinates(lat, lon);
         var a = EARTH_RADIUS * Math.cos(lat);
         const expectedX = Math.round(a * Math.sin(lon) + SVG_MAP_SHIFT_X) * SVG_MAP_SCALE_X;
         const expectedY = Math.round(a * Math.cos(lon) + SVG_MAP_SHIFT_Y) * SVG_MAP_SCALE_Y;
@@ -26,22 +26,22 @@ describe('GeographicUtilities.js tests', () => {
     });
 
     it('toRadians() should return float', () => {
-        const result = GeoUtilities.toRadians(160);
+        const result = GeographicUtilities.toRadians(160);
         expect(typeof result).toEqual('number');
     });
 
     it('calculateDistance() should return float', () => {
-        const result = GeoUtilities.calculateDistance(lat, lon, lat2, lon2);
+        const result = GeographicUtilities.calculateDistance(lat, lon, lat2, lon2);
         expect(typeof result).toEqual('number');
     });
 
     it('calculateDistance() should return correct distance between two points', () => {
-        const result = GeoUtilities.calculateDistance(lat, lon, lat2, lon2);
+        const result = GeographicUtilities.calculateDistance(lat, lon, lat2, lon2);
 
-        var deltaLat = GeoUtilities.toRadians(lat2-lat);
-        var deltaLon = GeoUtilities.toRadians(lon2-lon);
-        var latCopy = GeoUtilities.toRadians(lat);
-        var lat2Copy = GeoUtilities.toRadians(lat2);
+        var deltaLat = GeographicUtilities.toRadians(lat2-lat);
+        var deltaLon = GeographicUtilities.toRadians(lon2-lon);
+        var latCopy = GeographicUtilities.toRadians(lat);
+        var lat2Copy = GeographicUtilities.toRadians(lat2);
         var a = Math.sin(deltaLat/2) * Math.sin(deltaLat/2) +
             Math.sin(deltaLon/2) * Math.sin(deltaLon/2) * Math.cos(latCopy) * Math.cos(lat2Copy); 
         var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 

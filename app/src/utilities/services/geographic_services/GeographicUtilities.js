@@ -10,7 +10,7 @@ import {
 
 // Performs geographic calculations such as translating geographic to Cartesian
 // coordinates, finding distances between points, etc.
-class GeoUtilities {
+class GeographicUtilities {
     // @params {float} lat
     // @params {float} lon
     // @returns {Array}
@@ -47,4 +47,4 @@ class GeoUtilities {
 }
 
 
-export default GeoUtilities;
+export default GeographicUtilities;

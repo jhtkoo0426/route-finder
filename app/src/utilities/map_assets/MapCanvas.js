@@ -1,7 +1,7 @@
 import React, { PureComponent, createRef } from 'react';
 
 // Components and constants
-import ReactSVGPanZoomWrapper from './MapViewer';
+import MapViewer from './MapViewer';
 import {
     SVG_MAP_WIDTH,
     SVG_MAP_HEIGHT,
@@ -246,13 +246,13 @@ class MapCanvas extends PureComponent {
     render() {
         return (
             <div className="svg-container" ref={this.svgContainerRef}>
-                <ReactSVGPanZoomWrapper ref={this.viewer}>
+                <MapViewer ref={this.viewer}>
                     <svg width={SVG_MAP_WIDTH} height={SVG_MAP_HEIGHT}>
                         {this.renderGridLines()}
                         {this.renderConnections()}
                         {this.renderStations()}
                     </svg>
-                </ReactSVGPanZoomWrapper>
+                </MapViewer>
                 {this.renderRailwayLinesLegend()}
             </div>
         );

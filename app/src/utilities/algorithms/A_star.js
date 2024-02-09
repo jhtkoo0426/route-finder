@@ -2,8 +2,10 @@
 import BaseAlgorithm from "./BaseAlgorithm";
 import MinPriorityQueue from "./MinPriorityQueue";
 
+
+
 // A* algorithm implementation
-class AStar extends BaseAlgorithm {
+class A_star extends BaseAlgorithm {
     constructor(mapGraph, endStationName) {
         super(mapGraph, endStationName);
         this.priorityQueue = new MinPriorityQueue();
@@ -84,4 +86,4 @@ class AStar extends BaseAlgorithm {
 }
 
 
-export default AStar;
+export default A_star;

@@ -34,49 +34,61 @@ A dynamic visualization tool designed to identify the most efficient metro route
 ### Single Responsibility Principle
 This application follows the single responsibility principle by organizing its components into distinct responsibilities:
 
-1. **Client Code**
+1. **Client Code: App.js**
     - `App.js`: Initializes all required utilities and services, and renders the application UI.
-2. **Algorithms**
-    - `BaseAlgorithm.js`: An abstract base class for implementing various pathfinding algorithms, e.g., `Dijkstra.js` and `A_star.js`, which are all initialized with a `MapGraph` instance.
-3. **Components**
-    - `SearchableDropdown.js`: A React component responsible for populating and rendering a searchable dropdown list.
-4. **Map Assets**
-    - `Station.js`: Stores key information of metro stations and related methods.
-    - `Connection.js`: Stores key information of metro connections and related methods.
-    - `MapCanvas.js`: Renders a SVG representation of the metro map, as well as all metro map assets.
-    - `MapGraph.js`: An adjacency list representing a graph of metro stations. Algorithms interact with this class to find shortest-distance paths.
-5. **Parsers**
+2. **Algorithms: Implements various path-finding algorithms**
+    - `BaseAlgorithm.js`: A base class with abstract methods for implementing various path-finding algorithms, such as `Dijkstra.js` and `A_star.js`.
+3. **React Components**
+    - `SearchableDropdown.js`: Responsible for populating and rendering a searchable dropdown list.
+4. **Map Assets: Stores key information which is used for exploration and asset rendering**
+    - `Station.js`: Stores key information and methods for metro stations.
+    - `Connection.js`: Stores key information and methods for metro connections.
+    - `MapCanvas.js`: Renders a SVG representation of the metro map, including all metro map assets.
+    - `MapGraph.js`: An adjacency list representing a graph of all metro stations in a network. Path-finding algorithms interact with this class to find shortest-distance paths.
+5. **Parsers: A collection of parsers to transform raw data into suitable objects**
+    All parsers classes should be stored in the `utilities/parsers` directory.
     - `csv_parsers`: A family of CSV parsers that extract data from metro map asset files (see [here](#design-patterns) for details).
-    - `TravelPathParser.js`: Transforms a series of `Stations` (representing a travel path between a starting and ending station) into segments to indicate potential transits between metro lines.
-6. **Services**
+    - `path_parsers/TravelPathParser.js`: Transforms a series of `Stations` (representing a travel path between a starting and ending station) into segments to indicate potential transits between metro lines.
+6. **Services: A collection of helper classes to maintain code modularity**
+    All services classes should be stored in the `utilities/services` directory.
     - `AlgorithmSearchService.js`: Executes path-finding algorithms and returns their results.
-    - `SearchHandler.js`: Runs `AlgorithmSearchServices` with user-provided parameters and returns corresponding results for visualization.
+    - `SearchHandler.js`: Runs `AlgorithmSearchService` with user-provided parameters and returns corresponding results for visualization.
     - `MetroMapAssetsManager.js`: A central location to initialise and manage the states of all metro map assets.
+    - `geographic_services` and subclasses: Handles geographic calculations.
 
 
 ### Open-closed Principle
+1. The `AlgorithmSearchService` class can be extended to facilitate new algorithms without modifying its existing code.
 
 
 ### Liskov Substitution Principle
+The following are all classes that have a parent-child relationship via extension:
+1. `BaseAlgorithm.js` can be extended to implement concrete path-finding algorithms. For example, `Dijkstra.js` and `A_star.js` extend `BaseAlgorithm.js` and override its abstract methods. This allows such subclasses to be substituted for their base class without affecting the correctness of the application logic.
+2. `GeographicUtilities.js` can be extended to implement specific geographic calculations for various assets. For example, `StationGeographicUtilities.js` extends the `GeographicUtilities` class in `GeographicUtilities.js` and overrides the `geographicToCartesianCoordinates` and `calculateDistance` methods to adapt to the design of `Station` objects.
 
 
 ### Interface Segregation Principle
 
 
 ### Dependency Inversion Principle
-
+1. The `App` component relies on various services, and the dependencies are injected via constructor parameters.
+2. These classes also follow the DIP, as dependencies are injected or accessed through abstractions:
+    - `AlgorithmSearchService.js`
+    - `DebuggerHandler.js`
+    - `MetroMapAssetsManager.js`
+    - `SearchHandler.js`
 
 ## Design Patterns
 I applied sesveral design patterns in this project to offer solutions for common design challenges, while improving code quality and scalability. Ultimately, this enables me to develop more efficient, modular, and adaptable software systems (if I wanted to extend them).
 
-1. **Strategy**: The data for this project is stored in 3 separate `.csv` files (`connections.csv`, `railways.csv` and `stations.csv`). Every row of data in each file is extracted in the same manner *but should be parsed differently*, thus I created `CSVParser` to encapsulate the parsing behaviour, where concrete implementations such as `StationsCSVParser` provides the specific implementation for parsing stations.
+1. **Strategy**: The data for this project is stored in 3 separate `.csv` files (`connections.csv`, `railways.csv` and `stations.csv`). Every row of data in each file is extracted in the same manner *but should be parsed differently*, thus I created `BaseCSVParser` to encapsulate the parsing behaviour, where concrete implementations such as `StationsCSVParser` provides the specific implementation for parsing stations.
     <br>
 
     <details>
-    <summary>CSVParser.js</summary>
+    <summary>BaseCSVParser.js</summary>
 
     ```
-    class CSVParser {
+    class BaseCSVParser {
         constructor(filePath) {
             this.filePath = filePath;
         }
@@ -90,7 +102,7 @@ I applied sesveral design patterns in this project to offer solutions for common
         }
     }
 
-    export default CSVParser;
+    export default BaseCSVParser;
     ```
 
     </details>
@@ -99,7 +111,7 @@ I applied sesveral design patterns in this project to offer solutions for common
     <summary>StationsCSVParser.js</summary>
 
     ```
-    class StationsCSVParser extends CSVParser {
+    class StationsCSVParser extends BaseCSVParser {
         async parse(stations) {
             // @params stations (hashmap): Stores all Station objects that are previously
             // initialized by a StationsCSVParser instance, with the station name as the 

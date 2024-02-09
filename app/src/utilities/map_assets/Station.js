@@ -2,7 +2,7 @@
 import { SVG_STATION_NAME_LINE_MAX_CHARS } from "../Constants";
 
 // Utilities
-import GeoUtilities from "../services/geographic_services/GeographicUtilities";
+import GeographicUtilities from "../services/geographic_services/GeographicUtilities";
 
 
 
@@ -20,7 +20,7 @@ class Station {
     // @params {float} lon
     // @returns {Array}
     calculateXYCoordinates(lat, lon) {
-        return GeoUtilities.geographicToCartesianCoordinates(lat, lon);
+        return GeographicUtilities.geographicToCartesianCoordinates(lat, lon);
     }
 
     // @params {float} lat1
@@ -29,7 +29,7 @@ class Station {
     // @params {float} lon2
     // @returns {float}
     getDistance(lat1, lon1, lat2, lon2) {
-        return GeoUtilities.calculateDistance(lat1, lon1, lat2, lon2);
+        return GeographicUtilities.calculateDistance(lat1, lon1, lat2, lon2);
     }
 
     // @params {string} stationName

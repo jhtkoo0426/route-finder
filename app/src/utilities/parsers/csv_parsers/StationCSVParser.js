@@ -1,4 +1,4 @@
-import CSVParser from "./BaseCSVParser";
+import BaseCSVParser from "./BaseCSVParser";
 import Station from "../../map_assets/Station";
 
 
@@ -9,7 +9,7 @@ import Station from "../../map_assets/Station";
 // Column 1: Station name
 // Column 2: Latitude coordinates
 // Column 3: Longitude coordinates
-class StationsCSVParser extends CSVParser {
+class StationsCSVParser extends BaseCSVParser {
     // @returns {Map}
     async parse() {
         let stations = new Map();

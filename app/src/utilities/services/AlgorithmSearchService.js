@@ -1,5 +1,5 @@
 import Dijkstra from "../algorithms/Dijkstra"
-import AStarAlgorithm from "../algorithms/A_star";
+import A_star from "../algorithms/A_star";
 
 
 
@@ -21,7 +21,7 @@ class AlgorithmSearchService {
     // @returns {Map}
     async search(startStationName, endStationName) {
         const dijkstra = new Dijkstra(this.metroMapAssetsManager.mapGraph);
-        const a_star = new AStarAlgorithm(this.metroMapAssetsManager.mapGraph, endStationName);
+        const a_star = new A_star(this.metroMapAssetsManager.mapGraph, endStationName);
         const algorithmResults = {
             "Dijkstra": dijkstra.runAlgorithm(startStationName, endStationName),
             "A*": a_star.runAlgorithm(startStationName, endStationName),
