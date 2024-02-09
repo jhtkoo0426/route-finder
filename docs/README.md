@@ -32,7 +32,7 @@ A dynamic visualization tool designed to identify the most efficient metro route
 
 
 ## SOLID Principles
-#### Single Responsibility Principle
+### Single Responsibility Principle
 This application follows the single responsibility principle by organizing its components into distinct responsibilities:
 
 1. **Client Code: App.js**
@@ -58,21 +58,21 @@ This application follows the single responsibility principle by organizing its c
     - `geographic_services` and subclasses: Handles geographic calculations.
 
 
-#### Open-closed Principle
+### Open-closed Principle
 1. The `AlgorithmSearchService` class can be extended to facilitate new algorithms without modifying its existing code.
 
 
-#### Liskov Substitution Principle
+### Liskov Substitution Principle
 The following are all classes that have a parent-child relationship via extension:
 1. `BaseAlgorithm.js` can be extended to implement concrete path-finding algorithms. For example, `Dijkstra.js` and `A_star.js` extend `BaseAlgorithm.js` and override its abstract methods. This allows such subclasses to be substituted for their base class without affecting the correctness of the application logic.
 2. `GeographicUtilities.js` can be extended to implement specific geographic calculations for various assets. For example, `StationGeographicUtilities.js` extends the `GeographicUtilities` class in `GeographicUtilities.js` and overrides the `geographicToCartesianCoordinates` and `calculateDistance` methods to adapt to the design of `Station` objects.
 
 
-#### Interface Segregation Principle
+### Interface Segregation Principle
 1. The `BaseAlgorithm.js` class acts as an interface which provides all methods required to build a path-finding algorithm, *but an algorithm can be implemented without using all these methods*. For example, the `calculateHeuristic` method is declared in the `BaseAlgorithm.js` class, but is only used in the `A_star.js` algorithm, and not the `Dijkstra.js` algorithm. Therefore, this adheres to the ISP.
 
 
-#### Dependency Inversion Principle
+### Dependency Inversion Principle
 1. The `App` component relies on various services, and the dependencies are injected via constructor parameters.
 2. These classes also follow the DIP, as dependencies are injected or accessed through abstractions:
     - `AlgorithmSearchService.js`
@@ -167,15 +167,15 @@ I applied sesveral design patterns in this project to improve code quality and s
 This section provides information on setting up the testing environment, running tests, and writing different types of tests to ensure the reliability and stability of the application.
 
 
-#### Overview
+### Overview
 Unit tests are written with the `Jest` testing framework. The application currently contains 73 unit tests across 19 test suites with 85.13% code coverage.
 
 
-#### Types of tests available
+### Types of tests available
 Currently the application consists of only unit tests. These tests focus on testing individual functions, components, or modules in isolation. They help ensure that each part of the application works as expected.
 
 
-#### Setting up the testing environment
+### Setting up the testing environment
 To set up the testing environment for this React.js project, follow these steps:
 - Install Node.js: Ensure that Node.js is installed on your machine. You can download it from https://nodejs.org/. 
 - Install project dependencies: Run the following command in the project root directory to install the required dependencies:
@@ -183,7 +183,7 @@ To set up the testing environment for this React.js project, follow these steps:
     npm install
     ```
 
-#### Running tests
+### Running tests
 To run all unit tests for the application, follow these steps:
 1. Ensure that you are in the project directory:
     ```
