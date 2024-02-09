@@ -23,6 +23,7 @@ A dynamic visualization tool designed to identify the most efficient metro route
     - [Types of tests available](#types-of-tests-available)
     - [Setting up the testing environment](#setting-up-the-testing-environment)
     - [Running tests](#running-tests)
+- [Hosting](#hosting)
 
 
 ## Main Features
@@ -192,3 +193,34 @@ To run all unit tests for the application, follow these steps:
 2. Run tests
     - for development: `npm test`
     - for code coverage: `npm run test -- --coverage --watchAll=false`
+
+
+## Hosting
+This project is hosted via GitHub pages. To deploy this application for production, see the following steps:
+1. Install the [GitHub Pages package](https://www.npmjs.com/package/gh-pages) as a dev-depedency:
+    ```
+    cd app
+    npm install gh-pages --save-dev
+    ```
+2. Add properties to the `package.json` file:
+    - Add a `homepage` field at the top level:
+        ```
+        "homepage": "http://{github-username}.github.io/{repo-name}"
+        ```
+        For example, "http://jhtkoo0426.github.io/route-finder".
+    - In the `scripts` field (also at the top level), add the following:
+        ```
+        "scripts": {
+            // ...
+            "predeploy": "npm run build",
+            "deploy": "gh-pages -d build"
+        }
+        ```
+        These commands make the deployment process more straightforward.
+3. Run the following command to deploy the app:
+    ```
+    npm run deploy
+    ```
+    Note: Remember to checkout to the specific branch where you want to deploy your app.
+    
+Once you have completed the initial deployment steps for your app, you can resume the process from step 3 during subsequent deployment attempts.
